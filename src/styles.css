@@ -738,6 +738,44 @@ button {
   pointer-events: none;
 }
 
+/* ---------- tear (линия отрыва) ---------- */
+
+.tear {
+  position: relative;
+  background: var(--board);
+  overflow: visible;
+  z-index: 3;
+}
+
+.tear__strip {
+  background: var(--parchment);
+  will-change: transform;
+}
+
+.tear__line {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem clamp(1.1rem, 4vw, 2.5rem) 0.9rem;
+  color: var(--sepia);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.tear__dashes {
+  flex: 1;
+  height: 0;
+  border-top: 2px dashed rgba(107, 86, 56, 0.55);
+}
+
+.tear__rip {
+  display: block;
+  width: 100%;
+  height: 16px;
+  margin-bottom: -1px;
+}
+
 /* ---------- motion safety ---------- */
 
 @media (prefers-reduced-motion: reduce) {
