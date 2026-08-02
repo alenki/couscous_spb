@@ -1160,6 +1160,20 @@ button {
   font-size: 0.6rem;
 }
 
+@media (max-width: 560px) {
+  .pass {
+    flex-direction: column;
+  }
+  .pass__stub {
+    border-left: none;
+    border-top: 2px dashed rgba(107, 86, 56, 0.5);
+    flex-direction: row;
+    justify-content: space-evenly;
+    min-width: 0;
+    padding: 1rem;
+  }
+}
+
 .branches__note {
   text-align: center;
   margin-top: clamp(1.8rem, 4vh, 2.6rem);
