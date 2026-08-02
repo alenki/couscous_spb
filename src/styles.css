@@ -327,6 +327,73 @@ button {
   border-left-color: rgba(242, 230, 197, 0.7);
 }
 
+/* ---------- chalk ornaments (Act 2) ---------- */
+
+.dish-flag {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: -0.2em;
+}
+
+.bunting {
+  display: block;
+  width: min(100%, 40rem);
+  height: auto;
+  margin-inline: auto;
+}
+
+.bulb {
+  display: block;
+  transform-origin: 50% 0;
+  animation: bulb-sway 5.6s ease-in-out infinite alternate;
+}
+.bulb__glow {
+  animation: bulb-flicker 4.1s ease-in-out infinite;
+}
+@keyframes bulb-sway {
+  from {
+    rotate: 2.2deg;
+  }
+  to {
+    rotate: -2.2deg;
+  }
+}
+@keyframes bulb-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  47% {
+    opacity: 0.82;
+  }
+  52% {
+    opacity: 0.95;
+  }
+  71% {
+    opacity: 0.85;
+  }
+}
+
+.mandala {
+  display: block;
+}
+.mandala__spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mandala-spin 240s linear infinite;
+}
+@keyframes mandala-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chalk-rule {
+  display: block;
+  margin-inline: auto;
+  max-width: 100%;
+}
+
 /* ---------- motion safety ---------- */
 
 @media (prefers-reduced-motion: reduce) {
