@@ -40,7 +40,15 @@ export function Atmosphere() {
             viewport={{ once: true, margin: '-60px' }}
             variants={rise}
           >
-            <img src="/interior-counter.jpg" alt={t(UI.photoAltCounter)} width="1000" height="1333" loading="lazy" />
+            <img
+              src="/interior-counter.jpg"
+              srcSet="/interior-counter-640.jpg 640w, /interior-counter.jpg 1000w"
+              sizes="(min-width: 900px) 28vw, 92vw"
+              alt={t(UI.photoAltCounter)}
+              width="1000"
+              height="1333"
+              loading="lazy"
+            />
           </motion.figure>
           <motion.figure
             className="atmo__photo atmo__photo--b"
@@ -50,7 +58,15 @@ export function Atmosphere() {
             variants={rise}
             transition={{ delay: 0.12 }}
           >
-            <img src="/interior-hall.jpg" alt={t(UI.photoAltHall)} width="1600" height="1200" loading="lazy" />
+            <img
+              src="/interior-hall.jpg"
+              srcSet="/interior-hall-640.jpg 640w, /interior-hall.jpg 1600w"
+              sizes="(min-width: 900px) 38vw, 92vw"
+              alt={t(UI.photoAltHall)}
+              width="1600"
+              height="1200"
+              loading="lazy"
+            />
           </motion.figure>
           <motion.div
             className="atmo__card"

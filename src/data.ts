@@ -143,8 +143,8 @@ export const DRINKS: L<string[]> = {
 }
 
 export const DRINKS_NOTE: L = {
-  ru: 'напитки и десерты — от 120 ₽',
-  en: 'drinks and desserts — from 120 ₽',
+  ru: 'напитки и десерты — от 120 ₽',
+  en: 'drinks and desserts — from 120 ₽',
 }
 
 export const MENU_SOURCE_NOTE: L = {
@@ -156,6 +156,9 @@ export const MENU_SOURCE_NOTE: L = {
     'At Kropotkina 19/8 the menu and prices differ slightly.',
 }
 
+/** Единый рейтинг обеих точек (Яндекс): локализуем только запятую/точку. */
+export const RATING: L = { ru: '5,0', en: '5.0' }
+
 export interface Branch {
   terminal: L
   area: L
@@ -165,7 +168,7 @@ export interface Branch {
   phone: string
   phoneHref: string
   hours: string
-  rating: string
+  rating: L
   ratingsCount: L
   yandexUrl: string
   icon: string
@@ -176,13 +179,13 @@ export const BRANCHES: Branch[] = [
   {
     terminal: { ru: 'Терминал 1', en: 'Terminal 1' },
     area: { ru: 'Петроградская сторона', en: 'Petrogradskaya side' },
-    address: { ru: 'ул. Кропоткина, 19/8', en: '19/8 Kropotkina st.' },
+    address: { ru: 'ул. Кропоткина, 19/8', en: '19/8 Kropotkina st.' },
     addressNote: { ru: 'угол Саблинской улицы', en: 'corner of Sablinskaya st.' },
     phone: '+7 996 772-20-26',
     phoneHref: 'tel:+79967722026',
-    hours: '11:00 – 00:00',
-    rating: '5,0',
-    ratingsCount: { ru: '2 011 оценок', en: '2,011 ratings' },
+    hours: '11:00–00:00',
+    rating: RATING,
+    ratingsCount: { ru: '2 011 оценок', en: '2,011 ratings' },
     yandexUrl: 'https://yandex.ru/maps/org/cous_cous/26524829091/',
     icon: '/chalk-pin.png',
     iconAlt: {
@@ -201,8 +204,8 @@ export const BRANCHES: Branch[] = [
     },
     phone: '+7 911 786-30-26',
     phoneHref: 'tel:+79117863026',
-    hours: '11:00 – 23:00',
-    rating: '5,0',
+    hours: '11:00–23:00',
+    rating: RATING,
     ratingsCount: { ru: '639 оценок', en: '639 ratings' },
     yandexUrl: 'https://yandex.ru/maps/org/cous_cous/203444001790/',
     icon: '/chalk-store.png',
@@ -222,7 +225,7 @@ export const BRANCHES_SOURCE_NOTE: L = {
 export const REVIEW_STATS: { label: L; value: string }[] = [
   { label: { ru: 'персонал', en: 'staff' }, value: '93%' },
   { label: { ru: 'атмосфера', en: 'atmosphere' }, value: '100%' },
-  { label: { ru: 'кухня', en: 'kitchen' }, value: '90%' },
+  { label: { ru: 'кухня', en: 'food' }, value: '90%' },
 ]
 
 export const REVIEW_STATS_NOTE: L = {
@@ -236,7 +239,6 @@ export const SOCIAL = [
 ] as const
 
 export const AWARD: L = { ru: 'Хорошее место 2026', en: 'Good Place 2026' }
-export const AWARD_SOURCE = 'Яндекс'
 
 /** Города-направления = реальные названия шаурмы в меню. */
 export const DESTINATIONS: L<string[]> = {
@@ -244,7 +246,7 @@ export const DESTINATIONS: L<string[]> = {
   en: ['ALGIERS', 'PARIS', 'AMMAN', 'VATICAN', 'PETERSBURG'],
 }
 
-export const TOTAL_RATINGS: L = { ru: '2 650+ оценок', en: '2,650+ ratings' } // 2 011 + 639, обе точки
+export const TOTAL_RATINGS: L = { ru: '2 650+ оценок', en: '2,650+ ratings' } // 2 011 + 639, обе точки
 
 /** Все строки интерфейса. */
 export const UI = {
@@ -260,10 +262,10 @@ export const UI = {
     en: 'COUSCOUS · ALGERIAN KITCHEN · SAINT PETERSBURG',
   },
   heroTitleA: { ru: 'Ваш билет', en: 'Your ticket' },
-  heroTitleB: { ru: 'в мир кухни', en: 'to the world of the kitchen' },
+  heroTitleB: { ru: 'в мир кухни', en: 'to the world of cuisine' },
   departureLabel: { ru: 'отправление', en: 'departure' },
   destinationLabel: { ru: 'направление', en: 'destination' },
-  fromCity: { ru: 'САНКТ-ПЕТЕРБУРГ', en: 'ST PETERSBURG' },
+  fromCity: { ru: 'САНКТ-ПЕТЕРБУРГ', en: 'SAINT PETERSBURG' },
   stampHalal: { ru: 'ХАЛЯЛЬ', en: 'HALAL' },
   ctaMenu: { ru: 'Меню', en: 'Menu' },
   ctaRoute: { ru: 'Как добраться', en: 'How to find us' },
@@ -296,6 +298,10 @@ export const UI = {
   daily: { ru: 'ежедневно', en: 'daily' },
   routeCta: { ru: 'Маршрут в Яндекс Картах', en: 'Route in Yandex Maps' },
 
+  footerSub: {
+    ru: 'ALGERIAN KITCHEN · САНКТ-ПЕТЕРБУРГ',
+    en: 'ALGERIAN KITCHEN · SAINT PETERSBURG',
+  },
   footerFine: {
     ru: 'Билет действителен ежедневно с 11:00',
     en: 'Ticket valid daily from 11:00',

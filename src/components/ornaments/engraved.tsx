@@ -153,17 +153,6 @@ export function KingMark({ size = 56 }: { size?: number }) {
   )
 }
 
-/** Ряд перфорационных отверстий (для линии отрыва). */
-export function PerforationEdge() {
-  return (
-    <svg className="perforation" viewBox="0 0 1200 16" preserveAspectRatio="none" aria-hidden="true">
-      {Array.from({ length: 60 }, (_, i) => (
-        <circle key={i} cx={10 + i * 20} cy={8} r={4} fill="var(--board)" />
-      ))}
-    </svg>
-  )
-}
-
 function ArrowGlyph() {
   return (
     <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true">

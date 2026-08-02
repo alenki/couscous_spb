@@ -53,7 +53,7 @@ function Pass({ branch, index }: { branch: Branch; index: number }) {
             {branch.phone}
           </a>
           <span className="pass__row">
-            {branch.rating}★ · {t(branch.ratingsCount)}
+            {t(branch.rating)}★ · {t(branch.ratingsCount)}
           </span>
         </div>
         <a className="pass__route font-mono" href={branch.yandexUrl} target="_blank" rel="noopener noreferrer">

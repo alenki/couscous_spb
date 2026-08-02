@@ -263,19 +263,3 @@ export function ChalkRule() {
   )
 }
 
-/** Меловая стрелочка. */
-export function ChalkArrow() {
-  return (
-    <svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true">
-      <path
-        d="M4 6 C 16 20 28 24 40 20 M40 20 L32 14 M40 20 L31 24"
-        stroke={CH}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        opacity="0.8"
-      />
-    </svg>
-  )
-}

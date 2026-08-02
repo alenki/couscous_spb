@@ -1,5 +1,4 @@
-import '@fontsource/oranienbaum/cyrillic-400.css'
-import '@fontsource/oranienbaum/latin-400.css'
+/* Oranienbaum задан вручную в styles.css и предзагружен из /fonts (LCP-заголовок) */
 import '@fontsource/pt-serif/cyrillic-400.css'
 import '@fontsource/pt-serif/latin-400.css'
 import '@fontsource/pt-serif/cyrillic-700.css'

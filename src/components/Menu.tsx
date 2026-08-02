@@ -37,7 +37,7 @@ function DishRow({ dish }: { dish: Dish }) {
         </span>
         <span className="dish__dots" aria-hidden="true" />
         <span className="dish__weight font-mono">{t(dish.weight)}</span>
-        <span className="dish__price font-mono">{dish.price} ₽</span>
+        <span className="dish__price font-mono">{dish.price}&nbsp;₽</span>
       </span>
       {dish.desc && <span className="dish__desc font-chalk">{t(dish.desc)}</span>}
     </motion.li>

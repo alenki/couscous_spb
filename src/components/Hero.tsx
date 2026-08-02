@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { useLang } from '../lang'
-import { AWARD, DESTINATIONS, TOTAL_RATINGS, UI } from '../data'
+import { AWARD, DESTINATIONS, RATING, TOTAL_RATINGS, UI } from '../data'
 import { SplitFlap } from './SplitFlap'
 import { SkylineFrieze, Stamp, TicketStub, ZelligeCorner } from './ornaments/engraved'
 
@@ -18,7 +18,7 @@ function HeroStamps({ className }: { className: string }) {
       rotate: 5,
       body: (
         <>
-          5,0★
+          {t(RATING)}★
           <br />
           {t(TOTAL_RATINGS)}
         </>
@@ -48,6 +48,10 @@ export function Hero() {
   const { lang, t } = useLang()
   return (
     <section className="hero act-parchment grain" id="top">
+      {/* штампы декоративны для скринридера — факты даём одной фразой */}
+      <p className="visually-hidden">
+        {t(UI.stampHalal)} · {t(RATING)}★ · {t(TOTAL_RATINGS)} · {t(AWARD)}
+      </p>
       <div className="hero__corners" aria-hidden="true">
         <span className="hero__corner hero__corner--tl"><ZelligeCorner /></span>
         <span className="hero__corner hero__corner--tr"><ZelligeCorner flip="x" /></span>

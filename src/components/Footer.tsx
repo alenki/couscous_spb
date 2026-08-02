@@ -10,7 +10,7 @@ export function Footer() {
         <div className="footer__brand">
           <KingMark size={52} />
           <span className="footer__word font-display">COUSCOUS</span>
-          <span className="footer__sub font-mono">ALGERIAN KITCHEN · САНКТ-ПЕТЕРБУРГ</span>
+          <span className="footer__sub font-mono">{t(UI.footerSub)}</span>
         </div>
         <ul className="footer__social font-mono">
           {SOCIAL.map((s) => (

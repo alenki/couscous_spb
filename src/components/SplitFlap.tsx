@@ -79,14 +79,18 @@ export function SplitFlap({ words, intervalMs = 2600 }: { words: string[]; inter
 
   const word = pad(words[idx], len)
 
+  /* скринридеру — слово одной строкой; перекидные половинки букв прячем */
   if (reduced) {
     return (
-      <span className="splitflap" role="text" aria-label={words[idx].trim()}>
-        {word.split('').map((ch, i) => (
-          <span key={`${idx}-${i}`} className="flap flap--plain">
-            <span className="flap__glyph flap__glyph--center">{ch}</span>
-          </span>
-        ))}
+      <span className="splitflap-wrap">
+        <span className="visually-hidden">{words[idx].trim()}</span>
+        <span className="splitflap" aria-hidden="true">
+          {word.split('').map((ch, i) => (
+            <span key={`${idx}-${i}`} className="flap flap--plain">
+              <span className="flap__glyph flap__glyph--center">{ch}</span>
+            </span>
+          ))}
+        </span>
       </span>
     )
   }
@@ -94,10 +98,13 @@ export function SplitFlap({ words, intervalMs = 2600 }: { words: string[]; inter
   const fromWord = prev !== null ? pad(words[prev], len) : word
 
   return (
-    <span className="splitflap" role="text" aria-label={words[idx].trim()}>
-      {word.split('').map((ch, i) => (
-        <Cell key={prev !== null ? `f${prev}-${idx}-${i}` : `s${idx}-${i}`} from={fromWord[i]} to={ch} index={i} />
-      ))}
+    <span className="splitflap-wrap">
+      <span className="visually-hidden">{words[idx].trim()}</span>
+      <span className="splitflap" aria-hidden="true">
+        {word.split('').map((ch, i) => (
+          <Cell key={prev !== null ? `f${prev}-${idx}-${i}` : `s${idx}-${i}`} from={fromWord[i]} to={ch} index={i} />
+        ))}
+      </span>
     </span>
   )
 }
