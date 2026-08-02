@@ -299,7 +299,7 @@ button {
   text-transform: uppercase;
   text-align: center;
   line-height: 1.25;
-  opacity: 0.85;
+  /* opacity намеренно 1: полупрозрачность роняла контраст текста ниже AA */
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -313,7 +313,7 @@ button {
   padding: 0.4rem;
 }
 .stamp--red {
-  --stamp-color: #b23a28;
+  --stamp-color: #8a2b1c;
 }
 
 .king {
@@ -586,6 +586,7 @@ button {
 }
 .header__nav > a {
   text-decoration: none;
+  white-space: nowrap;
   border-bottom: 1.5px dashed transparent;
   padding-bottom: 2px;
   transition: border-color 0.15s;
@@ -726,8 +727,7 @@ button {
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--sepia);
-  opacity: 0.85;
+  color: #55432a;
 }
 
 .hero__stamps {
@@ -1060,9 +1060,26 @@ button {
   position: relative;
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: 0.25rem;
   width: 8.2rem;
   aspect-ratio: 1;
   text-align: center;
+}
+@media (max-width: 560px) {
+  .atmo__stats-row {
+    gap: 0.7rem;
+    flex-wrap: nowrap;
+  }
+  .atmo__stat {
+    width: min(28vw, 7rem);
+  }
+  .atmo__stat-value {
+    font-size: 1.35rem;
+  }
+  .atmo__stat-label {
+    font-size: 0.8rem;
+  }
 }
 .atmo__stat-ring {
   position: absolute;
@@ -1081,6 +1098,7 @@ button {
 .atmo__stats-note {
   text-align: center;
   margin-top: 1rem;
+  padding-inline: 1.2rem;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   color: var(--chalk-dim);
@@ -1137,8 +1155,9 @@ button {
 }
 
 .pass__address {
-  font-size: var(--step-2);
-  line-height: 1.1;
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
+  line-height: 1.12;
+  text-wrap: balance;
 }
 
 .pass__note {

@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { useLang } from '../lang'
 import { UI } from '../data'
 import { KingMark } from './ornaments/engraved'
@@ -18,16 +18,15 @@ export function Header() {
       <nav className="header__nav font-mono" aria-label={lang === 'ru' ? 'Разделы' : 'Sections'}>
         <a href="#menu">{t(UI.navMenu)}</a>
         <a href="#branches">{t(UI.navBranches)}</a>
-        <motion.button
+        <m.button
           type="button"
           className="lang-stamp font-mono"
           onClick={toggle}
-          aria-pressed={lang === 'en'}
           aria-label={t(UI.langSwitch)}
           whileTap={{ scale: 0.9 }}
         >
           {/* key на внутреннем span: кнопка не перемонтируется — фокус не теряется */}
-          <motion.span
+          <m.span
             key={lang}
             style={{ display: 'grid', placeItems: 'center' }}
             initial={{ scale: 1.35, rotate: -16, opacity: 0.6 }}
@@ -35,8 +34,8 @@ export function Header() {
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
           >
             {other}
-          </motion.span>
-        </motion.button>
+          </m.span>
+        </m.button>
       </nav>
     </header>
   )

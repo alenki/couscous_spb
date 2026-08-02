@@ -152,8 +152,8 @@ export const MENU_SOURCE_NOTE: L = {
     'Меню и цены — точка на Социалистической, 15 (Яндекс Карты, август 2026). ' +
     'На Кропоткина, 19/8 меню и цены немного отличаются.',
   en:
-    'Menu and prices — Sotsialisticheskaya 15 (Yandex Maps, August 2026). ' +
-    'At Kropotkina 19/8 the menu and prices differ slightly.',
+    'Menu and prices — Sotsialisticheskaya St., 15 (Yandex Maps, August 2026). ' +
+    'At Kropotkina St., 19/8 the menu and prices differ slightly.',
 }
 
 /** Единый рейтинг обеих точек (Яндекс): локализуем только запятую/точку. */
@@ -179,7 +179,7 @@ export const BRANCHES: Branch[] = [
   {
     terminal: { ru: 'Терминал 1', en: 'Terminal 1' },
     area: { ru: 'Петроградская сторона', en: 'Petrogradskaya side' },
-    address: { ru: 'ул. Кропоткина, 19/8', en: '19/8 Kropotkina st.' },
+    address: { ru: 'ул. Кропоткина, 19/8', en: 'Kropotkina St., 19/8' },
     addressNote: { ru: 'угол Саблинской улицы', en: 'corner of Sablinskaya st.' },
     phone: '+7 996 772-20-26',
     phoneHref: 'tel:+79967722026',
@@ -196,11 +196,11 @@ export const BRANCHES: Branch[] = [
   {
     terminal: { ru: 'Терминал 2', en: 'Terminal 2' },
     area: { ru: 'Центр', en: 'City centre' },
-    address: { ru: 'Социалистическая ул., 15', en: '15 Sotsialisticheskaya st.' },
+    address: { ru: 'Социалистическая ул., 15', en: 'Sotsialisticheskaya St., 15' },
     addressNote: { ru: 'цокольный этаж', en: 'basement level' },
     metro: {
       ru: 'м. Звенигородская · Лиговский проспект · Владимирская',
-      en: 'Zvenigorodskaya · Ligovsky pr. · Vladimirskaya metro',
+      en: 'Metro: Zvenigorodskaya · Ligovsky Prospekt · Vladimirskaya',
     },
     phone: '+7 911 786-30-26',
     phoneHref: 'tel:+79117863026',
@@ -230,7 +230,7 @@ export const REVIEW_STATS: { label: L; value: string }[] = [
 
 export const REVIEW_STATS_NOTE: L = {
   ru: 'по 415 отзывам на Яндекс Картах (Социалистическая, 15)',
-  en: 'across 415 reviews on Yandex Maps (Sotsialisticheskaya 15)',
+  en: 'across 415 reviews on Yandex Maps (Sotsialisticheskaya St., 15)',
 }
 
 export const SOCIAL = [
@@ -283,7 +283,7 @@ export const UI = {
       'Внутри — дерево, гирлянды из флажков, лампы, мандала под потолком и меловое меню с сердечками.',
     en:
       'A small Algerian cafe in Petersburg: shawarma, plates and falafel — everything halal. ' +
-      'Inside — wood, bunting, glowing bulbs, a mandala on the ceiling and a chalk menu covered in hearts.',
+      'Inside: wood, bunting, glowing bulbs, a mandala on the ceiling and a chalk menu covered in hearts.',
   },
   photoAltCounter: {
     ru: 'Стойка кафе: деревянные панели, меловое меню с сердечками, гирлянда из флажков',

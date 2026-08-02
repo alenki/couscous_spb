@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { m, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { useLang } from '../lang'
 import { UI } from '../data'
 
@@ -48,7 +48,7 @@ export function Tear() {
 
   return (
     <div ref={ref} className="tear" aria-hidden="true">
-      <motion.div
+      <m.div
         className="tear__strip"
         style={reduced ? undefined : { rotate, y, transformOrigin: '12% 0%' }}
       >
@@ -59,7 +59,7 @@ export function Tear() {
           <span className="tear__dashes" />
         </div>
         <RippedEdge />
-      </motion.div>
+      </m.div>
     </div>
   )
 }

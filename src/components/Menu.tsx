@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { useLang } from '../lang'
 import { DRINKS, DRINKS_NOTE, MENU, MENU_SOURCE_NOTE, UI, type Dish, type DishGroup } from '../data'
 import { Bunting, ChalkFlag, ChalkHeart, ChalkRule } from './ornaments/chalk'
@@ -29,7 +29,7 @@ const HEARTS: { top: string; left: string; size: number; tone: 'red' | 'white' |
 function DishRow({ dish }: { dish: Dish }) {
   const { t } = useLang()
   return (
-    <motion.li className="dish" variants={itemVariants}>
+    <m.li className="dish" variants={itemVariants}>
       <span className="dish__row">
         <span className="dish__name font-chalk">
           <ChalkFlag kind={dish.flag} />
@@ -40,29 +40,29 @@ function DishRow({ dish }: { dish: Dish }) {
         <span className="dish__price font-mono">{dish.price}&nbsp;₽</span>
       </span>
       {dish.desc && <span className="dish__desc font-chalk">{t(dish.desc)}</span>}
-    </motion.li>
+    </m.li>
   )
 }
 
 function Group({ group, tone }: { group: DishGroup; tone: (typeof GROUP_TONES)[number] }) {
   const { t } = useLang()
   return (
-    <motion.div
+    <m.div
       className="menu-group"
       initial="hidden"
       whileInView="shown"
       viewport={{ once: true, margin: '-60px' }}
       variants={groupVariants}
     >
-      <motion.h3 className={`menu-group__title menu-group__title--${tone} font-chalk`} variants={itemVariants}>
+      <m.h3 className={`menu-group__title menu-group__title--${tone} font-chalk`} variants={itemVariants}>
         {t(group.title)}
-      </motion.h3>
+      </m.h3>
       <ul className="menu-group__list">
         {group.dishes.map((d) => (
           <DishRow key={d.name.ru} dish={d} />
         ))}
       </ul>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -73,7 +73,7 @@ export function Menu() {
     <section id="menu" className="menu act-board">
       <div className="menu__hearts" aria-hidden="true">
         {HEARTS.map((h, i) => (
-          <motion.span
+          <m.span
             key={i}
             style={{ position: 'absolute', top: h.top, left: h.left }}
             initial={{ scale: 0, opacity: 0 }}
@@ -82,13 +82,13 @@ export function Menu() {
             transition={{ type: 'spring', stiffness: 400, damping: 14, delay: 0.15 + i * 0.1 }}
           >
             <ChalkHeart size={h.size} tone={h.tone} rotate={h.rotate} />
-          </motion.span>
+          </m.span>
         ))}
       </div>
 
       <div className="wrap menu__inner">
         <Bunting />
-        <motion.h2
+        <m.h2
           className="menu__title font-chalk"
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -98,7 +98,7 @@ export function Menu() {
           <ChalkHeart size={16} tone="red" rotate={-12} />
           {t(UI.menuTitle)}
           <ChalkHeart size={16} tone="red" rotate={10} />
-        </motion.h2>
+        </m.h2>
         <ChalkRule />
 
         <div className="menu__columns">
@@ -107,23 +107,23 @@ export function Menu() {
             <Group group={plates} tone={GROUP_TONES[1]} />
             <Group group={meatless} tone={GROUP_TONES[2]} />
 
-            <motion.div
+            <m.div
               className="menu-group"
               initial="hidden"
               whileInView="shown"
               viewport={{ once: true, margin: '-60px' }}
               variants={groupVariants}
             >
-              <motion.h3 className="menu-group__title menu-group__title--blue font-chalk" variants={itemVariants}>
+              <m.h3 className="menu-group__title menu-group__title--blue font-chalk" variants={itemVariants}>
                 {t(UI.drinksTitle)}
-              </motion.h3>
-              <motion.p className="menu__drinks font-chalk" variants={itemVariants}>
+              </m.h3>
+              <m.p className="menu__drinks font-chalk" variants={itemVariants}>
                 {t(DRINKS).join(' · ')}
-              </motion.p>
-              <motion.p className="menu__drinks-note font-chalk" variants={itemVariants}>
+              </m.p>
+              <m.p className="menu__drinks-note font-chalk" variants={itemVariants}>
                 {t(DRINKS_NOTE)}
-              </motion.p>
-            </motion.div>
+              </m.p>
+            </m.div>
           </div>
         </div>
 

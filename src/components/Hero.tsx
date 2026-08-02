@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { useLang } from '../lang'
 import { AWARD, DESTINATIONS, RATING, TOTAL_RATINGS, UI } from '../data'
 import { SplitFlap } from './SplitFlap'
@@ -29,7 +29,7 @@ function HeroStamps({ className }: { className: string }) {
   return (
     <div className={className} aria-hidden="true">
       {stamps.map((s, i) => (
-        <motion.div
+        <m.div
           key={i}
           initial={{ scale: 1.6, opacity: 0, rotate: s.rotate - 10 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -38,7 +38,7 @@ function HeroStamps({ className }: { className: string }) {
           <Stamp tone={s.tone} rotate={s.rotate}>
             {s.body}
           </Stamp>
-        </motion.div>
+        </m.div>
       ))}
     </div>
   )
@@ -59,22 +59,22 @@ export function Hero() {
         <span className="hero__corner hero__corner--br"><ZelligeCorner flip="xy" /></span>
       </div>
 
-      <motion.div
+      <m.div
         className="wrap hero__inner"
         initial="hidden"
         animate="shown"
         variants={{ shown: { transition: { staggerChildren: 0.09, delayChildren: 0.25 } } }}
       >
-        <motion.p className="hero__ribbon font-mono" variants={rise}>
+        <m.p className="hero__ribbon font-mono" variants={rise}>
           {t(UI.ribbon)}
-        </motion.p>
+        </m.p>
 
-        <motion.h1 className="hero__title" variants={rise}>
+        <m.h1 className="hero__title" variants={rise}>
           <span className="hero__title-a">{t(UI.heroTitleA)}</span>
           <span className="hero__title-b">{t(UI.heroTitleB)}</span>
-        </motion.h1>
+        </m.h1>
 
-        <motion.div className="hero__board" variants={rise}>
+        <m.div className="hero__board" variants={rise}>
           <div className="hero__board-col">
             <span className="hero__board-label font-mono">{t(UI.departureLabel)}</span>
             <span className="hero__board-city font-mono">{t(UI.fromCity)}</span>
@@ -95,21 +95,21 @@ export function Hero() {
               <SplitFlap words={DESTINATIONS[lang]} />
             </span>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div className="hero__ctas" variants={rise}>
+        <m.div className="hero__ctas" variants={rise}>
           <TicketStub href="#menu" primary>
             {t(UI.ctaMenu)}
           </TicketStub>
           <TicketStub href="#branches">{t(UI.ctaRoute)}</TicketStub>
-        </motion.div>
+        </m.div>
 
         <HeroStamps className="hero__stamps hero__stamps--inline" />
 
-        <motion.p className="hero__hint font-mono" variants={rise} transition={{ delay: 1.8 }}>
+        <m.p className="hero__hint font-mono" variants={rise} transition={{ delay: 1.8 }}>
           ↓ {t(UI.boardingHint)}
-        </motion.p>
-      </motion.div>
+        </m.p>
+      </m.div>
 
       <HeroStamps className="hero__stamps hero__stamps--side" />
 

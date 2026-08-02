@@ -57,10 +57,20 @@ export function SplitFlap({ words, intervalMs = 2600 }: { words: string[]; inter
   const [idx, setIdx] = useState(0)
   const [prev, setPrev] = useState<number | null>(null)
   const flipTimer = useRef<number>()
+  const flips = useRef(0)
+  const paused = useRef(false)
 
+  /* WCAG 2.2.2: анимация конечна (один круг по направлениям, финиш на первом),
+     останавливается при наведении/фокусе; при reduced-motion не идёт вовсе. */
   useEffect(() => {
+    if (reduced) return
     const tick = window.setInterval(() => {
-      if (document.hidden) return
+      if (document.hidden || paused.current) return
+      if (flips.current >= words.length) {
+        window.clearInterval(tick)
+        return
+      }
+      flips.current += 1
       setIdx((i) => {
         setPrev(i)
         return (i + 1) % words.length
@@ -75,7 +85,14 @@ export function SplitFlap({ words, intervalMs = 2600 }: { words: string[]; inter
       window.clearInterval(tick)
       window.clearTimeout(flipTimer.current)
     }
-  }, [words.length, intervalMs, len])
+  }, [words.length, intervalMs, len, reduced])
+
+  const hold = {
+    onPointerEnter: () => (paused.current = true),
+    onPointerLeave: () => (paused.current = false),
+    onFocus: () => (paused.current = true),
+    onBlur: () => (paused.current = false),
+  }
 
   const word = pad(words[idx], len)
 
@@ -98,7 +115,7 @@ export function SplitFlap({ words, intervalMs = 2600 }: { words: string[]; inter
   const fromWord = prev !== null ? pad(words[prev], len) : word
 
   return (
-    <span className="splitflap-wrap">
+    <span className="splitflap-wrap" {...hold}>
       <span className="visually-hidden">{words[idx].trim()}</span>
       <span className="splitflap" aria-hidden="true">
         {word.split('').map((ch, i) => (

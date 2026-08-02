@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { useLang } from '../lang'
 import { REVIEW_STATS, REVIEW_STATS_NOTE, UI } from '../data'
 import { Bulb, MandalaDisc } from './ornaments/chalk'
@@ -21,7 +21,7 @@ export function Atmosphere() {
         <Bulb cord={30} delay={-4.1} />
       </div>
 
-      <motion.h2
+      <m.h2
         className="atmo__title font-chalk"
         initial="hidden"
         whileInView="shown"
@@ -29,11 +29,11 @@ export function Atmosphere() {
         variants={rise}
       >
         {t(UI.atmoTitle)}
-      </motion.h2>
+      </m.h2>
 
       <div className="atmo__room wood">
         <div className="wrap atmo__gallery">
-          <motion.figure
+          <m.figure
             className="atmo__photo atmo__photo--a"
             initial="hidden"
             whileInView="shown"
@@ -49,8 +49,8 @@ export function Atmosphere() {
               height="1333"
               loading="lazy"
             />
-          </motion.figure>
-          <motion.figure
+          </m.figure>
+          <m.figure
             className="atmo__photo atmo__photo--b"
             initial="hidden"
             whileInView="shown"
@@ -67,8 +67,8 @@ export function Atmosphere() {
               height="1200"
               loading="lazy"
             />
-          </motion.figure>
-          <motion.div
+          </m.figure>
+          <m.div
             className="atmo__card"
             initial="hidden"
             whileInView="shown"
@@ -77,13 +77,13 @@ export function Atmosphere() {
             transition={{ delay: 0.2 }}
           >
             <p>{t(UI.atmoText)}</p>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 
       <div className="wrap atmo__stats-row">
         {REVIEW_STATS.map((s, i) => (
-          <motion.div
+          <m.div
             key={s.label.ru}
             className="atmo__stat"
             initial={{ opacity: 0, scale: 0.7 }}
@@ -105,7 +105,7 @@ export function Atmosphere() {
             </svg>
             <span className="atmo__stat-value font-chalk">{s.value}</span>
             <span className="atmo__stat-label font-chalk">{t(s.label)}</span>
-          </motion.div>
+          </m.div>
         ))}
       </div>
       <p className="atmo__stats-note font-mono">{t(REVIEW_STATS_NOTE)}</p>

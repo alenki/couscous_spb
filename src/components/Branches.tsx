@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { useLang } from '../lang'
 import { AWARD, BRANCHES, BRANCHES_SOURCE_NOTE, UI, type Branch } from '../data'
 import { Stamp } from './ornaments/engraved'
@@ -29,7 +29,7 @@ function PhoneGlyph() {
 function Pass({ branch, index }: { branch: Branch; index: number }) {
   const { t } = useLang()
   return (
-    <motion.article
+    <m.article
       className="pass"
       initial={{ opacity: 0, y: 22, rotate: index === 0 ? -1.2 : 1.2 }}
       whileInView={{ opacity: 1, y: 0, rotate: index === 0 ? -0.6 : 0.6 }}
@@ -66,7 +66,7 @@ function Pass({ branch, index }: { branch: Branch; index: number }) {
           {t(AWARD)}
         </Stamp>
       </div>
-    </motion.article>
+    </m.article>
   )
 }
 
@@ -75,7 +75,7 @@ export function Branches() {
   return (
     <section id="branches" className="branches act-board">
       <div className="wrap">
-        <motion.h2
+        <m.h2
           className="branches__title font-chalk"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ export function Branches() {
           transition={{ duration: 0.5 }}
         >
           {t(UI.branchesTitle)}
-        </motion.h2>
+        </m.h2>
         <div className="branches__grid">
           {BRANCHES.map((b, i) => (
             <Pass key={b.address.ru} branch={b} index={i} />
