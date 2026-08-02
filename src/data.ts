@@ -272,6 +272,7 @@ export const UI = {
   tear: { ru: 'линия отрыва', en: 'tear here' },
 
   menuTitle: { ru: 'Меню', en: 'Menu' },
+  drinksTitle: { ru: 'Напитки', en: 'Drinks' },
 
   atmoTitle: { ru: 'Атмосфера', en: 'The room' },
   atmoText: {

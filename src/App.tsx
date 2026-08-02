@@ -3,6 +3,7 @@ import { LangProvider } from './lang'
 import { Header } from './components/Header'
 import { Hero } from './components/Hero'
 import { Tear } from './components/Tear'
+import { Menu } from './components/Menu'
 
 export default function App() {
   return (
@@ -12,7 +13,7 @@ export default function App() {
         <main>
           <Hero />
           <Tear />
-          <section id="menu" className="act-board" style={{ minHeight: '60vh' }} />
+          <Menu />
         </main>
       </MotionConfig>
     </LangProvider>

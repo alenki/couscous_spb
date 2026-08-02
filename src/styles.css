@@ -776,6 +776,141 @@ button {
   margin-bottom: -1px;
 }
 
+/* ---------- menu chalkboard (Act 2) ---------- */
+
+.menu {
+  padding-block: clamp(3.2rem, 7vh, 5.5rem) clamp(3rem, 6vh, 5rem);
+}
+
+.menu__hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.menu__inner {
+  position: relative;
+  z-index: 2;
+}
+
+.menu__title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.6rem;
+  font-size: var(--step-4);
+  color: var(--chalk-yellow);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.menu .chalk-rule {
+  margin-top: 0.4rem;
+}
+
+.menu__columns {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  margin-top: clamp(2rem, 4vh, 3rem);
+}
+@media (min-width: 900px) {
+  .menu__columns {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+
+.menu__col2 {
+  display: grid;
+  gap: clamp(1.6rem, 3vh, 2.4rem);
+  align-content: start;
+}
+
+.menu-group__title {
+  font-size: var(--step-2);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.9rem;
+}
+.menu-group__title--red {
+  color: var(--chalk-red);
+}
+.menu-group__title--yellow {
+  color: var(--chalk-yellow);
+}
+.menu-group__title--green {
+  color: var(--chalk-green);
+}
+.menu-group__title--blue {
+  color: var(--chalk-blue);
+}
+
+.menu-group__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.dish__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+.dish__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
+  line-height: 1.2;
+}
+.dish__dots {
+  flex: 1;
+  min-width: 1.5rem;
+  border-bottom: 2px dotted rgba(242, 239, 230, 0.32);
+  transform: translateY(-0.28em);
+}
+.dish__weight {
+  font-size: 0.78rem;
+  color: var(--chalk-dim);
+  white-space: nowrap;
+}
+.dish__price {
+  font-size: 1.02rem;
+  color: var(--chalk);
+  white-space: nowrap;
+}
+.dish__desc {
+  display: block;
+  margin-top: 0.25rem;
+  padding-left: 2.1rem;
+  font-size: 0.95rem;
+  color: var(--chalk-dim);
+  line-height: 1.35;
+}
+
+.menu__drinks {
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+.menu__drinks-note {
+  margin-top: 0.5rem;
+  color: var(--chalk-dim);
+  font-size: 0.95rem;
+}
+
+.menu__source {
+  margin-top: clamp(2.4rem, 5vh, 3.6rem);
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--chalk-dim);
+  max-width: 46rem;
+  margin-inline: auto;
+  line-height: 1.7;
+}
+
 /* ---------- motion safety ---------- */
 
 @media (prefers-reduced-motion: reduce) {
