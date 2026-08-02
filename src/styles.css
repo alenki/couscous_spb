@@ -192,6 +192,141 @@ button {
   box-shadow: inset 0 10px 24px rgba(0, 0, 0, 0.35), inset 0 -10px 24px rgba(0, 0, 0, 0.35);
 }
 
+/* ---------- engraved ornaments (Act 1) ---------- */
+
+.zellige {
+  display: block;
+  pointer-events: none;
+}
+
+.frieze {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+/* прорисовка штрихов фриза при загрузке */
+.frieze-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.frieze--animate .frieze-path {
+  animation: frieze-draw 1.4s var(--ease-settle) both;
+  animation-delay: calc(var(--frieze-delay, 0s));
+}
+@keyframes frieze-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.stamp {
+  --stamp-color: var(--sepia);
+  display: inline-grid;
+  place-items: center;
+  width: 7.2rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--stamp-color);
+  border-radius: 50%;
+  rotate: var(--stamp-rotate, 0deg);
+  color: var(--stamp-color);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.25;
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.stamp__inner {
+  display: grid;
+  place-items: center;
+  width: calc(100% - 0.55rem);
+  aspect-ratio: 1;
+  border: 1px solid var(--stamp-color);
+  border-radius: 50%;
+  padding: 0.4rem;
+}
+.stamp--red {
+  --stamp-color: #b23a28;
+}
+
+.king {
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px var(--sepia), 0 0 0 5px rgba(107, 86, 56, 0.25);
+  flex-shrink: 0;
+}
+.king img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.perforation {
+  display: block;
+  width: 100%;
+  height: 16px;
+}
+
+.stub {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--parchment-hi);
+  border: 1.5px solid var(--sepia);
+  border-radius: 10px;
+  box-shadow: 2px 3px 0 rgba(107, 86, 56, 0.35);
+  transition: translate 0.15s var(--ease-settle), box-shadow 0.15s var(--ease-settle);
+  -webkit-mask:
+    radial-gradient(circle 8px at 0% 50%, transparent 97%, #000),
+    radial-gradient(circle 8px at 100% 50%, transparent 97%, #000);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle 8px at 0% 50%, transparent 97%, #000),
+    radial-gradient(circle 8px at 100% 50%, transparent 97%, #000);
+  mask-composite: intersect;
+}
+.stub:hover {
+  translate: 0 -2px;
+  box-shadow: 3px 5px 0 rgba(107, 86, 56, 0.35);
+}
+.stub:active {
+  translate: 0 1px;
+  box-shadow: 1px 1px 0 rgba(107, 86, 56, 0.35);
+}
+.stub > span:first-child {
+  padding: 0.95rem 1.3rem 0.95rem 1.7rem;
+}
+.stub__end {
+  display: grid;
+  place-items: center;
+  padding: 0 1.1rem;
+  border-left: 1.5px dashed var(--sepia);
+}
+.stub--primary {
+  color: var(--parchment-hi);
+  background: var(--chalk-red);
+  border-color: #a53222;
+  box-shadow: 2px 3px 0 rgba(25, 19, 7, 0.4);
+}
+.stub--primary .stub__end {
+  border-left-color: rgba(242, 230, 197, 0.7);
+}
+
 /* ---------- motion safety ---------- */
 
 @media (prefers-reduced-motion: reduce) {
