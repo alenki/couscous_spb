@@ -1,7 +1,208 @@
-/* Tokens and base styles land in Task 2. */
+/* ============================================================
+   COUSCOUS · Algerian Kitchen — design tokens & base
+   Act 1 (ticket): parchment + ink + sepia engraving
+   Act 2 (the room): chalkboard + colored chalk + wood
+   ============================================================ */
+
 :root {
   color-scheme: light;
+
+  /* Act 1 — parchment ticket */
+  --parchment: #ead9ae;
+  --parchment-hi: #f2e6c5;
+  --ink: #191307;
+  --sepia: #6b5638;
+
+  /* Act 2 — the room */
+  --board: #16130f;
+  --chalk: #f2efe6;
+  --chalk-dim: #b5af9f;
+  --chalk-red: #e2543f;
+  --chalk-yellow: #e9b94d;
+  --chalk-green: #7fa85c;
+  --chalk-blue: #86b9cc;
+  --wood: #8a5a33;
+  --wood-dark: #6e4526;
+
+  /* Ceiling (Atmosphere section only) */
+  --navy: #1e2a4a;
+  --sky: #7ec8e3;
+  --plaster: #c9a6a0;
+
+  /* Type */
+  --font-display: 'Oranienbaum', 'PT Serif', georgia, serif;
+  --font-body: 'PT Serif', georgia, serif;
+  --font-mono: 'PT Mono', 'Courier New', monospace;
+  --font-chalk: 'Neucha', 'PT Serif', cursive;
+
+  /* Fluid scale */
+  --step--1: clamp(0.78rem, 0.74rem + 0.2vw, 0.9rem);
+  --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.16rem + 0.45vw, 1.5rem);
+  --step-2: clamp(1.56rem, 1.4rem + 0.8vw, 2rem);
+  --step-3: clamp(1.95rem, 1.7rem + 1.3vw, 2.7rem);
+  --step-4: clamp(2.44rem, 2rem + 2.2vw, 3.8rem);
+  --step-5: clamp(3.05rem, 2.4rem + 3.3vw, 5.25rem);
+
+  --wrap: 71.25rem; /* 1140px */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--board); /* overscroll top/bottom reads as the room */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--chalk-red);
+  color: var(--parchment-hi);
+}
+
+:focus-visible {
+  outline: 2px solid var(--chalk-red);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- layout utilities ---------- */
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: clamp(1.1rem, 4vw, 2.5rem);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+.font-chalk {
+  font-family: var(--font-chalk);
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ---------- act backdrops ---------- */
+
+.act-parchment {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--parchment-hi) 0%, var(--parchment) 55%, #e0cd9d 100%);
+  color: var(--ink);
+}
+
+/* paper grain: two dot lattices + soft mottling, no image assets */
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(107, 86, 56, 0.16) 0.5px, transparent 0.6px),
+    radial-gradient(rgba(242, 230, 197, 0.55) 0.5px, transparent 0.6px),
+    radial-gradient(60% 45% at 18% 22%, rgba(107, 86, 56, 0.05), transparent 70%),
+    radial-gradient(50% 40% at 82% 74%, rgba(107, 86, 56, 0.06), transparent 70%);
+  background-size:
+    7px 7px,
+    5px 5px,
+    auto,
+    auto;
+  background-position:
+    0 0,
+    3px 2px,
+    0 0,
+    0 0;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+.act-board {
+  position: relative;
+  background:
+    radial-gradient(90% 70% at 50% 12%, #1d1a14 0%, var(--board) 60%, #100e0b 100%);
+  color: var(--chalk);
+}
+
+/* faint chalk smudge on the board */
+.act-board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 30% at 28% 30%, rgba(242, 239, 230, 0.035), transparent 70%),
+    radial-gradient(38% 26% at 74% 62%, rgba(242, 239, 230, 0.03), transparent 70%);
+}
+
+/* wood plank band (Atmosphere) */
+.wood {
+  background:
+    linear-gradient(rgba(25, 19, 7, 0.18), rgba(25, 19, 7, 0.18)),
+    repeating-linear-gradient(
+      180deg,
+      var(--wood) 0 84px,
+      var(--wood-dark) 84px 86px
+    );
+  box-shadow: inset 0 10px 24px rgba(0, 0, 0, 0.35), inset 0 -10px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- motion safety ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
