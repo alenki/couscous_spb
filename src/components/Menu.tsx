@@ -30,14 +30,18 @@ function DishRow({ dish }: { dish: Dish }) {
   const { t } = useLang()
   return (
     <m.li className="dish" variants={itemVariants}>
+      {/* слот под флажок рисуем всегда, даже пустой: иначе блюда без флага
+          (такосы, шаурма на тарелке) вставали левее остальных — рваный край */}
+      <span className="dish__flag" aria-hidden="true">
+        <ChalkFlag kind={dish.flag} />
+      </span>
       <span className="dish__row">
-        <span className="dish__name font-chalk">
-          <ChalkFlag kind={dish.flag} />
-          {t(dish.name)}
-        </span>
+        <span className="dish__name font-chalk">{t(dish.name)}</span>
         <span className="dish__dots" aria-hidden="true" />
-        <span className="dish__weight font-mono">{t(dish.weight)}</span>
-        <span className="dish__price font-mono">{dish.price}&nbsp;₽</span>
+        <span className="dish__meta font-mono">
+          <span className="dish__weight">{t(dish.weight)}</span>
+          <span className="dish__price">{dish.price}&nbsp;₽</span>
+        </span>
       </span>
       {dish.desc && <span className="dish__desc font-chalk">{t(dish.desc)}</span>}
     </m.li>

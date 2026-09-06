@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Facts ONLY from `src/data.ts`; RU side copied verbatim from `git show 799ddba:src/data.ts`; EN is faithful translation; nothing invented (spec «Verified facts»).
-- Exactly TWO branches; never add пер. Ульяны Громовой 3.
+- ~~Exactly TWO branches; never add пер. Ульяны Громовой 3.~~ **WRONG — corrected 2026-08-03: there are THREE branches and пер. Ульяны Громовой 3 is one of them (Yandex chain «Кус Кус» 78954622395, `quantityInCity: 3`). See the correction at the end of the v2 design spec.**
 - Palette hexes verbatim from spec: parchment `#EAD9AE`/`#F2E6C5`, ink `#191307`, sepia `#6B5638`, board `#16130F`, chalk `#F2EFE6`, red `#E2543F`, yellow `#E9B94D`, green `#7FA85C`, blue `#86B9CC`, wood `#8A5A33`/`#6E4526`.
 - Fonts self-hosted via @fontsource only (no Google CDN); subsets cyrillic+latin; display Oranienbaum, body PT Serif, mono PT Mono, chalk Neucha.
 - Ornament: inline SVG only; no stock icons, no emoji in UI, no icon fonts.

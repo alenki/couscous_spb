@@ -23,8 +23,13 @@ export function Footer() {
         </ul>
         <div className="footer__fine font-mono">
           <p>{t(UI.footerFine)}</p>
-          <p>{t(UI.footerData)}</p>
         </div>
+        <p className="footer__made font-mono">
+          {t(UI.madeBy)}{' '}
+          <a className="lumako" href="https://lumako.ru" target="_blank" rel="noopener noreferrer">
+            Lumako<span className="lumako__dot" aria-hidden="true">.</span>
+          </a>
+        </p>
       </div>
     </footer>
   )

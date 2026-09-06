@@ -62,7 +62,8 @@ Two signature devices, everything else quiet:
    11:00–00:00; +7 996 772-20-26; 5,0★ · 2 011 оценок) and Социалистическая 15,
    цоколь (11:00–23:00; +7 911 786-30-26; 5,0★ · 639 оценок; м. Звенигородская /
    Лиговский пр. / Владимирская), «Хорошее место 2026» badges, Yandex route
-   links. EXACTLY TWO branches — Ульяны Громовой 3 is a different business.
+   links. ~~EXACTLY TWO branches — Ульяны Громовой 3 is a different business.~~
+   **WRONG — superseded 2026-08-03, see “Correction” at the end of this file.**
 6. **Footer — ink.** Split-face logo; Telegram FIRST (@coucousdz), Instagram
    second (@cafe_cous_cous) — IG restricted in RU; ticket-conditions fine print
    «Билет действителен ежедневно с 11:00».
@@ -128,3 +129,37 @@ focus-visible, AA contrast, reduced motion. Assets: logo crop, 2 interiors,
 both languages → ultracode Workflow review: parallel reviewers (design/AI-slop,
 facts-vs-this-spec, a11y, RU+EN typography, responsive/perf) + adversarial
 verification of each finding → fix confirmed findings → final screenshots.
+
+## Correction 2026-08-03 — THREE branches, and two published facts were wrong
+
+The user supplied a Yandex link to a third point; verification overturned two things
+this spec asserted. Sources: raw HTML of all three Yandex org pages (schema.org meta
+tags + page state JSON, via curl), cross-checked against 2GIS and the brand's Telegram.
+
+1. **There are three branches, not two.** Every org page carries
+   `"chain": {"id": "78954622395", "name": "Кус Кус", "quantityInCity": 3}`, and the
+   chain page lists exactly: Кропоткина 19/8 (`26524829091`), Социалистическая 15
+   (`203444001790`), пер. Ульяны Громовой 3 (`122809620395`). 2GIS's chain agrees.
+   The v2 claim that Ульяны Громовой 3 «is a different business» was most likely drawn
+   from the stale «Бистро / Fast food» record still indexed at that address by
+   third-party scrapers. `src/data.test.ts` enforced the wrong rule and now asserts
+   the three verified addresses instead.
+   Third point: 11:00–23:00 daily · +7 966 758-47-01 · 4,9★ · 121 оценка ·
+   1 этаж, вход с улицы · м. Площадь Восстания 360 м / Маяковская 640 м /
+   Владимирская 1,35 км.
+2. **Кропоткина 19/8 opens at 07:00, not 11:00.** Seven `openingHours` meta tags say
+   `Mo–Su 07:00-00:00`, `workingTimeText` renders «ежедневно, 7:00 AM–12:00 AM», and
+   the brand's own Telegram bio says «Ждём вас каждый день с 07:00». The footer fine
+   print «Билет действителен ежедневно с 11:00» depended on the wrong figure and now
+   carries no time at all.
+3. Rating counts drifted a day: Кропоткина 2 011 → 2 013, Социалистическая 639 → 640.
+   Review stats (93/100/90 of 415 отзывов) are left untouched — the percentages were
+   read on 2026-08-02 and re-reading the count without the percentages would mismatch.
+
+Unresolved, needs the cafe: the brand's Telegram advertises «Гончарная 3
+☎️ 8 966 758-46-90» — an address no directory lists, one digit-block from the Ульяны
+Громовой number, and the channel never mentions Социалистическая 15. Also, the
+«Халяль» attribute is present on the Кропоткина listing but absent from the Ульяны
+Громовой one (missing data, not a contradiction — the brand-wide halal copy stands).
+Yandex reports `has_verified_owner: false` for the third point, so its hours are
+catalogue data rather than operator-confirmed.

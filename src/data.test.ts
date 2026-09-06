@@ -1,9 +1,24 @@
 import { expect, test } from 'vitest'
 import { BRANCHES, DESTINATIONS, DRINKS, MENU, SOCIAL, UI } from './data'
 
-test('exactly two branches, never a third', () => {
-  expect(BRANCHES).toHaveLength(2)
-  expect(JSON.stringify(BRANCHES)).not.toMatch(/Громовой/i)
+// Сеть «Кус Кус» на Яндекс Картах (id 78954622395) — ровно три организации.
+// Прежний запрет на Ульяны Громовой снят 2026-08-03: адрес входит в ту же сеть.
+test('exactly the three verified branches', () => {
+  expect(BRANCHES).toHaveLength(3)
+  // адреса склеены неразрывными пробелами — сравниваем по обычным
+  const plain = (s: string) => s.replace(/\u00a0/g, ' ')
+  expect(BRANCHES.map((b) => plain(b.address.ru))).toEqual([
+    'ул. Кропоткина, 19/8',
+    'Социалистическая ул., 15',
+    'пер. Ульяны Громовой, 3',
+  ])
+  expect(new Set(BRANCHES.map((b) => b.yandexUrl)).size).toBe(3)
+})
+
+test('phone links match the printed numbers', () => {
+  for (const b of BRANCHES) {
+    expect(b.phoneHref).toBe(`tel:+${b.phone.replace(/\D/g, '')}`)
+  }
 })
 
 test('verified prices are intact', () => {

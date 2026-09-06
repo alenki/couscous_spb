@@ -2,25 +2,36 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover: без него env(safe-area-inset-*) всегда 0, и Safari
+         letterbox'ит документ — рядом с вырезом в альбомной ориентации появлялась
+         чёрная полоса поверх пергаментного героя. Отступы под вырез — в styles.css -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Cous Cous — алжирская кухня и халяль-шаурма в Санкт-Петербурге</title>
     <meta
       name="description"
-      content="Ваш билет в мир кухни COUSCOUS: алжирская шаурма, тарелки и фалафель — всё халяль. Два кафе в Петербурге: Кропоткина 19/8 и Социалистическая 15. 5,0★ на Яндекс Картах."
+      content="Ваш билет в мир кухни COUSCOUS: алжирская шаурма, тарелки и фалафель — всё халяль. Три кафе в Петербурге: Кропоткина 19/8, Социалистическая 15 и Ульяны Громовой 3. 2 700+ оценок на Яндекс Картах."
     />
-    <meta name="theme-color" content="#EAD9AE" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <!-- тон строки состояния = верх пергаментного градиента героя (--parchment-hi) -->
+    <meta name="theme-color" content="#F2E6C5" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Предзагружаем только кириллицу. rel=preload идёт с высшим приоритетом,
+         впереди стилей и модуля, а латинская подрезка (20,5 КБ — 62% бюджета
+         предзагрузки) на русской странице набирает лишь слово COUSCOUS в шапке:
+         заблокировав её на Slow-4G, LCP падал с 2134 до 1658 мс. Первый визит
+         всегда русский (lang.tsx читает язык из localStorage, html lang="ru"),
+         у вернувшихся англоязычных обе подрезки уже в кеше. Латинская грузится
+         обычным порядком из @font-face, а на время загрузки работает
+         'Oranienbaum Fallback' с подогнанными метриками. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/oranienbaum-cyrillic-400-normal.woff2" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/oranienbaum-latin-400-normal.woff2" crossorigin />
 
     <!-- PLACEHOLDER: после привязки домена замените og:image на абсолютный URL, добавьте og:url + canonical,
-         а в JSON-LD ниже — поля "url" и "image" (абсолютные ссылки) в оба объекта Restaurant -->
+         а в JSON-LD ниже — поля "url" и "image" (абсолютные ссылки) во все три объекта Restaurant -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Cous Cous — алжирская кухня в Санкт-Петербурге" />
     <meta
       property="og:description"
-      content="Ваш билет в мир кухни COUSCOUS. Халяль-шаурма и алжирские тарелки. Кропоткина 19/8 · Социалистическая 15."
+      content="Ваш билет в мир кухни COUSCOUS. Халяль-шаурма и алжирские тарелки. Кропоткина 19/8 · Социалистическая 15 · Ульяны Громовой 3."
     />
     <meta property="og:image" content="/og.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -46,14 +57,14 @@
             "openingHoursSpecification": {
               "@type": "OpeningHoursSpecification",
               "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-              "opens": "11:00",
+              "opens": "07:00",
               "closes": "00:00"
             },
             "aggregateRating": {
               "@type": "AggregateRating",
               "ratingValue": "5.0",
               "bestRating": "5",
-              "ratingCount": "2011"
+              "ratingCount": "2013"
             },
             "sameAs": [
               "https://yandex.ru/maps/org/cous_cous/26524829091/",
@@ -82,10 +93,39 @@
               "@type": "AggregateRating",
               "ratingValue": "5.0",
               "bestRating": "5",
-              "ratingCount": "639"
+              "ratingCount": "640"
             },
             "sameAs": [
               "https://yandex.ru/maps/org/cous_cous/203444001790/",
+              "https://t.me/coucousdz",
+              "https://www.instagram.com/cafe_cous_cous/"
+            ]
+          },
+          {
+            "@type": "Restaurant",
+            "name": "Cous Cous — Algerian Kitchen (Ульяны Громовой)",
+            "servesCuisine": "Алжирская кухня",
+            "telephone": "+7 966 758-47-01",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "пер. Ульяны Громовой, 3",
+              "addressLocality": "Санкт-Петербург",
+              "addressCountry": "RU"
+            },
+            "openingHoursSpecification": {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+              "opens": "11:00",
+              "closes": "23:00"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "bestRating": "5",
+              "ratingCount": "121"
+            },
+            "sameAs": [
+              "https://yandex.ru/maps/org/cous_cous/122809620395/",
               "https://t.me/coucousdz",
               "https://www.instagram.com/cafe_cous_cous/"
             ]

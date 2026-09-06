@@ -1,9 +1,9 @@
 import { LazyMotion, MotionConfig, domAnimation } from 'motion/react'
 import { LangProvider, useLang } from './lang'
 import { UI } from './data'
-import { Header } from './components/Header'
+import { useSmoothScroll } from './useSmoothScroll'
+import { FloatingLang, Header } from './components/Header'
 import { Hero } from './components/Hero'
-import { Tear } from './components/Tear'
 import { Menu } from './components/Menu'
 import { Atmosphere } from './components/Atmosphere'
 import { Branches } from './components/Branches'
@@ -19,6 +19,7 @@ function SkipLink() {
 }
 
 export default function App() {
+  useSmoothScroll()
   return (
     <LangProvider>
       {/* LazyMotion + m.* вместо motion.*: в бандл попадает только domAnimation (~-60 КБ) */}
@@ -28,12 +29,12 @@ export default function App() {
           <Header />
           <main>
             <Hero />
-            <Tear />
             <Menu />
             <Atmosphere />
             <Branches />
           </main>
           <Footer />
+          <FloatingLang />
         </MotionConfig>
       </LazyMotion>
     </LangProvider>

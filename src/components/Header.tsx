@@ -1,7 +1,44 @@
+import { useEffect, useState } from 'react'
 import { m } from 'motion/react'
 import { useLang } from '../lang'
 import { UI } from '../data'
 import { KingMark } from './ornaments/engraved'
+
+/**
+ * Плавающий переключатель языка для телефона.
+ *
+ * Шапка стоит absolute внутри героя и уезжает вместе с ним, а страница на 390px
+ * высотой около 5800px. После первого экрана сменить язык было нечем — только
+ * прокруткой до самого верха. На телефоне из шапки к тому же убраны ссылки,
+ * так что штамп языка остаётся единственным управляющим элементом и должен
+ * быть под рукой. Появляется, когда герой (#top) уходит из вида; пока скрыт —
+ * вне порядка обхода, чтобы два одинаковых переключателя не существовали разом.
+ */
+export function FloatingLang() {
+  const { lang, toggle, t } = useLang()
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const top = document.getElementById('top')
+    if (!top || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setShown(!e.isIntersecting), { threshold: 0 })
+    io.observe(top)
+    return () => io.disconnect()
+  }, [])
+
+  return (
+    <button
+      type="button"
+      className={`lang-stamp lang-stamp--float font-mono${shown ? ' is-shown' : ''}`}
+      onClick={toggle}
+      aria-label={t(UI.langSwitch)}
+      aria-hidden={!shown}
+      tabIndex={shown ? 0 : -1}
+    >
+      {lang === 'ru' ? 'EN' : 'RU'}
+    </button>
+  )
+}
 
 export function Header() {
   const { lang, toggle, t } = useLang()

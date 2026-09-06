@@ -24,6 +24,23 @@
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Подменный шрифт для Oranienbaum на время загрузки (font-display: swap).
+   Заголовок героя от 720px набирается в одну строку кеглем, посчитанным ровно
+   под метрики Oranienbaum (--title-fit), запаса нет. Системная антиква шире:
+   Georgia — в 1,29 раза, и первый кадр обрезало по правому краю, молча, потому
+   что у .hero съедает overflow: hidden. size-adjust посажен по САМОЙ широкой
+   реальной системной антикве; на более узких строка окажется чуть меньше
+   нужного — это безобидно, обрезать её уже нечем. */
+@font-face {
+  font-family: 'Oranienbaum Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Tinos'),
+    local('Liberation Serif'), local('Noto Serif'), local('Droid Serif');
+  size-adjust: 77%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
 :root {
   color-scheme: light;
 
@@ -35,6 +52,7 @@
 
   /* Act 2 — the room */
   --board: #16130f;
+  --night: #100d09; /* подвал и фон документа — один тон */
   --chalk: #f2efe6;
   --chalk-dim: #b5af9f;
   --chalk-red: #e2543f;
@@ -44,13 +62,16 @@
   --wood: #8a5a33;
   --wood-dark: #6e4526;
 
+  /* Подпись разработчика в подвале — фирменное золото Lumako, только точка */
+  --lume-gold: #d49a2e;
+
   /* Ceiling (Atmosphere section only) */
   --navy: #1e2a4a;
   --sky: #7ec8e3;
   --plaster: #c9a6a0;
 
   /* Type */
-  --font-display: 'Oranienbaum', 'PT Serif', georgia, serif;
+  --font-display: 'Oranienbaum', 'Oranienbaum Fallback', 'PT Serif', georgia, serif;
   --font-body: 'PT Serif', georgia, serif;
   --font-mono: 'PT Mono', 'Courier New', monospace;
   --font-chalk: 'Neucha', 'PT Serif', cursive;
@@ -62,10 +83,25 @@
   --step-2: clamp(1.56rem, 1.4rem + 0.8vw, 2rem);
   --step-3: clamp(1.95rem, 1.7rem + 1.3vw, 2.7rem);
   --step-4: clamp(2.44rem, 2rem + 2.2vw, 3.8rem);
-  --step-5: clamp(3.05rem, 2.4rem + 3.3vw, 5.25rem);
+  /* только заголовок героя; кривая подобрана так, чтобы капитель ломалась
+     одинаково от 320px до десктопа: RU в две строки, EN в три */
+  --step-5: clamp(2.3rem, 0.9rem + 7vw, 5.25rem);
+
+  /* Служебная микротипографика (штампы, сноски, подписи табло). Раньше это были
+     жёсткие 0,58–0,72rem — на телефоне те же 9–11px, что и на десктопе. Теперь
+     низ шкалы поднят до читаемого на 320px, верх оставлен прежним. */
+  --micro: clamp(0.78rem, 0.755rem + 0.105vw, 0.85rem); /* 12,5 → 13,6px */
+  --micro-sm: clamp(0.75rem, 0.73rem + 0.08vw, 0.8rem); /* 12,0 → 12,8px */
 
   --wrap: 71.25rem; /* 1140px */
+  --gutter: clamp(1.1rem, 4vw, 2.5rem);
   --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* вырез, «уши» и полоса-домой на телефонах; 0px там, где env() не поддержан */
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
 }
 
 * {
@@ -74,6 +110,16 @@
 
 html {
   scroll-behavior: smooth;
+  /* iOS Safari в альбомной ориентации сам раздувает кегль — запрещаем */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Lenis скроллит настоящей полосой документа: если html/body однажды получат
+   height: 100%, прокручивать станет нечего. */
+html.lenis,
+html.lenis body {
+  height: auto;
 }
 
 body {
@@ -82,9 +128,12 @@ body {
   font-size: var(--step-0);
   line-height: 1.55;
   color: var(--ink);
-  background: var(--board); /* overscroll top/bottom reads as the room */
+  background: var(--night); /* overscroll top/bottom matches the footer */
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* серый прямоугольник подсветки тапа чужероден пергаменту и доске:
+     гасим его, а отклик даём собственными :active-состояниями ниже */
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1,
@@ -149,23 +198,26 @@ button {
   border: 0;
 }
 
+/* transform, а не translate: независимое свойство translate появилось только в
+   Chrome 104 / Safari 14.1, и на старых движках объявление отбрасывалось целиком —
+   чёрная плашка «Перейти к меню» намертво висела поверх героя. */
 .skip-link {
   position: fixed;
-  top: 0.8rem;
+  top: calc(0.8rem + var(--safe-t));
   left: 50%;
-  translate: -50% calc(-100% - 1.5rem);
+  transform: translate(-50%, calc(-100% - 1.5rem - var(--safe-t)));
   z-index: 100;
-  padding: 0.7rem 1.2rem;
+  padding: 0.85rem 1.2rem;
   background: var(--ink);
   color: var(--parchment-hi);
   text-decoration: none;
   font-size: var(--step--1);
   letter-spacing: 0.1em;
   border-radius: 6px;
-  transition: translate 0.15s var(--ease-settle);
+  transition: transform 0.15s var(--ease-settle);
 }
 .skip-link:focus-visible {
-  translate: -50% 0;
+  transform: translate(-50%, 0);
   outline-color: var(--parchment-hi);
 }
 
@@ -174,7 +226,9 @@ button {
 .wrap {
   max-width: var(--wrap);
   margin-inline: auto;
-  padding-inline: clamp(1.1rem, 4vw, 2.5rem);
+  /* поля растут на вырез: в альбомной ориентации iPhone текст не уезжает под «уши» */
+  padding-left: calc(var(--gutter) + var(--safe-l));
+  padding-right: calc(var(--gutter) + var(--safe-r));
 }
 
 .font-display {
@@ -253,16 +307,77 @@ button {
 
 /* ---------- engraved ornaments (Act 1) ---------- */
 
-.zellige {
-  display: block;
-  pointer-events: none;
-}
-
+/* Фриз никогда не кадрируется: height:auto держит коробку в пропорциях своего
+   viewBox, а компоновку под ширину экрана выбирает media-запрос ниже. */
 .frieze {
   display: block;
   width: 100%;
   height: auto;
   pointer-events: none;
+}
+.frieze--narrow {
+  display: none;
+}
+
+/* Порог 900px, а не 560: восьмикратная панорама держится, пока полоса выше
+   ~110px, то есть примерно с этой ширины. Ниже она вырождается в волосяную
+   черту поверх пустого поля, и короткая компоновка выигрывает даже там, где
+   места ещё вроде бы хватает. */
+@media (max-width: 899.98px) {
+  .frieze--wide {
+    display: none;
+  }
+  .frieze--narrow {
+    display: block;
+  }
+  /* пунктир на узкой полосе считаем в экранных пикселях, а не в единицах
+     viewBox: так точки земли и маршрута сохраняют десктопный шаг */
+  .frieze-dots {
+    vector-effect: non-scaling-stroke;
+  }
+}
+
+/* Штрих задан в единицах viewBox, а рендерится в масштабе «ширина полосы /
+   ширина viewBox» — на телефоне 1,6 единицы уходят в волосок, на широком
+   экране пухнут в жирную линию. Ступени ниже держат гравюру в 1,2–1,9
+   экранного пикселя на всех ширинах. */
+@media (max-width: 429.98px) {
+  .frieze--narrow .frieze-path {
+    stroke-width: 2.7;
+  }
+}
+@media (min-width: 430px) and (max-width: 559.98px) {
+  .frieze--narrow .frieze-path {
+    stroke-width: 2.2;
+  }
+}
+@media (min-width: 560px) and (max-width: 719.98px) {
+  .frieze--narrow .frieze-path {
+    stroke-width: 1.75;
+  }
+}
+@media (min-width: 720px) and (max-width: 899.98px) {
+  .frieze--narrow .frieze-path {
+    stroke-width: 1.4;
+  }
+}
+@media (max-width: 1199.98px) {
+  .frieze--wide .frieze-path {
+    stroke-width: 1.9;
+  }
+}
+
+/* Низкий экран (телефон в альбоме, окно в половину высоты): короткая
+   компоновка забирает под полосу четверть ширины — при 390px высоты это треть
+   первого акта, и корешки уезжают за сгиб. Панорама при той же ширине вдвое
+   ниже, поэтому здесь она возвращается независимо от ширины окна. */
+@media (max-height: 620px) and (min-width: 560px) {
+  .frieze--wide {
+    display: block;
+  }
+  .frieze--narrow {
+    display: none;
+  }
 }
 
 /* прорисовка штрихов фриза при загрузке */
@@ -344,18 +459,30 @@ button {
   border-radius: 10px;
   box-shadow: 2px 3px 0 rgba(107, 86, 56, 0.35);
   transition: translate 0.15s var(--ease-settle), box-shadow 0.15s var(--ease-settle);
+  /* Маска вырезает две перфорации по бокам корешка. Сокращённое свойство mask
+     сбрасывает composite, поэтому -webkit-mask-composite должен идти ПОСЛЕ обоих
+     сокращений — иначе на Safari 15.0–15.3, где нет mask-composite, режим
+     оставался аддитивным и перфорации пропадали вовсе. */
   -webkit-mask:
     radial-gradient(circle 8px at 0% 50%, transparent 97%, #000),
     radial-gradient(circle 8px at 100% 50%, transparent 97%, #000);
-  -webkit-mask-composite: source-in;
   mask:
     radial-gradient(circle 8px at 0% 50%, transparent 97%, #000),
     radial-gradient(circle 8px at 100% 50%, transparent 97%, #000);
+  -webkit-mask-composite: source-in;
   mask-composite: intersect;
+  /* область маски по умолчанию — border-box, и она срезала всё, что рисуется
+     снаружи: кольцо фокуса (outline-offset 3px) и высечку box-shadow.
+     no-clip снимает границу, перфорации при этом остаются. */
+  -webkit-mask-clip: no-clip;
+  mask-clip: no-clip;
 }
-.stub:hover {
-  translate: 0 -2px;
-  box-shadow: 3px 5px 0 rgba(107, 86, 56, 0.35);
+/* hover — только там, где есть курсор: на тач-экране :hover залипает после тапа */
+@media (hover: hover) {
+  .stub:hover {
+    translate: 0 -2px;
+    box-shadow: 3px 5px 0 rgba(107, 86, 56, 0.35);
+  }
 }
 .stub:active {
   translate: 0 1px;
@@ -449,6 +576,12 @@ button {
 }
 
 /* ---------- split-flap ---------- */
+
+.splitflap-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 
 .splitflap {
   display: inline-flex;
@@ -553,7 +686,9 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: clamp(0.9rem, 2.5vw, 1.6rem) clamp(1.1rem, 4vw, 2.5rem);
+  padding: calc(clamp(0.9rem, 2.5vw, 1.6rem) + var(--safe-t))
+    calc(var(--gutter) + var(--safe-r)) clamp(0.9rem, 2.5vw, 1.6rem)
+    calc(var(--gutter) + var(--safe-l));
 }
 
 .header__brand {
@@ -585,13 +720,25 @@ button {
   text-transform: uppercase;
 }
 .header__nav > a {
+  position: relative;
   text-decoration: none;
   white-space: nowrap;
   border-bottom: 1.5px dashed transparent;
   padding-bottom: 2px;
   transition: border-color 0.15s;
 }
-.header__nav > a:hover {
+/* 36×22 — мимо пальца; область нажатия растим невидимо, подчёркивание не трогаем */
+.header__nav > a::after {
+  content: '';
+  position: absolute;
+  inset: -0.7rem -0.45rem;
+}
+@media (hover: hover) {
+  .header__nav > a:hover {
+    border-bottom-color: var(--chalk-red);
+  }
+}
+.header__nav > a:active {
   border-bottom-color: var(--chalk-red);
 }
 
@@ -600,15 +747,91 @@ button {
   place-items: center;
   width: 3.1rem;
   aspect-ratio: 1;
-  border: 2px dashed #b23a28;
+  border: 2px dashed #8a2b1c;
   border-radius: 50%;
-  color: #b23a28;
+  /* #b23a28 давал 3,96:1 на пергаменте — ниже AA; кирпичный тёмный даёт 5,7:1 */
+  color: #8a2b1c;
   font-size: 0.82rem;
   letter-spacing: 0.1em;
   background: rgba(178, 58, 40, 0.06);
 }
-.lang-stamp:hover {
-  background: rgba(178, 58, 40, 0.14);
+@media (hover: hover) {
+  .lang-stamp:hover {
+    background: rgba(178, 58, 40, 0.14);
+  }
+}
+.lang-stamp:active {
+  background: rgba(178, 58, 40, 0.2);
+}
+
+/* Плавающий штамп языка — только на телефоне и малом планшете, где из шапки
+   убраны ссылки, а сама шапка уезжает вместе с героем. Собственная тёмная
+   подложка: элемент проплывает над доской, деревом и пергаментными карточками,
+   и без неё контраст плавал бы вместе с фоном (--chalk-red на доске 4,9:1). */
+.lang-stamp--float {
+  display: none;
+}
+@media (max-width: 899.98px) {
+  .lang-stamp--float {
+    display: grid;
+    position: fixed;
+    right: calc(1rem + var(--safe-r));
+    bottom: calc(1rem + var(--safe-b));
+    z-index: 90;
+    border-color: var(--chalk-red);
+    color: var(--chalk-red);
+    background: rgba(16, 13, 9, 0.93);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: scale(0.75);
+    pointer-events: none;
+    transition: opacity 0.2s var(--ease-settle), transform 0.2s var(--ease-settle);
+  }
+  .lang-stamp--float.is-shown {
+    opacity: 1;
+    transform: scale(1) rotate(-7deg);
+    pointer-events: auto;
+  }
+  .lang-stamp--float:active {
+    background: rgba(226, 84, 63, 0.22);
+  }
+}
+
+/* Телефон: строка шапки не помещается — логотип, слово, две ссылки и штамп
+   вместе требуют ~425px при 320 доступных, и штамп языка уезжал за экран.
+   Ссылки убираем: они дублируют два корешка-билета в самом герое, ведущих
+   на те же якоря, а шапка здесь absolute и всё равно уходит при прокрутке.
+   Остаётся то, что несёт смысл: марка и переключатель языка. */
+@media (max-width: 599.98px) {
+  .header {
+    gap: 0.75rem;
+  }
+  .header__nav > a {
+    display: none;
+  }
+  .header__brand {
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .header__word {
+    min-width: 0;
+  }
+  .header__name {
+    font-size: clamp(1.05rem, 0.86rem + 0.95vw, 1.35rem);
+    letter-spacing: 0.16em;
+  }
+  .header__sub {
+    /* на десктопе это логотипная деталь в 9,3px и так и задумана; на телефоне
+       её читают с 30 см — поднимаем кегль, а место освобождаем трекингом,
+       чтобы строка не переносилась даже на 320px */
+    font-size: 0.66rem;
+    letter-spacing: 0.19em;
+    white-space: nowrap;
+  }
+  .lang-stamp {
+    width: 2.85rem;
+    flex-shrink: 0;
+  }
 }
 
 /* ---------- hero (Act 1) ---------- */
@@ -618,216 +841,268 @@ button {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   overflow: hidden;
-  padding-top: 5.5rem;
+  /* верхнее поле = высота шапки (на телефоне шапка ниже), плюс вырез */
+  padding-top: calc(clamp(4.6rem, 12vh, 6rem) + var(--safe-t));
 }
 
-.hero__corner {
-  position: absolute;
-  z-index: 1;
-  opacity: 0.9;
-}
-.hero__corner--tl { top: -6px; left: -6px; }
-.hero__corner--tr { top: -6px; right: -6px; }
-.hero__corner--bl { bottom: -6px; left: -6px; }
-.hero__corner--br { bottom: -6px; right: -6px; }
-.hero__corner svg { display: block; width: clamp(84px, 11vw, 170px); height: auto; }
-
+/* Герой — табло отправления во всю ширину полосы: заголовок, маршрут
+   «город → город», подвал с билетами. Каждая полоса держит оба поля,
+   поэтому справа не остаётся пустоты. */
 .hero__inner {
   position: relative;
   z-index: 2;
+  /* база для 1cqw в .hero__title — это ширина контента полосы без паддингов */
+  container-type: inline-size;
   display: grid;
-  justify-items: center;
-  text-align: center;
-  gap: clamp(1.2rem, 2.6vh, 2rem);
-  padding-bottom: clamp(8rem, 16vh, 11rem);
+  text-align: left;
+  gap: clamp(1.05rem, 3.6vh, 2.9rem);
+  /* Только воздух до гравюры. Раньше здесь сидел резерв под фриз (тот стоял
+     абсолютом и не занимал места): величину приходилось считать от ширины
+     экрана, промахи давали то мёртвую полосу под подсказкой, то гравюру,
+     идущую сквозь корешки. Теперь фриз лежит в потоке и место берёт сам. */
+  padding-bottom: clamp(1.4rem, 4vh, 3rem);
+  /* .wrap даёт margin-inline:auto — у flex-элемента это отменяет stretch,
+     и блок съезжает к центру. Обнуляем: герой стоит на левом поле страницы.
+     По вертикали auto оставляем: свободная высота делится поровну сверху и
+     снизу, поэтому блок стоит по центру того, что осталось над фризом. */
+  margin-inline: 0;
+  margin-block: auto;
 }
 
-.hero__ribbon {
-  font-size: var(--step--1);
-  letter-spacing: 0.32em;
-  color: var(--sepia);
-}
-
+/* До 720px заголовок переносится по словам; шире — растягивается в одну строку
+   от края до края полосы (см. --title-fit ниже). */
 .hero__title {
-  display: grid;
-  gap: 0.1em;
+  --title-fit: 9.19;
+  max-width: 8em; /* em, а не px: перенос строк держится одинаковым на всех кеглях */
   font-size: var(--step-5);
+  line-height: 1.02;
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  text-wrap: balance;
 }
-.hero__title-b {
-  position: relative;
-  font-size: 1.18em;
-}
-.hero__title-b::after {
-  content: '';
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  bottom: -0.12em;
-  height: 1.5px;
-  background:
-    linear-gradient(var(--sepia), var(--sepia)) left center / 43% 100% no-repeat,
-    linear-gradient(var(--sepia), var(--sepia)) right center / 43% 100% no-repeat;
-  opacity: 0.65;
-  pointer-events: none;
-}
-.hero__title-b::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -0.24em;
-  width: 0.26em;
-  height: 0.26em;
-  translate: -50% 0;
-  rotate: 45deg;
-  border: 1.5px solid var(--sepia);
-  opacity: 0.65;
-  pointer-events: none;
+html[lang='en'] .hero__title {
+  --title-fit: 5.94;
 }
 
 .hero__board {
-  display: flex;
-  align-items: flex-end;
-  gap: clamp(0.9rem, 3vw, 1.8rem);
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.hero__board-col {
   display: grid;
-  gap: 0.45rem;
-  justify-items: center;
+  align-items: end;
+  grid-template-columns: auto minmax(2.5rem, 1fr) auto;
+  grid-template-areas:
+    'fromlabel .     tolabel'
+    'fromcity  route toflap';
+  column-gap: clamp(0.9rem, 2.5vw, 2rem);
+  row-gap: 0.5rem;
 }
 .hero__board-label {
-  font-size: 0.68rem;
+  font-size: var(--micro-sm);
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--sepia);
 }
+.hero__board-label--from {
+  grid-area: fromlabel;
+}
+.hero__board-label--to {
+  grid-area: tolabel;
+  /* start, а не end: с тех пор как табло добивается пробелами только справа,
+     слово начинается у левого края своей колонки — подпись встаёт над первой
+     буквой направления, а не над хвостом пустых карточек */
+  justify-self: start;
+}
 .hero__board-city {
-  font-size: var(--step-1);
+  grid-area: fromcity;
+  font-size: clamp(1.15rem, 0.95rem + 0.9vw, 1.8rem);
   letter-spacing: 0.12em;
 }
 .hero__board-flap {
-  font-size: var(--step-1);
+  grid-area: toflap;
+  justify-self: end;
+  font-size: clamp(1.05rem, 0.8rem + 1.1vw, 1.85rem);
 }
-.hero__board-arrow {
-  margin-bottom: 0.55rem;
-  opacity: 0.8;
+
+/* пунктирный маршрут занимает всё, что осталось между городами */
+.hero__route {
+  grid-area: route;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.75rem;
+}
+.hero__route-dots {
+  flex: 1;
+  height: 2px;
+  /* тот же штрих, что у пунктира на фризе: точка 1,6px с шагом 8px */
+  background: radial-gradient(circle at 0.8px 1px, var(--sepia) 0.8px, transparent 1.1px) 0 0 /
+    8px 2px repeat-x;
+  opacity: 0.75;
+}
+
+/* узкие экраны: города встают друг под другом, маршрут — разделителем между ними */
+@media (max-width: 719.98px) {
+  .hero__board {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'fromlabel'
+      'fromcity'
+      'route'
+      'tolabel'
+      'toflap';
+    row-gap: 0.4rem;
+  }
+  /* подпись уже start в базовом правиле — здесь выравниваем только табло */
+  .hero__board-flap {
+    justify-self: start;
+  }
+  .hero__board-label--to {
+    margin-top: 0.75rem;
+  }
+  .hero__route {
+    margin-block: 0.55rem 0.15rem;
+  }
+}
+
+.hero__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding-top: clamp(0.2rem, 1.2vh, 0.9rem);
 }
 
 .hero__ctas {
   display: flex;
   gap: 1.1rem;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .hero__hint {
-  font-size: 0.7rem;
+  font-size: var(--micro-sm);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #55432a;
 }
 
-.hero__stamps {
-  gap: 1.2rem;
-}
-.hero__stamps--side {
-  display: none;
-}
-.hero__stamps--inline {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+/* Телефон: два корешка встают в столбик во всю ширину полосы. Так они
+   перестают быть рваными по длине и берут палец целиком, а не по буквам. */
+@media (max-width: 559.98px) {
+  .hero__ctas {
+    width: 100%;
+    gap: 0.75rem;
+  }
+  .hero__ctas .stub {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .hero__hint {
+    letter-spacing: 0.16em;
+  }
 }
 
+/* с этой ширины герой садится на ту же левую линию, что и логотип в шапке */
 @media (min-width: 1120px) {
   .header {
     padding-inline: clamp(2.5rem, 6vw, 5rem);
   }
-  .hero__stamps--inline {
-    display: none;
-  }
-  .hero__stamps--side {
-    position: absolute;
-    z-index: 2;
-    right: clamp(2rem, 8vw, 9rem);
-    top: 24%;
-    display: grid;
-    gap: 1.6rem;
-  }
-  .hero__stamps--side > div:nth-child(2) {
-    translate: -3.2rem 0;
-  }
-  .hero__stamps--side > div:nth-child(3) {
-    translate: 1.4rem 0;
-  }
   .hero__inner {
-    justify-items: start;
-    text-align: left;
-    max-width: 60rem;
-    margin-inline: auto;
-  }
-  .hero__board,
-  .hero__ctas {
-    justify-content: flex-start;
-  }
-  .hero__board-col {
-    justify-items: start;
-  }
-  .hero__title-b::after {
-    left: 2%;
-    right: 20%;
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: clamp(2.5rem, 6vw, 5rem);
   }
 }
 
+/* Кегль заголовка в одну строку: --title-fit = 100 / (ширина строки в Oranienbaum
+   при кегле 100px) × 0,99; 1cqw — процент ширины контента .hero__inner.
+   Пересчитывать при любой правке heroTitle: RU 1078px → 9,19; EN 1668px → 5,94. */
+@media (min-width: 720px) {
+  .hero__title {
+    max-width: none;
+    white-space: nowrap;
+    font-size: calc(var(--title-fit) * 1cqw);
+  }
+}
+
+/* Гравюра — последний элемент колонки: её высоту задаёт сама полоса, поэтому
+   резерв под неё нигде не считается и наехать на корешки она не может. */
 .hero__frieze {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 1.1rem;
+  /* relative + z-index только ради порядка отрисовки: .grain::before — тоже
+     позиционированный слой, и без этого зерно бумаги легло бы поверх штриха.
+     На раскладку не влияет, полоса остаётся в потоке. */
+  position: relative;
   z-index: 1;
+  padding-bottom: 1.1rem;
   opacity: 0.85;
   pointer-events: none;
 }
 
-/* ---------- tear (линия отрыва) ---------- */
-
-.tear {
-  position: relative;
-  background: var(--board);
-  overflow: visible;
-  z-index: 3;
+@media (max-width: 559.98px) {
+  .hero__frieze {
+    padding-bottom: 0.6rem;
+  }
 }
 
-.tear__strip {
-  background: var(--parchment);
-  will-change: transform;
+/* Низкий экран (окно в половину высоты, телефон в альбоме): там, где полосу
+   рисует панорама (см. одноимённый запрос выше), воздух вокруг неё тоже
+   считаем от высоты экрана — иначе первый акт вылезает за сгиб. */
+@media (max-height: 620px) and (min-width: 560px) {
+  .hero__inner {
+    padding-bottom: clamp(0.6rem, 2.5vh, 1.4rem);
+  }
+  .hero__frieze {
+    padding-bottom: 0.5rem;
+  }
 }
 
-.tear__line {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.7rem clamp(1.1rem, 4vw, 2.5rem) 0.9rem;
-  color: var(--sepia);
-  font-size: 0.68rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
+/* Совсем узкий и короткий экран (iPhone SE, 320×568): вертикали не хватает
+   на ~19px, и нижний край фриза уходит за сгиб. Поджимаем поля и межблочные
+   интервалы ровно настолько, чтобы весь первый акт встал в один экран. */
+@media (max-width: 359.98px) {
+  .hero {
+    padding-top: 3.4rem;
+  }
+  .hero__inner {
+    gap: 0.6rem;
+    padding-bottom: 0;
+  }
+  .hero__board-label--to {
+    margin-top: 0.5rem;
+  }
 }
 
-.tear__dashes {
-  flex: 1;
-  height: 0;
-  border-top: 2px dashed rgba(107, 86, 56, 0.55);
+/* Телефон в альбомной ориентации: 100svh — это ~360px. Заголовок в одну
+   строку кеглем 62px и поля в 6rem туда не помещаются; всё завязываем на
+   высоту экрана, а не на ширину. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .hero {
+    padding-top: clamp(3.2rem, 13vh, 4.6rem);
+  }
+  .hero__inner {
+    gap: clamp(0.45rem, 2.2vh, 1.2rem);
+    padding-bottom: clamp(0.6rem, 2.5vh, 1.4rem);
+  }
+  .hero__title {
+    /* кегль ограничен и шириной полосы, и высотой экрана */
+    font-size: min(var(--step-5), 11vh);
+  }
+  .hero__board-city,
+  .hero__board-flap {
+    font-size: clamp(0.95rem, 4.2vh, 1.5rem);
+  }
+  .hero__route {
+    margin-bottom: 0.5rem;
+  }
+  .hero__frieze {
+    padding-bottom: 0.5rem;
+  }
 }
-
-.tear__rip {
-  display: block;
-  width: 100%;
-  height: 16px;
-  margin-bottom: -1px;
+@media (orientation: landscape) and (max-height: 540px) and (min-width: 720px) {
+  .hero__title {
+    font-size: min(calc(var(--title-fit) * 1cqw), 11vh);
+  }
 }
 
 /* ---------- menu chalkboard (Act 2) ---------- */
@@ -907,15 +1182,28 @@ button {
   gap: 0.9rem;
 }
 
+/* Блюдо = флажковая колонка + текстовая колонка. Флажок вынесен в собственный
+   жёлоб, поэтому названия, точки и состав стоят на одной левой линии
+   независимо от того, есть у блюда флаг или нет. */
+.dish {
+  --dish-gutter: 1.5rem;
+  display: grid;
+  grid-template-columns: var(--dish-gutter) minmax(0, 1fr);
+  column-gap: 0.55rem;
+}
+.dish__flag {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 1.68em; /* высота строки названия: флажок садится на её середину */
+}
+
 .dish__row {
   display: flex;
   align-items: baseline;
   gap: 0.7rem;
 }
 .dish__name {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
   font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
   line-height: 1.2;
 }
@@ -925,23 +1213,58 @@ button {
   border-bottom: 2px dotted rgba(242, 239, 230, 0.32);
   transform: translateY(-0.28em);
 }
-.dish__weight {
-  font-size: 0.78rem;
-  color: var(--chalk-dim);
+.dish__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
   white-space: nowrap;
+}
+.dish__weight {
+  font-size: var(--micro);
+  color: var(--chalk-dim);
 }
 .dish__price {
   font-size: 1.02rem;
   color: var(--chalk);
-  white-space: nowrap;
 }
 .dish__desc {
   display: block;
+  grid-column: 2;
   margin-top: 0.25rem;
-  padding-left: 2.1rem;
   font-size: 0.95rem;
   color: var(--chalk-dim);
   line-height: 1.35;
+}
+
+/* Узкая доска: длинное название переносилось в две строки, а точки, вес и цена
+   оставались приклеены к базовой линии ПЕРВОЙ строки — обрубок пунктира посреди
+   пустоты. На телефоне ставим цену на собственную строку и тянем пунктир к ней:
+   табло сохраняется, но ведёт слева направо по нижней строке. */
+@media (max-width: 559.98px) {
+  .dish {
+    --dish-gutter: 1.4rem;
+  }
+  .dish__row {
+    display: grid;
+    grid-template-columns: minmax(1.5rem, 1fr) auto;
+    align-items: baseline;
+    column-gap: 0.6rem;
+    row-gap: 0.1rem;
+  }
+  .dish__name {
+    grid-column: 1 / -1;
+  }
+  .dish__dots {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    transform: none;
+    align-self: center;
+  }
+  .dish__meta {
+    grid-column: 2;
+    grid-row: 2;
+  }
 }
 
 .menu__drinks {
@@ -957,7 +1280,7 @@ button {
 .menu__source {
   margin-top: clamp(2.4rem, 5vh, 3.6rem);
   text-align: center;
-  font-size: 0.72rem;
+  font-size: var(--micro);
   letter-spacing: 0.08em;
   color: var(--chalk-dim);
   max-width: 46rem;
@@ -968,7 +1291,8 @@ button {
 /* ---------- atmosphere ---------- */
 
 .atmo {
-  padding-top: clamp(2rem, 5vh, 3.5rem);
+  padding-top: clamp(3rem, 7vh, 5rem);
+  padding-bottom: clamp(3rem, 7vh, 5rem);
 }
 
 .atmo__ceiling {
@@ -994,7 +1318,7 @@ button {
 }
 
 .atmo__title {
-  margin-top: 0.6rem;
+  margin-top: clamp(1.2rem, 3.5vh, 2.4rem);
   text-align: center;
   font-size: var(--step-4);
   color: var(--chalk-blue);
@@ -1003,7 +1327,7 @@ button {
 }
 
 .atmo__room {
-  margin-top: clamp(1.8rem, 4vh, 3rem);
+  margin-top: clamp(2.6rem, 6vh, 4.4rem);
   padding-block: clamp(2.2rem, 5vh, 4rem);
 }
 
@@ -1017,7 +1341,6 @@ button {
     grid-template-columns: 0.9fr 1.2fr 0.9fr;
   }
 }
-
 .atmo__photo {
   margin: 0;
   background: #241b10;
@@ -1037,6 +1360,35 @@ button {
   rotate: 1.1deg;
 }
 
+/* Телефон: два снимка в столбик занимали почти два экрана. Кладём их рядом —
+   как пара карточек, приколотых к доске, — а текст ставим под ними во всю
+   ширину. Секция становится вдвое короче, и снимки читаются как пара.
+   Блок стоит ПОСЛЕ безусловных правил .atmo__photo — специфичность у них
+   одинаковая (0-1-0), media-запрос её не повышает, и выше по файлу эти
+   объявления просто перекрывались десктопными. */
+@media (max-width: 899.98px) {
+  .atmo__gallery {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.9rem, 3vw, 1.6rem);
+    align-items: start;
+  }
+  .atmo__card {
+    grid-column: 1 / -1;
+  }
+  .atmo__photo {
+    padding: 7px;
+  }
+  .atmo__photo--a {
+    rotate: -1.8deg;
+  }
+  .atmo__photo--b {
+    rotate: 1.5deg;
+    /* margin, а не margin-top: сокращение `margin:0` в .atmo__photo выше
+       обнуляло бы отдельное margin-top */
+    margin: 1.4rem 0 0;
+  }
+}
+
 .atmo__card {
   background: var(--parchment-hi);
   color: var(--ink);
@@ -1048,58 +1400,94 @@ button {
   border: 1.5px solid var(--sepia);
 }
 
+.atmo__reviews {
+  margin-top: clamp(2.4rem, 6vh, 4rem);
+  text-align: center;
+}
+
+.atmo__reviews-lead {
+  margin: 0;
+  font-size: var(--step-1);
+  font-weight: 400;
+  color: var(--chalk);
+  letter-spacing: 0.04em;
+}
+
 .atmo__stats-row {
+  list-style: none;
+  margin: clamp(1.4rem, 3.5vh, 2.2rem) 0 0;
+  padding: 0;
   display: flex;
   justify-content: center;
-  gap: clamp(1.6rem, 6vw, 4.5rem);
-  margin-top: clamp(2.4rem, 5vh, 3.6rem);
+  gap: clamp(1.1rem, 6vw, 4.5rem);
   flex-wrap: wrap;
 }
 
 .atmo__stat {
+  display: grid;
+  justify-items: center;
+  gap: 0.65rem;
+}
+
+/* циферблат: шкала + число внутри, подпись — снаружи, чтобы не тесно */
+.atmo__stat-dial {
   position: relative;
   display: grid;
   place-items: center;
-  align-content: center;
-  gap: 0.25rem;
-  width: 8.2rem;
+  width: clamp(5.6rem, 24vw, 8.2rem);
   aspect-ratio: 1;
-  text-align: center;
 }
-@media (max-width: 560px) {
-  .atmo__stats-row {
-    gap: 0.7rem;
-    flex-wrap: nowrap;
-  }
-  .atmo__stat {
-    width: min(28vw, 7rem);
-  }
-  .atmo__stat-value {
-    font-size: 1.35rem;
-  }
-  .atmo__stat-label {
-    font-size: 0.8rem;
-  }
-}
+
 .atmo__stat-ring {
   position: absolute;
   inset: 0;
+  /* transform, а не rotate: без поддержки независимого свойства дуга
+     стартовала бы с 3 часов, а не с 12 */
+  transform: rotate(-90deg);
 }
+.atmo__stat-track {
+  fill: none;
+  stroke: var(--chalk);
+  stroke-width: 2;
+  stroke-dasharray: 3 7;
+  opacity: 0.25;
+}
+/* Покой дуги — уже готовый процент, а не пустое кольцо: прочерк добавляет
+   анимация, когда шкала входит в кадр (см. Stat в Atmosphere.tsx). Так самый
+   тяжёлый исход — шкала не прорисуется на глазах, но число совпадёт с дугой. */
+.atmo__stat-arc {
+  fill: none;
+  stroke: var(--chalk-yellow);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: var(--ring-c);
+  stroke-dashoffset: var(--ring-drawn);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .atmo__stat.is-drawn .atmo__stat-arc {
+    animation: ring-draw 1.1s var(--ease-settle) var(--ring-delay, 0s) backwards;
+  }
+}
+@keyframes ring-draw {
+  from {
+    stroke-dashoffset: var(--ring-c);
+  }
+}
+
 .atmo__stat-value {
-  font-size: 1.9rem;
+  font-size: clamp(1.4rem, 5.5vw, 1.9rem);
   color: var(--chalk-yellow);
   line-height: 1;
 }
 .atmo__stat-label {
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 3vw, 0.95rem);
   color: var(--chalk-dim);
 }
 
 .atmo__stats-note {
-  text-align: center;
-  margin-top: 1rem;
+  margin-top: clamp(1.3rem, 3vh, 2rem);
   padding-inline: 1.2rem;
-  font-size: 0.7rem;
+  font-size: var(--micro-sm);
   letter-spacing: 0.08em;
   color: var(--chalk-dim);
 }
@@ -1127,10 +1515,34 @@ button {
   .branches__grid {
     grid-template-columns: 1fr 1fr;
   }
+  /* нечётная последняя карточка не висит в полряда, а встаёт по центру своей шириной */
+  .branches__grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, 29rem);
+  }
+}
+/* три точки в ряд */
+@media (min-width: 1180px) {
+  .branches__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .branches__grid > :last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: auto;
+  }
 }
 
+/* Билет по умолчанию сложен вертикально: корешок с наградой уходит вниз.
+   Горизонтальным он бывает ровно в одной полосе ширин — 560–859px, где
+   карточки идут по одной в ряд. При 2-up (от 860) и 3-up (от 1180) карточка
+   узкая, и корешок в 8,5rem съедал бы половину строки: на 860px под адрес
+   оставалось 183px, и «ул. Кропоткина, 19/8» ломался посреди названия. */
 .pass {
   display: flex;
+  flex-direction: column;
   background: var(--parchment-hi);
   color: var(--ink);
   border: 1.5px solid var(--sepia);
@@ -1148,16 +1560,30 @@ button {
 }
 
 .pass__terminal {
-  font-size: 0.68rem;
-  letter-spacing: 0.26em;
+  font-size: var(--micro-sm);
+  letter-spacing: 0.2em;
+  line-height: 1.5;
   text-transform: uppercase;
   color: var(--sepia);
+}
+/* в три колонки длинная надпись переносится: держим две строки, чтобы адреса стояли в ряд */
+@media (min-width: 1180px) {
+  .pass__terminal {
+    min-height: 3em;
+  }
 }
 
 .pass__address {
   font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
   line-height: 1.12;
   text-wrap: balance;
+}
+/* в две и три колонки карточка узкая — адрес набираем мельче, чтобы он не
+   ломался посреди названия улицы */
+@media (min-width: 860px) {
+  .pass__address {
+    font-size: clamp(1.3rem, 1.05rem + 0.5vw, 1.6rem);
+  }
 }
 
 .pass__note {
@@ -1167,7 +1593,7 @@ button {
 }
 
 .pass__metro {
-  font-size: 0.72rem;
+  font-size: var(--micro);
   letter-spacing: 0.06em;
   color: var(--sepia);
 }
@@ -1184,17 +1610,38 @@ button {
   gap: 0.5rem;
 }
 .pass__tel {
-  text-decoration: none;
   width: fit-content;
-  border-bottom: 1.5px dashed rgba(107, 86, 56, 0.55);
-  padding-bottom: 1px;
+  color: inherit;
+  text-decoration: none;
 }
-.pass__tel:hover {
-  border-bottom-style: solid;
+/* подчёркивание только под номером, не под иконкой */
+.pass__tel > span {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: rgba(107, 86, 56, 0.55);
+  text-underline-offset: 3px;
+}
+@media (hover: hover) {
+  .pass__tel:hover {
+    color: #b23a28;
+  }
+  .pass__tel:hover > span {
+    text-decoration-style: solid;
+    text-decoration-color: currentColor;
+  }
+}
+.pass__tel:active {
   color: #b23a28;
+}
+.pass__tel:active > span {
+  text-decoration-style: solid;
+  text-decoration-color: currentColor;
 }
 
 .pass__route {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   margin-top: 0.7rem;
   width: fit-content;
   font-size: 0.78rem;
@@ -1205,56 +1652,80 @@ button {
   border-bottom: 1.5px solid transparent;
   transition: border-color 0.15s;
 }
-.pass__route:hover {
-  border-bottom-color: #b23a28;
+@media (hover: hover) {
+  .pass__route:hover {
+    border-bottom-color: #b23a28;
+  }
+}
+
+/* Телефон и маршрут — два действия, ради которых билет вообще открывают с
+   телефона. В строке они были 21 и 20px высотой: под палец не годится
+   (WCAG 2.5.8 — минимум 24px, комфорт — 44px).
+   Номер получает вертикальные поля, маршрут становится отрывным корешком
+   во всю ширину карточки — это и крупная цель, и продолжение метафоры. */
+@media (max-width: 767.98px) {
+  .pass__rows {
+    gap: 0.15rem;
+  }
+  .pass__tel {
+    padding-block: 0.72rem;
+    margin-block: -0.35rem;
+  }
+  .pass__route {
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.85rem 1.1rem;
+    border: 1.5px dashed rgba(178, 58, 40, 0.55);
+    border-radius: 8px;
+    background: rgba(178, 58, 40, 0.05);
+  }
+  .pass__route:active {
+    background: rgba(178, 58, 40, 0.14);
+    border-style: solid;
+  }
+}
+/* сложенный билет: корешок-действие берёт всю ширину карточки */
+@media (max-width: 559.98px) {
+  .pass__route {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
 }
 
 .pass__stub {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 1.2rem;
-  border-left: 2px dashed rgba(107, 86, 56, 0.5);
+  padding: 0.9rem 1.2rem;
+  border-top: 2px dashed rgba(107, 86, 56, 0.5);
   background: var(--parchment);
-  min-width: 9.5rem;
 }
-.pass__stub > img {
-  border-radius: 50%;
-  background: var(--board);
-  padding: 6px;
-  width: 72px;
-  height: 72px;
-  object-fit: cover;
+@media (min-width: 560px) and (max-width: 859.98px) {
+  .pass {
+    flex-direction: row;
+  }
+  .pass__stub {
+    border-top: none;
+    border-left: 2px dashed rgba(107, 86, 56, 0.5);
+    min-width: 8.5rem;
+    padding: 1.1rem;
+  }
 }
 /* штамп-награда в карточке — это содержимое, не декор: без blend, крупнее, темнее */
 .pass__award {
-  width: 6.8rem;
-  font-size: 0.7rem;
+  width: 7.2rem;
+  font-size: var(--micro-sm);
   --stamp-color: #8a2b1c;
   opacity: 1;
   mix-blend-mode: normal;
 }
 
-@media (max-width: 560px) {
-  .pass {
-    flex-direction: column;
-  }
-  .pass__stub {
-    border-left: none;
-    border-top: 2px dashed rgba(107, 86, 56, 0.5);
-    flex-direction: row;
-    justify-content: space-evenly;
-    min-width: 0;
-    padding: 1rem;
-  }
-}
 
 .branches__note {
   text-align: center;
   margin-top: clamp(1.8rem, 4vh, 2.6rem);
-  font-size: 0.7rem;
+  font-size: var(--micro-sm);
   letter-spacing: 0.08em;
   color: var(--chalk-dim);
 }
@@ -1262,15 +1733,15 @@ button {
 /* ---------- footer ---------- */
 
 .footer {
-  background: #100d09;
+  background: var(--night);
   color: var(--chalk);
-  border-top: 1px solid rgba(242, 239, 230, 0.08);
 }
 
 .footer__inner {
   display: grid;
   gap: 1.8rem;
-  padding-block: clamp(2.4rem, 5vh, 3.6rem);
+  /* нижнее поле уступает место полосе-домой на безкнопочных iPhone */
+  padding-block: clamp(2.4rem, 5vh, 3.6rem) calc(clamp(2.4rem, 5vh, 3.6rem) + var(--safe-b));
   justify-items: center;
   text-align: center;
 }
@@ -1285,8 +1756,8 @@ button {
   font-size: 1.3rem;
 }
 .footer__sub {
-  font-size: 0.6rem;
-  letter-spacing: 0.3em;
+  font-size: clamp(0.75rem, 0.72rem + 0.09vw, 0.8rem);
+  letter-spacing: 0.2em;
   color: var(--chalk-dim);
 }
 
@@ -1295,18 +1766,36 @@ button {
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 2rem;
+  /* строчный интервал больше вертикального выноса ::after (2 × 0,8rem):
+     расширенные области соседних ссылок не накладываются друг на друга */
+  gap: 1.75rem 2rem;
   flex-wrap: wrap;
   justify-content: center;
   font-size: 0.85rem;
   letter-spacing: 0.08em;
 }
+/* Ссылки были 18px высотой — палец в них не попадает. Площадь наращиваем
+   невидимым псевдоэлементом, а не полями: пунктирное подчёркивание остаётся
+   вплотную к строке, набор не меняется. */
 .footer__social a {
+  position: relative;
+  display: inline-block;
   text-decoration: none;
   border-bottom: 1.5px dashed rgba(242, 239, 230, 0.35);
   padding-bottom: 2px;
 }
-.footer__social a:hover {
+.footer__social a::after {
+  content: '';
+  position: absolute;
+  inset: -0.8rem -0.5rem;
+}
+@media (hover: hover) {
+  .footer__social a:hover {
+    border-bottom-color: var(--chalk-red);
+    color: var(--chalk);
+  }
+}
+.footer__social a:active {
   border-bottom-color: var(--chalk-red);
   color: var(--chalk);
 }
@@ -1317,10 +1806,52 @@ button {
 .footer__fine {
   display: grid;
   gap: 0.3rem;
-  font-size: 0.66rem;
+  font-size: var(--micro-sm);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--chalk-dim);
+}
+
+/* Подпись разработчика: тише мелкого шрифта над ней, без капители — иначе
+   от логотипа Lumako остаётся только набор букв. */
+.footer__made {
+  margin: 0;
+  font-size: var(--micro-sm);
+  letter-spacing: 0.1em;
+  color: var(--chalk-dim);
+}
+.lumako {
+  position: relative;
+  display: inline-block;
+  color: var(--chalk);
+  text-decoration: none;
+  /* геометрический гротеск логотипа — из системных: ради одного слова
+     веб-шрифт не тянем */
+  font-family: 'Avenir Next', Avenir, Futura, 'Century Gothic', system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+/* строка в 13px — не палец; площадь наращиваем невидимым слоем, как у соцсетей */
+.lumako::after {
+  content: '';
+  position: absolute;
+  inset: -0.7rem -0.5rem;
+}
+/* в логотипе точка крупнее буквы — на 13px строке иначе теряется совсем */
+.lumako__dot {
+  color: var(--lume-gold);
+  font-size: 1.2em;
+  font-weight: 700;
+  line-height: 0;
+}
+@media (hover: hover) {
+  .lumako:hover {
+    border-bottom-color: var(--lume-gold);
+  }
+}
+.lumako:active {
+  border-bottom-color: var(--lume-gold);
 }
 
 /* ---------- motion safety ---------- */

@@ -10,10 +10,16 @@ import { useReducedMotion } from 'motion/react'
 const STAGGER_MS = 90
 const HALF_MS = 280
 
+/**
+ * Добивка пробелами — только справа. Раньше пустые ячейки делились поровну по
+ * краям: АЛЖИР (5) в поле из 9 получал по две чёрные пустые карточки слева и
+ * справа, и на каждом перекиде слово прыгало по горизонтали. На телефоне, где
+ * табло стоит под САНКТ-ПЕТЕРБУРГ по левому краю, это читалось как не
+ * загрузившийся шрифт. Теперь направление всегда начинается на той же левой
+ * линии, а незанятые ячейки уходят вправо — как на настоящем табло Солари.
+ */
 function pad(word: string, len: number): string {
-  const extra = len - word.length
-  const left = Math.floor(extra / 2)
-  return ' '.repeat(left) + word + ' '.repeat(extra - left)
+  return word + ' '.repeat(len - word.length)
 }
 
 function Cell({ from, to, index }: { from: string; to: string; index: number }) {
@@ -58,14 +64,22 @@ export function SplitFlap({ words, intervalMs = 2600 }: { words: string[]; inter
   const [prev, setPrev] = useState<number | null>(null)
   const flipTimer = useRef<number>()
   const flips = useRef(0)
-  const paused = useRef(false)
+  const [paused, setPaused] = useState(false)
+  const pausedRef = useRef(false)
 
-  /* WCAG 2.2.2: анимация конечна (один круг по направлениям, финиш на первом),
-     останавливается при наведении/фокусе; при reduced-motion не идёт вовсе. */
+  /* держим ref в согласии с состоянием: интервал читает ref, поэтому список
+     зависимостей эффекта не меняется и таймер не пересоздаётся на каждом тапе */
+  useEffect(() => {
+    pausedRef.current = paused
+  }, [paused])
+
+  /* Круг по направлениям конечен: пять слов по 2,6 с и таймер сам себя гасит.
+     На десктопе движение придерживает курсор. При reduced-motion анимация не
+     идёт вовсе — табло сразу показывает слово целиком. */
   useEffect(() => {
     if (reduced) return
     const tick = window.setInterval(() => {
-      if (document.hidden || paused.current) return
+      if (document.hidden || pausedRef.current) return
       if (flips.current >= words.length) {
         window.clearInterval(tick)
         return
@@ -87,11 +101,15 @@ export function SplitFlap({ words, intervalMs = 2600 }: { words: string[]; inter
     }
   }, [words.length, intervalMs, len, reduced])
 
+  /* курсор по-прежнему придерживает табло, но только там, где курсор есть:
+     на тач-экране эти два события приходят подряд и залипания не создают */
   const hold = {
-    onPointerEnter: () => (paused.current = true),
-    onPointerLeave: () => (paused.current = false),
-    onFocus: () => (paused.current = true),
-    onBlur: () => (paused.current = false),
+    onPointerEnter: (e: React.PointerEvent) => {
+      if (e.pointerType === 'mouse') setPaused(true)
+    },
+    onPointerLeave: (e: React.PointerEvent) => {
+      if (e.pointerType === 'mouse') setPaused(false)
+    },
   }
 
   const word = pad(words[idx], len)

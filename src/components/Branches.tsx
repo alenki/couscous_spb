@@ -26,13 +26,29 @@ function PhoneGlyph() {
   )
 }
 
+function StarGlyph() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+      <path
+        d="M7 1.4 L8.75 5.2 L12.8 5.7 L9.8 8.5 L10.6 12.6 L7 10.55 L3.4 12.6 L4.2 8.5 L1.2 5.7 L5.25 5.2 Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+/** Билеты лежат врассыпную: свой наклон на карточку и на штамп. */
+const TILT = [-1.2, 1.2, -0.8]
+const STAMP_TILT = [-8, 6, -5]
+
 function Pass({ branch, index }: { branch: Branch; index: number }) {
   const { t } = useLang()
+  const tilt = TILT[index % TILT.length]
   return (
     <m.article
       className="pass"
-      initial={{ opacity: 0, y: 22, rotate: index === 0 ? -1.2 : 1.2 }}
-      whileInView={{ opacity: 1, y: 0, rotate: index === 0 ? -0.6 : 0.6 }}
+      initial={{ opacity: 0, y: 22, rotate: tilt }}
+      whileInView={{ opacity: 1, y: 0, rotate: tilt / 2 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: index * 0.12 }}
     >
@@ -50,19 +66,21 @@ function Pass({ branch, index }: { branch: Branch; index: number }) {
           </span>
           <a className="pass__row pass__tel" href={branch.phoneHref}>
             <PhoneGlyph />
-            {branch.phone}
+            <span>{branch.phone}</span>
           </a>
           <span className="pass__row">
-            {t(branch.rating)}★ · {t(branch.ratingsCount)}
+            <StarGlyph />
+            <span className="visually-hidden">{t(UI.ratingLabel)}: </span>
+            {t(branch.rating)} · {t(branch.ratingsCount)}
           </span>
         </div>
         <a className="pass__route font-mono" href={branch.yandexUrl} target="_blank" rel="noopener noreferrer">
-          {t(UI.routeCta)} →
+          <span>{t(UI.routeCta)}</span>
+          <span aria-hidden="true">→</span>
         </a>
       </div>
       <div className="pass__stub">
-        <img src={branch.icon} alt={t(branch.iconAlt)} width="72" height="72" loading="lazy" />
-        <Stamp tone="red" rotate={index === 0 ? -8 : 6} className="pass__award">
+        <Stamp tone="red" rotate={STAMP_TILT[index % STAMP_TILT.length]} className="pass__award">
           {t(AWARD)}
         </Stamp>
       </div>

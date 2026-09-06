@@ -5,6 +5,20 @@
  * Английская сторона — только перевод русской, никогда не новые факты.
  * Ничего не выдумывать. Непроверенное помечать PLACEHOLDER.
  * JSON-LD в index.html держать в согласии с этим файлом.
+ *
+ * 2026-08-03 — сверка всех трёх карточек по сырому HTML Яндекс Карт (schema.org-мета
+ * и JSON состояния страницы, curl, без рендера):
+ *  - сеть «Кус Кус» id 78954622395, "quantityInCity": 3 — ровно три точки:
+ *    26524829091 (Кропоткина), 203444001790 (Социалистическая),
+ *    122809620395 (Ульяны Громовой). Сеть в 2ГИС подтверждает состав.
+ *    Вывод v1 «Ульяны Громовой 3 — другой бизнес» опровергнут: скорее всего он
+ *    опирался на устаревшую карточку «Бистро / Fast food» по тому же адресу.
+ *  - Кропоткина: openingHours Mo–Su 07:00-00:00 (публиковали 11:00 — ошибка;
+ *    07:00 подтверждает и шапка телеграм-канала), ratingCount 2013, reviewCount 1223.
+ *  - Социалистическая: Mo–Su 11:00-23:00, ratingCount 640, reviewCount 416.
+ *  - Ульяны Громовой: Mo–Su 11:00-23:00, ratingCount 121, reviewCount 76.
+ *    Часы совпали с 2ГИС, но у карточки has_verified_owner: false — это данные
+ *    справочника, а не подтверждение владельца.
  */
 
 export type L<T = string> = { ru: T; en: T }
@@ -150,13 +164,16 @@ export const DRINKS_NOTE: L = {
 export const MENU_SOURCE_NOTE: L = {
   ru:
     'Меню и цены — точка на Социалистической, 15 (Яндекс Карты, август 2026). ' +
-    'На Кропоткина, 19/8 меню и цены немного отличаются.',
+    'На Кропоткина, 19/8 и Ульяны Громовой, 3 меню и цены отличаются.',
   en:
     'Menu and prices — Sotsialisticheskaya St., 15 (Yandex Maps, August 2026). ' +
-    'At Kropotkina St., 19/8 the menu and prices differ slightly.',
+    'At Kropotkina St., 19/8 and Ulyany Gromovoy Lane, 3 the menu and prices differ.',
 }
 
-/** Единый рейтинг обеих точек (Яндекс): локализуем только запятую/точку. */
+/**
+ * Общий рейтинг двух старших точек (Яндекс): локализуем только запятую/точку.
+ * У точки на Ульяны Громовой рейтинг свой — 4,9, он задан прямо в её карточке.
+ */
 export const RATING: L = { ru: '5,0', en: '5.0' }
 
 export interface Branch {
@@ -171,8 +188,6 @@ export interface Branch {
   rating: L
   ratingsCount: L
   yandexUrl: string
-  icon: string
-  iconAlt: L
 }
 
 export const BRANCHES: Branch[] = [
@@ -183,15 +198,10 @@ export const BRANCHES: Branch[] = [
     addressNote: { ru: 'угол Саблинской улицы', en: 'corner of Sablinskaya st.' },
     phone: '+7 996 772-20-26',
     phoneHref: 'tel:+79967722026',
-    hours: '11:00–00:00',
+    hours: '07:00–00:00',
     rating: RATING,
-    ratingsCount: { ru: '2 011 оценок', en: '2,011 ratings' },
+    ratingsCount: { ru: '2 013 оценок', en: '2,013 ratings' },
     yandexUrl: 'https://yandex.ru/maps/org/cous_cous/26524829091/',
-    icon: '/chalk-pin.png',
-    iconAlt: {
-      ru: 'Меловой рисунок: оранжевая метка на карте',
-      en: 'Chalk drawing: an orange map pin',
-    },
   },
   {
     terminal: { ru: 'Терминал 2', en: 'Terminal 2' },
@@ -206,13 +216,24 @@ export const BRANCHES: Branch[] = [
     phoneHref: 'tel:+79117863026',
     hours: '11:00–23:00',
     rating: RATING,
-    ratingsCount: { ru: '639 оценок', en: '639 ratings' },
+    ratingsCount: { ru: '640 оценок', en: '640 ratings' },
     yandexUrl: 'https://yandex.ru/maps/org/cous_cous/203444001790/',
-    icon: '/chalk-store.png',
-    iconAlt: {
-      ru: 'Меловой рисунок: лавка с полосатым навесом',
-      en: 'Chalk drawing: a small shop with a striped awning',
+  },
+  {
+    terminal: { ru: 'Терминал 3', en: 'Terminal 3' },
+    area: { ru: 'Центр', en: 'City centre' },
+    address: { ru: 'пер. Ульяны Громовой, 3', en: 'Ulyany Gromovoy Lane, 3' },
+    addressNote: { ru: '1 этаж, вход с улицы', en: 'ground floor, street entrance' },
+    metro: {
+      ru: 'м. Площадь Восстания · Маяковская · Владимирская',
+      en: 'Metro: Ploshchad Vosstaniya · Mayakovskaya · Vladimirskaya',
     },
+    phone: '+7 966 758-47-01',
+    phoneHref: 'tel:+79667584701',
+    hours: '11:00–23:00',
+    rating: { ru: '4,9', en: '4.9' },
+    ratingsCount: { ru: '121 оценка', en: '121 ratings' },
+    yandexUrl: 'https://yandex.ru/maps/org/cous_cous/122809620395/',
   },
 ]
 
@@ -222,10 +243,10 @@ export const BRANCHES_SOURCE_NOTE: L = {
 }
 
 /** Проценты — вкладка отзывов точки на Социалистической (Яндекс, 2026-08-02). */
-export const REVIEW_STATS: { label: L; value: string }[] = [
-  { label: { ru: 'персонал', en: 'staff' }, value: '93%' },
-  { label: { ru: 'атмосфера', en: 'atmosphere' }, value: '100%' },
-  { label: { ru: 'кухня', en: 'food' }, value: '90%' },
+export const REVIEW_STATS: { label: L; pct: number }[] = [
+  { label: { ru: 'персонал', en: 'staff' }, pct: 93 },
+  { label: { ru: 'атмосфера', en: 'atmosphere' }, pct: 100 },
+  { label: { ru: 'кухня', en: 'food' }, pct: 90 },
 ]
 
 export const REVIEW_STATS_NOTE: L = {
@@ -243,10 +264,8 @@ export const AWARD: L = { ru: 'Хорошее место 2026', en: 'Good Place 
 /** Города-направления = реальные названия шаурмы в меню. */
 export const DESTINATIONS: L<string[]> = {
   ru: ['АЛЖИР', 'ПАРИЖ', 'АММАН', 'ВАТИКАН', 'ПЕТЕРБУРГ'],
-  en: ['ALGIERS', 'PARIS', 'AMMAN', 'VATICAN', 'PETERSBURG'],
+  en: ['ALGERIA', 'PARIS', 'AMMAN', 'VATICAN', 'PETERSBURG'],
 }
-
-export const TOTAL_RATINGS: L = { ru: '2 650+ оценок', en: '2,650+ ratings' } // 2 011 + 639, обе точки
 
 /** Все строки интерфейса. */
 export const UI = {
@@ -257,21 +276,15 @@ export const UI = {
   langSwitch: { ru: 'Switch to English', en: 'Переключить на русский' },
   skip: { ru: 'Перейти к меню', en: 'Skip to menu' },
 
-  ribbon: {
-    ru: 'COUSCOUS · ALGERIAN KITCHEN · САНКТ-ПЕТЕРБУРГ',
-    en: 'COUSCOUS · ALGERIAN KITCHEN · SAINT PETERSBURG',
-  },
-  heroTitleA: { ru: 'Ваш билет', en: 'Your ticket' },
-  heroTitleB: { ru: 'в мир кухни', en: 'to the world of cuisine' },
+  /* Одна строка: на десктопе заголовок растягивается на всю ширину полосы
+     (см. --title-fit в styles.css — коэффициенты пересчитывать при правке текста). */
+  heroTitle: { ru: 'Ваш билет в мир кухни', en: 'Your ticket to the world of cuisine' },
   departureLabel: { ru: 'отправление', en: 'departure' },
   destinationLabel: { ru: 'направление', en: 'destination' },
   fromCity: { ru: 'САНКТ-ПЕТЕРБУРГ', en: 'SAINT PETERSBURG' },
-  stampHalal: { ru: 'ХАЛЯЛЬ', en: 'HALAL' },
   ctaMenu: { ru: 'Меню', en: 'Menu' },
   ctaRoute: { ru: 'Как добраться', en: 'How to find us' },
   boardingHint: { ru: 'листайте вниз — посадка началась', en: 'scroll down — now boarding' },
-
-  tear: { ru: 'линия отрыва', en: 'tear here' },
 
   menuTitle: { ru: 'Меню', en: 'Menu' },
   drinksTitle: { ru: 'Напитки', en: 'Drinks' },
@@ -293,21 +306,22 @@ export const UI = {
     ru: 'Зал: голубой потолок с мандалой, лампы Эдисона, деревянные столы',
     en: 'The hall: sky-blue ceiling with a mandala, Edison bulbs, wooden tables',
   },
+  reviewsLead: { ru: 'Что хвалят в отзывах', en: 'What the reviews praise' },
 
   branchesTitle: { ru: 'Куда прибыть', en: 'Where to arrive' },
   daily: { ru: 'ежедневно', en: 'daily' },
+  ratingLabel: { ru: 'Рейтинг', en: 'Rating' },
   routeCta: { ru: 'Маршрут в Яндекс Картах', en: 'Route in Yandex Maps' },
 
   footerSub: {
     ru: 'ALGERIAN KITCHEN · САНКТ-ПЕТЕРБУРГ',
     en: 'ALGERIAN KITCHEN · SAINT PETERSBURG',
   },
+  /* Без времени: точки открываются по-разному (07:00 на Кропоткина, 11:00 на двух других). */
   footerFine: {
-    ru: 'Билет действителен ежедневно с 11:00',
-    en: 'Ticket valid daily from 11:00',
+    ru: 'Билет действителен ежедневно',
+    en: 'Ticket valid daily',
   },
-  footerData: {
-    ru: 'Данные: Яндекс Карты, август 2026',
-    en: 'Data: Yandex Maps, August 2026',
-  },
+  /* Подпись разработчика. Слово «Lumako» — часть вёрстки, не переводится. */
+  madeBy: { ru: 'Сделано в', en: 'Made by' },
 } satisfies Record<string, L>

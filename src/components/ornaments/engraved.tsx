@@ -6,119 +6,164 @@ import type { CSSProperties, ReactNode } from 'react'
 
 const S = 'var(--sepia)'
 
-/** Два повёрнутых квадрата = восьмиконечная звезда зелиджа (хатам). */
-function Star8({ cx, cy, r, fill }: { cx: number; cy: number; r: number; fill: string }) {
-  const s = r * 1.35
+/* ---------- гравюрный фриз: Петербург → Алжир ---------- */
+
+const P = {
+  fill: 'none',
+  stroke: S,
+  strokeWidth: 1.6,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+  pathLength: 1,
+  className: 'frieze-path',
+}
+/* пунктирные линии рисуем БЕЗ frieze-path: его CSS-штрих переопределил бы точки.
+   Свой класс нужен, чтобы узкая полоса могла считать пунктир в экранных
+   пикселях (vector-effect в styles.css) — иначе точки мельчали вместе с кадром. */
+const DOTTED = {
+  fill: 'none',
+  stroke: S,
+  strokeLinecap: 'round' as const,
+  className: 'frieze-dots',
+}
+
+/* Все постройки нарисованы в координатах широкой панорамы (viewBox 1200×150).
+   Узкая полоса берёт те же фигуры и только переставляет их: <At dx> сдвигает
+   блок по горизонтали, так что путей всего один набор — правка купола видна
+   в обеих компоновках. */
+function At({ dx, children }: { dx: number; children: ReactNode }) {
+  return <g transform={`translate(${dx} 0)`}>{children}</g>
+}
+
+/** Классический купол (70…140). */
+const Dome = () => (
+  <>
+    <path d="M70 130 V96 H140 V130" {...P} />
+    <path d="M78 96 V78 A27 27 0 0 1 132 78 V96" {...P} />
+    <path d="M100 60 A6 6 0 0 1 110 60 L110 78 M100 78 L100 60 M105 54 V47 M101 50 H109" {...P} />
+    <path d="M84 112 V96 M97 112 V96 M113 112 V96 M126 112 V96" {...P} />
+  </>
+)
+
+/** Петропавловский шпиль (156…214). */
+const Spire = () => (
+  <>
+    <path d="M156 130 V84 H214 V130" {...P} />
+    <path d="M162 84 V70 H208 V84" {...P} />
+    <path d="M172 70 L185 46 L198 70" {...P} />
+    <path d="M185 46 L185 12 M181 20 L189 20 M185 6 L188 11 L185 16 L182 11 Z" {...P} />
+    <path d="M168 112 V96 H178 V112 M192 112 V96 H202 V112" {...P} />
+  </>
+)
+
+/** Набережная-домик (232…290). */
+const House = () => (
+  <path d="M232 130 V102 H290 V130 M240 112 H250 M258 112 H268 M276 112 H282" {...P} />
+)
+
+/** Макам Эшахид: три лепестка (930…1030). */
+const Monument = () => (
+  <>
+    <path d="M930 130 C 942 92 962 56 980 30 C 972 68 966 100 964 130" {...P} />
+    <path d="M1030 130 C 1018 92 998 56 980 30 C 988 68 994 100 996 130" {...P} />
+    <path d="M968 130 C 972 96 976 62 980 34 C 984 62 988 96 992 130" {...P} />
+    <path d="M980 30 V16 M976 20 H984" {...P} />
+  </>
+)
+
+/** Минарет (1060…1096). */
+const Minaret = () => (
+  <>
+    <path d="M1064 130 V58 H1092 V130" {...P} />
+    <path d="M1060 58 H1096 M1064 74 H1092 M1070 58 V46 A8 8 0 0 1 1086 46 V58" {...P} />
+    <path d="M1078 40 V32 M1074 36 H1082 M1070 112 V96 H1086 V112" {...P} />
+  </>
+)
+
+/** Высокая пальма (874…924). */
+const PalmTall = () => (
+  <>
+    <path d="M906 130 C 908 110 906 92 900 78" {...P} />
+    <path
+      d="M900 78 q-16 -10 -26 -2 q14 -2 26 2 M900 78 q-4 -18 -16 -22 q10 8 16 22 M900 78 q4 -18 14 -22 q-8 10 -14 22 M900 78 q16 -8 24 0 q-12 -4 -24 0"
+      {...P}
+    />
+  </>
+)
+
+/** Молодая пальма (1112…1148). */
+const PalmShort = () => (
+  <>
+    <path d="M1128 130 C 1126 112 1128 96 1134 84" {...P} />
+    <path
+      d="M1134 84 q-14 -8 -22 -2 q12 -2 22 2 M1134 84 q-2 -16 -12 -20 q8 8 12 20 M1134 84 q6 -14 14 -16 q-8 6 -14 16"
+      {...P}
+    />
+  </>
+)
+
+/**
+ * Маршрут: пунктирная дуга от x0 к x1. Дуга — квадратичная Безье с вершиной
+ * ровно на `lift` выше основания `base`, поэтому обе компоновки строятся одной
+ * формулой, а не подобранными на глаз контрольными точками.
+ */
+function Route({ x0, x1, base, lift }: { x0: number; x1: number; base: number; lift: number }) {
+  const mid = (x0 + x1) / 2
   return (
-    <g fill={fill} stroke="var(--parchment-hi)" strokeWidth={1.6}>
-      <rect x={cx - s / 2} y={cy - s / 2} width={s} height={s} />
-      <rect
-        x={cx - s / 2}
-        y={cy - s / 2}
-        width={s}
-        height={s}
-        transform={`rotate(45 ${cx} ${cy})`}
-      />
-    </g>
+    <path
+      d={`M${x0} ${base} Q ${mid} ${base - 2 * lift} ${x1} ${base}`}
+      {...DOTTED}
+      strokeWidth={3}
+      strokeDasharray="0.1 13"
+    />
   )
 }
 
-/** Мозаичный угол из звёзд — приглушённые цвета флаера. */
-export function ZelligeCorner({ flip = '' }: { flip?: '' | 'x' | 'y' | 'xy' }) {
-  const t =
-    flip === 'x' ? 'scale(-1,1)' : flip === 'y' ? 'scale(1,-1)' : flip === 'xy' ? 'scale(-1,-1)' : ''
-  return (
-    <svg
-      className="zellige"
-      viewBox="0 0 170 170"
-      width="170"
-      height="170"
-      aria-hidden="true"
-      style={{ transform: t ? `${t}` : undefined }}
-    >
-      <g opacity="0.6">
-        <Star8 cx={8} cy={8} r={46} fill="#b8432f" />
-        <Star8 cx={76} cy={4} r={24} fill="#c99b33" />
-        <Star8 cx={4} cy={76} r={24} fill="#5f8fa3" />
-        <Star8 cx={58} cy={58} r={20} fill="#6d8f4e" />
-        <Star8 cx={118} cy={14} r={16} fill="#5f8fa3" />
-        <Star8 cx={14} cy={118} r={16} fill="#c99b33" />
-        <Star8 cx={96} cy={52} r={12} fill="#b8432f" />
-        <Star8 cx={52} cy={96} r={12} fill="#b8432f" />
-        <Star8 cx={130} cy={52} r={8} fill="#6d8f4e" />
-        <Star8 cx={52} cy={130} r={8} fill="#6d8f4e" />
-        <Star8 cx={92} cy={92} r={8} fill="#c99b33" />
-      </g>
-    </svg>
-  )
-}
-
-/** Гравюрный фриз: Петербург ↔ Алжир, пунктирный маршрут, птицы. */
+/**
+ * Гравюрный фриз: Петербург → Алжир, между ними пунктирный маршрут.
+ *
+ * Две компоновки, а не одна с кадрированием. Прежде узкий экран получал ту же
+ * панораму 8:1, прижатую вправо через preserveAspectRatio="slice": окно кадра
+ * считалось из ширины и высоты сразу, поэтому на 500–560px рез приходился
+ * ровно по Петербургу — из-за левого края торчала половина купола или шпиля.
+ * Теперь широкая полоса никогда не режется, а узкая — отдельная компоновка тех
+ * же фигур: город отправления и город прибытия сходятся ближе, маршрут между
+ * ними короче, пустая середина исчезает. Обе полосы лежат в разметке, показ
+ * переключает CSS (см. .frieze--wide / .frieze--narrow).
+ */
 export function SkylineFrieze() {
-  const p = {
-    fill: 'none',
-    stroke: S,
-    strokeWidth: 1.6,
-    strokeLinecap: 'round' as const,
-    strokeLinejoin: 'round' as const,
-    pathLength: 1,
-    className: 'frieze-path',
-  }
-  /* пунктирные линии рисуем БЕЗ frieze-path: его CSS-штрих переопределил бы точки */
-  const dotted = {
-    fill: 'none',
-    stroke: S,
-    strokeLinecap: 'round' as const,
-  }
   return (
-    <svg
-      className="frieze"
-      viewBox="0 0 1200 150"
-      preserveAspectRatio="xMidYMax meet"
-      aria-hidden="true"
-    >
-      {/* земля */}
-      <path d="M40 130 H1160" {...dotted} strokeWidth={1.6} strokeDasharray="1 7" />
+    <>
+      <svg className="frieze frieze--wide" viewBox="0 0 1200 150" aria-hidden="true">
+        <path d="M40 130 H1160" {...DOTTED} strokeWidth={1.6} strokeDasharray="1 7" />
+        <Dome />
+        <Spire />
+        <House />
+        <Route x0={320} x1={880} base={84} lift={39} />
+        <PalmTall />
+        <Monument />
+        <Minaret />
+        <PalmShort />
+      </svg>
 
-      {/* — Петербург — */}
-      {/* классический купол */}
-      <path d="M70 130 V96 H140 V130" {...p} />
-      <path d="M78 96 V78 A27 27 0 0 1 132 78 V96" {...p} />
-      <path d="M100 60 A6 6 0 0 1 110 60 L110 78 M100 78 L100 60 M105 54 V47 M101 50 H109" {...p} />
-      <path d="M84 112 V96 M97 112 V96 M113 112 V96 M126 112 V96" {...p} />
-      {/* Петропавловский шпиль */}
-      <path d="M156 130 V84 H214 V130" {...p} />
-      <path d="M162 84 V70 H208 V84" {...p} />
-      <path d="M172 70 L185 46 L198 70" {...p} />
-      <path d="M185 46 L185 12 M181 20 L189 20 M185 6 L188 11 L185 16 L182 11 Z" {...p} />
-      <path d="M168 112 V96 H178 V112 M192 112 V96 H202 V112" {...p} />
-      {/* набережная-домик */}
-      <path d="M232 130 V102 H290 V130 M240 112 H250 M258 112 H268 M276 112 H282" {...p} />
-
-      {/* маршрут */}
-      <path d="M320 84 Q 600 6 880 84" {...dotted} strokeWidth={3} strokeDasharray="0.1 13" />
-      {/* роза ветров в зените */}
-      <path d="M600 20 L605 31 L616 34 L605 37 L600 48 L595 37 L584 34 L595 31 Z" {...p} />
-      {/* птицы с флаера */}
-      <path d="M462 56 q8 -9 16 0 q8 -9 16 0" {...p} strokeWidth={2} />
-      <path d="M702 50 q7 -8 14 0 q7 -8 14 0" {...p} strokeWidth={2} />
-
-      {/* — Алжир — */}
-      {/* Макам Эшахид: три лепестка */}
-      <path d="M930 130 C 942 92 962 56 980 30 C 972 68 966 100 964 130" {...p} />
-      <path d="M1030 130 C 1018 92 998 56 980 30 C 988 68 994 100 996 130" {...p} />
-      <path d="M968 130 C 972 96 976 62 980 34 C 984 62 988 96 992 130" {...p} />
-      <path d="M980 30 V16 M976 20 H984" {...p} />
-      {/* минарет */}
-      <path d="M1064 130 V58 H1092 V130" {...p} />
-      <path d="M1060 58 H1096 M1064 74 H1092 M1070 58 V46 A8 8 0 0 1 1086 46 V58" {...p} />
-      <path d="M1078 40 V32 M1074 36 H1082 M1070 112 V96 H1086 V112" {...p} />
-      {/* пальмы */}
-      <path d="M906 130 C 908 110 906 92 900 78" {...p} />
-      <path d="M900 78 q-16 -10 -26 -2 q14 -2 26 2 M900 78 q-4 -18 -16 -22 q10 8 16 22 M900 78 q4 -18 14 -22 q-8 10 -14 22 M900 78 q16 -8 24 0 q-12 -4 -24 0" {...p} />
-      <path d="M1128 130 C 1126 112 1128 96 1134 84" {...p} />
-      <path d="M1134 84 q-14 -8 -22 -2 q12 -2 22 2 M1134 84 q-2 -16 -12 -20 q8 8 12 20 M1134 84 q6 -14 14 -16 q-8 6 -14 16" {...p} />
-    </svg>
+      {/* 710×150 вместо 1200×150: те же постройки в кадре вдвое короче, поэтому
+          на телефоне полоса выходит вдвое выше прежних 48px и штрих читается.
+          Набережная-домик и молодая пальма в узкий кадр не идут: без них между
+          городами остаётся место на дугу, а не на две тесные гроздья у краёв. */}
+      <svg className="frieze frieze--narrow" viewBox="0 0 710 150" aria-hidden="true">
+        <path d="M22 130 H686" {...DOTTED} strokeWidth={1.6} strokeDasharray="1 7" />
+        <At dx={-45}>
+          <Dome />
+          <Spire />
+        </At>
+        <Route x0={194} x1={436} base={88} lift={40} />
+        <At dx={-414}>
+          <PalmTall />
+          <Monument />
+          <Minaret />
+        </At>
+      </svg>
+    </>
   )
 }
 
