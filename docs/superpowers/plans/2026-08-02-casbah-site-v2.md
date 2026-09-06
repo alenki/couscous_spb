@@ -1,4 +1,4 @@
-# Cous Cous SPb Site v2 Implementation Plan
+# Casbah SPb Site v2 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Facts ONLY from `src/data.ts`; RU side copied verbatim from `git show 799ddba:src/data.ts`; EN is faithful translation; nothing invented (spec «Verified facts»).
-- ~~Exactly TWO branches; never add пер. Ульяны Громовой 3.~~ **WRONG — corrected 2026-08-03: there are THREE branches and пер. Ульяны Громовой 3 is one of them (Yandex chain «Кус Кус» 78954622395, `quantityInCity: 3`). See the correction at the end of the v2 design spec.**
+- ~~Exactly TWO branches; never add пер. Ульяны Громовой 3.~~ **WRONG — corrected 2026-08-03: there are THREE branches and пер. Ульяны Громовой 3 is one of them (Yandex chain «Касба» 78954622395, `quantityInCity: 3`). See the correction at the end of the v2 design spec.**
 - Palette hexes verbatim from spec: parchment `#EAD9AE`/`#F2E6C5`, ink `#191307`, sepia `#6B5638`, board `#16130F`, chalk `#F2EFE6`, red `#E2543F`, yellow `#E9B94D`, green `#7FA85C`, blue `#86B9CC`, wood `#8A5A33`/`#6E4526`.
 - Fonts self-hosted via @fontsource only (no Google CDN); subsets cyrillic+latin; display Oranienbaum, body PT Serif, mono PT Mono, chalk Neucha.
 - Ornament: inline SVG only; no stock icons, no emoji in UI, no icon fonts.
@@ -48,7 +48,7 @@ src/App.tsx                   — composition
 
 ### Task 1: Scaffold, assets, fonts
 
-**Files:** Create `package.json`, `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`, `vite.config.ts`, `index.html` (minimal for now), `src/main.tsx`, `src/styles.css` (empty shell), `src/App.tsx` (placeholder `<h1>COUSCOUS</h1>`). Restore binaries.
+**Files:** Create `package.json`, `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`, `vite.config.ts`, `index.html` (minimal for now), `src/main.tsx`, `src/styles.css` (empty shell), `src/App.tsx` (placeholder `<h1>CASBAH</h1>`). Restore binaries.
 
 **Interfaces — Produces:** working `npm run dev`/`build`; photos at `/interior-counter.jpg`, `/interior-hall.jpg`, `/chalk-pin.png`, `/chalk-store.png`, `/logo-crop.png`.
 
@@ -97,7 +97,7 @@ export const SOCIAL: { label: string; handle: string; url: string }[];
 export const AWARD: L; export const DESTINATIONS: L<string[]>;
 export const UI: Record<string, L> // all section headings, CTAs, microcopy, footer fine print
 // lang.tsx:
-export function LangProvider({children}): JSX.Element // localStorage 'couscous-lang', default 'ru', sets document.documentElement.lang
+export function LangProvider({children}): JSX.Element // localStorage 'casbah-lang', default 'ru', sets document.documentElement.lang
 export function useLang(): { lang: 'ru'|'en'; toggle(): void; t<T>(l: L<T>): T }
 ```
 
@@ -186,7 +186,7 @@ test('telegram before instagram', () => {
 
 **Files:** Create `src/components/Header.tsx`.
 
-**Interfaces — Consumes:** `useLang`, `KingMark`, `UI`. **Produces:** `<Header/>` absolute over hero: left `KingMark` + wordmark COUSCOUS (Oranienbaum, letterspaced) + «ALGERIAN KITCHEN» fine print; right: passport-stamp toggle — round dashed-border stamp reading the OTHER lang (`EN`/`RU`), on click rotates -8° with a thud (motion spring) and switches; `aria-pressed`, `aria-label` («Switch to English»/«Переключить на русский»); nav anchor links Меню · Адреса (PT Mono small caps).
+**Interfaces — Consumes:** `useLang`, `KingMark`, `UI`. **Produces:** `<Header/>` absolute over hero: left `KingMark` + wordmark CASBAH (Oranienbaum, letterspaced) + «ALGERIAN KITCHEN» fine print; right: passport-stamp toggle — round dashed-border stamp reading the OTHER lang (`EN`/`RU`), on click rotates -8° with a thud (motion spring) and switches; `aria-pressed`, `aria-label` («Switch to English»/«Переключить на русский»); nav anchor links Меню · Адреса (PT Mono small caps).
 
 - [ ] **Step 1:** Implement; **Step 2:** screenshot both lang states; **Step 3:** build, commit `feat: header with passport-stamp language toggle`.
 
@@ -230,7 +230,7 @@ test('telegram before instagram', () => {
 
 **Files:** Modify `index.html`; create `public/og.jpg` (from hero screenshot 1200×630); verify `public/robots.txt`.
 
-- [ ] **Step 1:** `index.html`: `lang="ru"`, title «Cous Cous — алжирская кухня и халяль-шаурма в Санкт-Петербурге», meta description (два адреса, 5,0★ на Яндекс Картах), theme-color `#EAD9AE`, OG/Twitter card tags → `/og.jpg`, icons, preload woff2 for Oranienbaum 400 + Neucha 400 (exact @fontsource file paths), JSON-LD: two `Restaurant` objects with address, geo omitted (not verified), telephone, openingHoursSpecification (Mo-Su 11:00-00:00 / 11:00-23:00), aggregateRating (5.0, ratingCount 2011 / 639), servesCuisine «Алжирская», acceptsReservations false omitted, sameAs [t.me, instagram, both yandex org urls], parentOrganization Couscous.
+- [ ] **Step 1:** `index.html`: `lang="ru"`, title «Casbah — алжирская кухня и халяль-шаурма в Санкт-Петербурге», meta description (два адреса, 5,0★ на Яндекс Картах), theme-color `#EAD9AE`, OG/Twitter card tags → `/og.jpg`, icons, preload woff2 for Oranienbaum 400 + Neucha 400 (exact @fontsource file paths), JSON-LD: two `Restaurant` objects with address, geo omitted (not verified), telephone, openingHoursSpecification (Mo-Su 11:00-00:00 / 11:00-23:00), aggregateRating (5.0, ratingCount 2011 / 639), servesCuisine «Алжирская», acceptsReservations false omitted, sameAs [t.me, instagram, both yandex org urls], parentOrganization Casbah.
 - [ ] **Step 2:** Playwright: screenshot hero at 1200×630, save as `public/og.jpg` (jpeg q85).
 - [ ] **Step 3:** `npm run build` + `npm run preview`; screenshot; commit `feat: seo meta, json-ld, og card`.
 
@@ -247,7 +247,7 @@ test('telegram before instagram', () => {
 - [ ] **Step 1:** Serve `dist` via `npm run preview`; capture fresh full-page screenshots (desktop+mobile, ru+en) to scratchpad.
 - [ ] **Step 2:** Run ultracode Workflow per spec QA gate: parallel reviewers — (a) design/AI-slop vs README aesthetics + HEP bar, (b) facts vs spec/data.ts (feed both), (c) a11y, (d) RU + EN typography/copy, (e) responsive/perf/code — each returns structured findings; adversarial verify each finding (refuter agents); fix confirmed findings; re-screenshot.
 - [ ] **Step 3:** Final `vitest` + `build`; commit `fix: confirmed QA findings`; final commit of dist is NOT committed (dist gitignored).
-- [ ] **Step 4:** Update memory files (couscous-spb-site: v2 shipped, concept, RU/EN; design-taste unchanged unless new signal). Send final summary + screenshots to user.
+- [ ] **Step 4:** Update memory files (casbah-spb-site: v2 shipped, concept, RU/EN; design-taste unchanged unless new signal). Send final summary + screenshots to user.
 
 ## Self-Review
 

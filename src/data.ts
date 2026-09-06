@@ -1,24 +1,22 @@
 /**
- * ЕДИНСТВЕННЫЙ источник фактов о кафе. Русская сторона перенесена дословно из
- * проверенных данных v1 (Яндекс Карты, организации 26524829091 и 203444001790,
- * получено 2026-08-02; флаер бренда; сверка с 2ГИС 2026-08-01).
- * Английская сторона — только перевод русской, никогда не новые факты.
- * Ничего не выдумывать. Непроверенное помечать PLACEHOLDER.
- * JSON-LD в index.html держать в согласии с этим файлом.
+ * ЕДИНСТВЕННЫЙ источник фактов о кафе.
  *
- * 2026-08-03 — сверка всех трёх карточек по сырому HTML Яндекс Карт (schema.org-мета
- * и JSON состояния страницы, curl, без рендера):
- *  - сеть «Кус Кус» id 78954622395, "quantityInCity": 3 — ровно три точки:
- *    26524829091 (Кропоткина), 203444001790 (Социалистическая),
- *    122809620395 (Ульяны Громовой). Сеть в 2ГИС подтверждает состав.
- *    Вывод v1 «Ульяны Громовой 3 — другой бизнес» опровергнут: скорее всего он
- *    опирался на устаревшую карточку «Бистро / Fast food» по тому же адресу.
- *  - Кропоткина: openingHours Mo–Su 07:00-00:00 (публиковали 11:00 — ошибка;
- *    07:00 подтверждает и шапка телеграм-канала), ratingCount 2013, reviewCount 1223.
- *  - Социалистическая: Mo–Su 11:00-23:00, ratingCount 640, reviewCount 416.
- *  - Ульяны Громовой: Mo–Su 11:00-23:00, ratingCount 121, reviewCount 76.
- *    Часы совпали с 2ГИС, но у карточки has_verified_owner: false — это данные
- *    справочника, а не подтверждение владельца.
+ * «Касба» — ВЫМЫШЛЕННЫЙ бренд. Всё, что могло бы указать на конкретное
+ * заведение, выдумано вместе с ним: адреса, телефоны, рейтинги и число оценок,
+ * ссылки на карты и соцсети. Улиц Звонарёва, Лоскутной и Стеклярусного переулка
+ * в Петербурге нет; у телефонов несуществующий индекс 000 — дозвониться по ним
+ * нельзя. Совпадения с реальными заведениями непреднамеренны.
+ *
+ * Настоящие здесь только город, станции метро, часы работы, состав меню и
+ * цены — ничто из этого не идентифицирует конкретный бизнес.
+ *
+ * Английская сторона — только перевод русской, никогда не новые факты.
+ * JSON-LD в index.html держать в согласии с этим файлом: адреса, телефоны и
+ * aggregateRating продублированы там.
+ *
+ * Если сайт пойдёт в продакшен под настоящим брендом — блоки aggregateRating
+ * либо заполнить подтверждёнными числами, либо убрать: размечать
+ * несуществующие отзывы через schema.org нельзя.
  */
 
 export type L<T = string> = { ru: T; en: T }
@@ -32,7 +30,7 @@ export interface Dish {
   weight: L
   price: number
   flag: FlagKind
-  /** Состав указывается ТОЛЬКО если он подтверждён (карточки Яндекса, Кропоткина). */
+  /** Состав есть только у трёх блюд — так задумано в макете, см. data.test.ts. */
   desc?: L
 }
 
@@ -41,7 +39,7 @@ export interface DishGroup {
   dishes: Dish[]
 }
 
-/** Меню точки на Социалистической, 15 — вкладка «Меню» на Яндекс Картах, 2026-08-02. */
+/** Меню точки на Лоскутной, 15. На двух других точках меню и цены отличаются. */
 export const MENU: DishGroup[] = [
   {
     title: { ru: 'Шаурма', en: 'Shawarma' },
@@ -163,18 +161,18 @@ export const DRINKS_NOTE: L = {
 
 export const MENU_SOURCE_NOTE: L = {
   ru:
-    'Меню и цены — точка на Социалистической, 15 (Яндекс Карты, август 2026). ' +
-    'На Кропоткина, 19/8 и Ульяны Громовой, 3 меню и цены отличаются.',
+    'Меню и цены — точка на Лоскутной, 15. ' +
+    'На Звонарёва, 19/8 и в Стеклярусном, 3 меню и цены отличаются.',
   en:
-    'Menu and prices — Sotsialisticheskaya St., 15 (Yandex Maps, August 2026). ' +
-    'At Kropotkina St., 19/8 and Ulyany Gromovoy Lane, 3 the menu and prices differ.',
+    'Menu and prices — Loskutnaya St., 15. ' +
+    'At Zvonaryova St., 19/8 and Steklyarusny Lane, 3 the menu and prices differ.',
 }
 
 /**
- * Общий рейтинг двух старших точек (Яндекс): локализуем только запятую/точку.
- * У точки на Ульяны Громовой рейтинг свой — 4,9, он задан прямо в её карточке.
+ * Общий рейтинг двух старших точек: локализуем только запятую/точку.
+ * У точки в Стеклярусном рейтинг свой — 4,7, он задан прямо в её карточке.
  */
-export const RATING: L = { ru: '5,0', en: '5.0' }
+export const RATING: L = { ru: '4,8', en: '4.8' }
 
 export interface Branch {
   terminal: L
@@ -194,72 +192,72 @@ export const BRANCHES: Branch[] = [
   {
     terminal: { ru: 'Терминал 1', en: 'Terminal 1' },
     area: { ru: 'Петроградская сторона', en: 'Petrogradskaya side' },
-    address: { ru: 'ул. Кропоткина, 19/8', en: 'Kropotkina St., 19/8' },
-    addressNote: { ru: 'угол Саблинской улицы', en: 'corner of Sablinskaya st.' },
-    phone: '+7 996 772-20-26',
-    phoneHref: 'tel:+79967722026',
+    address: { ru: 'ул. Звонарёва, 19/8', en: 'Zvonaryova St., 19/8' },
+    addressNote: { ru: 'угол Звонарёвского переулка', en: 'corner of Zvonaryovsky lane' },
+    phone: '+7 812 000-19-08',
+    phoneHref: 'tel:+78120001908',
     hours: '07:00–00:00',
     rating: RATING,
-    ratingsCount: { ru: '2 013 оценок', en: '2,013 ratings' },
-    yandexUrl: 'https://yandex.ru/maps/org/cous_cous/26524829091/',
+    ratingsCount: { ru: '1 284 оценки', en: '1,284 ratings' },
+    yandexUrl: 'https://yandex.ru/maps/org/casbah/10000000001/',
   },
   {
     terminal: { ru: 'Терминал 2', en: 'Terminal 2' },
     area: { ru: 'Центр', en: 'City centre' },
-    address: { ru: 'Социалистическая ул., 15', en: 'Sotsialisticheskaya St., 15' },
+    address: { ru: 'Лоскутная ул., 15', en: 'Loskutnaya St., 15' },
     addressNote: { ru: 'цокольный этаж', en: 'basement level' },
     metro: {
       ru: 'м. Звенигородская · Лиговский проспект · Владимирская',
       en: 'Metro: Zvenigorodskaya · Ligovsky Prospekt · Vladimirskaya',
     },
-    phone: '+7 911 786-30-26',
-    phoneHref: 'tel:+79117863026',
+    phone: '+7 812 000-24-51',
+    phoneHref: 'tel:+78120002451',
     hours: '11:00–23:00',
     rating: RATING,
-    ratingsCount: { ru: '640 оценок', en: '640 ratings' },
-    yandexUrl: 'https://yandex.ru/maps/org/cous_cous/203444001790/',
+    ratingsCount: { ru: '396 оценок', en: '396 ratings' },
+    yandexUrl: 'https://yandex.ru/maps/org/casbah/10000000002/',
   },
   {
     terminal: { ru: 'Терминал 3', en: 'Terminal 3' },
     area: { ru: 'Центр', en: 'City centre' },
-    address: { ru: 'пер. Ульяны Громовой, 3', en: 'Ulyany Gromovoy Lane, 3' },
+    address: { ru: 'Стеклярусный пер., 3', en: 'Steklyarusny Lane, 3' },
     addressNote: { ru: '1 этаж, вход с улицы', en: 'ground floor, street entrance' },
     metro: {
       ru: 'м. Площадь Восстания · Маяковская · Владимирская',
       en: 'Metro: Ploshchad Vosstaniya · Mayakovskaya · Vladimirskaya',
     },
-    phone: '+7 966 758-47-01',
-    phoneHref: 'tel:+79667584701',
+    phone: '+7 812 000-38-06',
+    phoneHref: 'tel:+78120003806',
     hours: '11:00–23:00',
-    rating: { ru: '4,9', en: '4.9' },
-    ratingsCount: { ru: '121 оценка', en: '121 ratings' },
-    yandexUrl: 'https://yandex.ru/maps/org/cous_cous/122809620395/',
+    rating: { ru: '4,7', en: '4.7' },
+    ratingsCount: { ru: '87 оценок', en: '87 ratings' },
+    yandexUrl: 'https://yandex.ru/maps/org/casbah/10000000003/',
   },
 ]
 
 export const BRANCHES_SOURCE_NOTE: L = {
-  ru: 'Часы и оценки — Яндекс Карты, август 2026.',
-  en: 'Hours and ratings — Yandex Maps, August 2026.',
+  ru: 'Часы и оценки — сентябрь 2026.',
+  en: 'Hours and ratings — September 2026.',
 }
 
-/** Проценты — вкладка отзывов точки на Социалистической (Яндекс, 2026-08-02). */
+/** Проценты — отзывы точки на Лоскутной. Как и рейтинги, выдуманы. */
 export const REVIEW_STATS: { label: L; pct: number }[] = [
-  { label: { ru: 'персонал', en: 'staff' }, pct: 93 },
-  { label: { ru: 'атмосфера', en: 'atmosphere' }, pct: 100 },
-  { label: { ru: 'кухня', en: 'food' }, pct: 90 },
+  { label: { ru: 'персонал', en: 'staff' }, pct: 91 },
+  { label: { ru: 'атмосфера', en: 'atmosphere' }, pct: 96 },
+  { label: { ru: 'кухня', en: 'food' }, pct: 88 },
 ]
 
 export const REVIEW_STATS_NOTE: L = {
-  ru: 'по 415 отзывам на Яндекс Картах (Социалистическая, 15)',
-  en: 'across 415 reviews on Yandex Maps (Sotsialisticheskaya St., 15)',
+  ru: 'по 248 отзывам гостей (Лоскутная, 15)',
+  en: 'across 248 guest reviews (Loskutnaya St., 15)',
 }
 
 export const SOCIAL = [
-  { label: 'Telegram', handle: '@coucousdz', url: 'https://t.me/coucousdz' },
-  { label: 'Instagram', handle: '@cafe_cous_cous', url: 'https://www.instagram.com/cafe_cous_cous/' },
+  { label: 'Telegram', handle: '@casbahdz', url: 'https://t.me/casbahdz' },
+  { label: 'Instagram', handle: '@cafe_casbah', url: 'https://www.instagram.com/cafe_casbah/' },
 ] as const
 
-export const AWARD: L = { ru: 'Хорошее место 2026', en: 'Good Place 2026' }
+export const AWARD: L = { ru: 'Выбор гостей 2026', en: "Guests' choice 2026" }
 
 /** Города-направления = реальные названия шаурмы в меню. */
 export const DESTINATIONS: L<string[]> = {
@@ -269,7 +267,7 @@ export const DESTINATIONS: L<string[]> = {
 
 /** Все строки интерфейса. */
 export const UI = {
-  brand: { ru: 'COUSCOUS', en: 'COUSCOUS' },
+  brand: { ru: 'CASBAH', en: 'CASBAH' },
   brandSub: { ru: 'ALGERIAN KITCHEN', en: 'ALGERIAN KITCHEN' },
   navMenu: { ru: 'Меню', en: 'Menu' },
   navBranches: { ru: 'Адреса', en: 'Find us' },
@@ -317,7 +315,7 @@ export const UI = {
     ru: 'ALGERIAN KITCHEN · САНКТ-ПЕТЕРБУРГ',
     en: 'ALGERIAN KITCHEN · SAINT PETERSBURG',
   },
-  /* Без времени: точки открываются по-разному (07:00 на Кропоткина, 11:00 на двух других). */
+  /* Без времени: точки открываются по-разному (07:00 на Звонарёва, 11:00 на двух других). */
   footerFine: {
     ru: 'Билет действителен ежедневно',
     en: 'Ticket valid daily',

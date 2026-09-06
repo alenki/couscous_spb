@@ -1,6 +1,6 @@
-# Cous Cous SPb — site v2 design («Билет → в зал»)
+# Casbah SPb — site v2 design («Билет → в зал»)
 
-Date: 2026-08-02. Supersedes 2026-08-02-couscous-site-design.md (v1, ticket-only
+Date: 2026-08-02. Supersedes 2026-08-02-casbah-site-design.md (v1, ticket-only
 parchment execution). User feedback driving v2: the cafe is **not luxury or
 minimalistic** — it is a warm, loud, vintage eatery; the site must carry the vibe
 of their actual room, at the creative level of hepvintageclub.it (Awwwards
@@ -19,7 +19,7 @@ Decisions made with the user:
 The site is a journey in two acts told with the cafe’s own two artifacts:
 
 - **Act 1 — the Ticket**: their parchment flyer world («Ваш билет в мир кухни
-  COUSCOUS», engraved Algiers/SPb landmarks, zellige corners, split-face king).
+  CASBAH», engraved Algiers/SPb landmarks, zellige corners, split-face king).
 - **Act 2 — the Room**: their actual interior — near-black chalkboard menu
   handwritten in colored chalk with hearts and country flags, pine planks,
   triangle bunting, Edison bulbs, sky-blue sculpted ceiling with navy disc and
@@ -38,7 +38,7 @@ Two signature devices, everything else quiet:
 ## Sections (single page)
 
 1. **Hero — the Ticket (parchment).** Grain + zellige 8-point-star corners
-   (muted flyer colors); split-face king logo; fine-print ribbon COUSCOUS ·
+   (muted flyer colors); split-face king logo; fine-print ribbon CASBAH ·
    ALGERIAN KITCHEN · САНКТ-ПЕТЕРБУРГ; display headline «Ваш билет в мир
    кухни»; split-flap line; stamp cluster thudding in (ХАЛЯЛЬ, 5,0★, «Хорошее
    место 2026»); engraved SPb↔Algiers skyline frieze with dotted route along
@@ -64,8 +64,8 @@ Two signature devices, everything else quiet:
    Лиговский пр. / Владимирская), «Хорошее место 2026» badges, Yandex route
    links. ~~EXACTLY TWO branches — Ульяны Громовой 3 is a different business.~~
    **WRONG — superseded 2026-08-03, see “Correction” at the end of this file.**
-6. **Footer — ink.** Split-face logo; Telegram FIRST (@coucousdz), Instagram
-   second (@cafe_cous_cous) — IG restricted in RU; ticket-conditions fine print
+6. **Footer — ink.** Split-face logo; Telegram FIRST (@casbahdz), Instagram
+   second (@cafe_casbah) — IG restricted in RU; ticket-conditions fine print
    «Билет действителен ежедневно с 11:00».
 
 ## Look
@@ -137,7 +137,7 @@ this spec asserted. Sources: raw HTML of all three Yandex org pages (schema.org 
 tags + page state JSON, via curl), cross-checked against 2GIS and the brand's Telegram.
 
 1. **There are three branches, not two.** Every org page carries
-   `"chain": {"id": "78954622395", "name": "Кус Кус", "quantityInCity": 3}`, and the
+   `"chain": {"id": "78954622395", "name": "Касба", "quantityInCity": 3}`, and the
    chain page lists exactly: Кропоткина 19/8 (`26524829091`), Социалистическая 15
    (`203444001790`), пер. Ульяны Громовой 3 (`122809620395`). 2GIS's chain agrees.
    The v2 claim that Ульяны Громовой 3 «is a different business» was most likely drawn

@@ -1,16 +1,16 @@
 import { expect, test } from 'vitest'
 import { BRANCHES, DESTINATIONS, DRINKS, MENU, SOCIAL, UI } from './data'
 
-// Сеть «Кус Кус» на Яндекс Картах (id 78954622395) — ровно три организации.
-// Прежний запрет на Ульяны Громовой снят 2026-08-03: адрес входит в ту же сеть.
+// Три точки вымышленной сети «Касба». Адреса выдуманы вместе с брендом —
+// тест держит их в согласии с JSON-LD в index.html.
 test('exactly the three verified branches', () => {
   expect(BRANCHES).toHaveLength(3)
   // адреса склеены неразрывными пробелами — сравниваем по обычным
   const plain = (s: string) => s.replace(/\u00a0/g, ' ')
   expect(BRANCHES.map((b) => plain(b.address.ru))).toEqual([
-    'ул. Кропоткина, 19/8',
-    'Социалистическая ул., 15',
-    'пер. Ульяны Громовой, 3',
+    'ул. Звонарёва, 19/8',
+    'Лоскутная ул., 15',
+    'Стеклярусный пер., 3',
   ])
   expect(new Set(BRANCHES.map((b) => b.yandexUrl)).size).toBe(3)
 })

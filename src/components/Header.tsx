@@ -45,7 +45,7 @@ export function Header() {
   const other = lang === 'ru' ? 'EN' : 'RU'
   return (
     <header className="header">
-      <a className="header__brand" href="#top" aria-label="Cous Cous">
+      <a className="header__brand" href="#top" aria-label="Casbah">
         <KingMark size={46} />
         <span className="header__word">
           <span className="header__name font-display">{t(UI.brand)}</span>

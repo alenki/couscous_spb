@@ -3,7 +3,7 @@ import type { L } from './data'
 
 type Lang = 'ru' | 'en'
 
-const KEY = 'couscous-lang'
+const KEY = 'casbah-lang'
 
 const LangContext = createContext<{ lang: Lang; toggle: () => void } | null>(null)
 

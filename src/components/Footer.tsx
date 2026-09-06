@@ -9,7 +9,7 @@ export function Footer() {
       <div className="wrap footer__inner">
         <div className="footer__brand">
           <KingMark size={52} />
-          <span className="footer__word font-display">COUSCOUS</span>
+          <span className="footer__word font-display">CASBAH</span>
           <span className="footer__sub font-mono">{t(UI.footerSub)}</span>
         </div>
         <ul className="footer__social font-mono">

@@ -189,7 +189,7 @@ export function Stamp({
   )
 }
 
-/** Логотип-король: настоящая картинка клиента в кольце. */
+/** Логотип: гравюра касбы с короной над цитаделью, в кольце. */
 export function KingMark({ size = 56 }: { size?: number }) {
   return (
     <span className="king" style={{ width: size, height: size }}>

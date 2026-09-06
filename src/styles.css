@@ -1,5 +1,5 @@
 /* ============================================================
-   COUSCOUS · Algerian Kitchen — design tokens & base
+   CASBAH · Algerian Kitchen — design tokens & base
    Act 1 (ticket): parchment + ink + sepia engraving
    Act 2 (the room): chalkboard + colored chalk + wood
    ============================================================ */
@@ -1539,7 +1539,7 @@ html[lang='en'] .hero__title {
    Горизонтальным он бывает ровно в одной полосе ширин — 560–859px, где
    карточки идут по одной в ряд. При 2-up (от 860) и 3-up (от 1180) карточка
    узкая, и корешок в 8,5rem съедал бы половину строки: на 860px под адрес
-   оставалось 183px, и «ул. Кропоткина, 19/8» ломался посреди названия. */
+   оставалось 183px, и «ул. Звонарёва, 19/8» ломался посреди названия. */
 .pass {
   display: flex;
   flex-direction: column;
