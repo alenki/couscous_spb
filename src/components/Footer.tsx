@@ -1,33 +1,45 @@
 import { useLang } from '../lang'
-import { SOCIAL, UI } from '../data'
-import { KingMark } from './ornaments/engraved'
+import { CAFE, SOCIAL, UI } from '../data'
+import { ArchMark } from './ornaments/damascene'
 
 export function Footer() {
   const { t } = useLang()
   return (
     <footer className="footer">
       <div className="wrap footer__inner">
-        <div className="footer__brand">
-          <KingMark size={52} />
-          <span className="footer__word font-display">CASBAH</span>
-          <span className="footer__sub font-mono">{t(UI.footerSub)}</span>
-        </div>
-        <ul className="footer__social font-mono">
+        <a className="footer__brand" href="#top">
+          <ArchMark size={54} />
+          <span className="footer__word">{CAFE.wordmark}</span>
+          <span className="footer__sub">{t(UI.footerSub)}</span>
+        </a>
+
+        <ul className="footer__social" role="list">
           {SOCIAL.map((s) => (
             <li key={s.label}>
               <a href={s.url} target="_blank" rel="noopener noreferrer">
-                {s.label} <span className="footer__handle">{s.handle}</span>
+                {s.label}
+                {s.handle && <span className="footer__handle num"> {s.handle}</span>}
               </a>
             </li>
           ))}
+          <li>
+            <a href={CAFE.phoneHref} className="num">
+              {CAFE.phone}
+            </a>
+          </li>
         </ul>
-        <div className="footer__fine font-mono">
-          <p>{t(UI.footerFine)}</p>
-        </div>
-        <p className="footer__made font-mono">
+
+        <p className="footer__fine">
+          {t(UI.daily)} <span className="num">{CAFE.hours.text}</span> · {t(CAFE.street)}
+        </p>
+
+        <p className="footer__made">
           {t(UI.madeBy)}{' '}
           <a className="lumako" href="https://lumako.ru" target="_blank" rel="noopener noreferrer">
-            Lumako<span className="lumako__dot" aria-hidden="true">.</span>
+            Lumako
+            <span className="lumako__dot" aria-hidden="true">
+              .
+            </span>
           </a>
         </p>
       </div>

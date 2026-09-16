@@ -1,79 +1,79 @@
 import { useEffect, useState } from 'react'
 import { m } from 'motion/react'
 import { useLang } from '../lang'
-import { UI } from '../data'
-import { KingMark } from './ornaments/engraved'
+import { CAFE, LANGS, UI, type Lang } from '../data'
+import { ArchMark } from './ornaments/damascene'
 
 /**
- * Плавающий переключатель языка для телефона.
+ * Переключатель языка на три значения.
  *
- * Шапка стоит absolute внутри героя и уезжает вместе с ним, а страница на 390px
- * высотой около 5800px. После первого экрана сменить язык было нечем — только
- * прокруткой до самого верха. На телефоне из шапки к тому же убраны ссылки,
- * так что штамп языка остаётся единственным управляющим элементом и должен
- * быть под рукой. Появляется, когда герой (#top) уходит из вида; пока скрыт —
- * вне порядка обхода, чтобы два одинаковых переключателя не существовали разом.
+ * Не `<select>` и не пара кнопок «туда-обратно»: с тремя языками циклическая
+ * кнопка заставляет угадывать, что будет следующим, а на арабском ещё и
+ * переворачивает страницу — цена ошибки высокая. Сегментированная группа
+ * показывает все три сразу и текущий выбор.
+ *
+ * Роль группы задана `role="group"` с общей подписью, состояние — `aria-pressed`:
+ * это кнопки-переключатели, а не ссылки и не радиогруппа формы.
  */
-export function FloatingLang() {
-  const { lang, toggle, t } = useLang()
-  const [shown, setShown] = useState(false)
-
-  useEffect(() => {
-    const top = document.getElementById('top')
-    if (!top || typeof IntersectionObserver === 'undefined') return
-    const io = new IntersectionObserver(([e]) => setShown(!e.isIntersecting), { threshold: 0 })
-    io.observe(top)
-    return () => io.disconnect()
-  }, [])
-
+function LangSwitch() {
+  const { lang, setLang, t } = useLang()
   return (
-    <button
-      type="button"
-      className={`lang-stamp lang-stamp--float font-mono${shown ? ' is-shown' : ''}`}
-      onClick={toggle}
-      aria-label={t(UI.langSwitch)}
-      aria-hidden={!shown}
-      tabIndex={shown ? 0 : -1}
-    >
-      {lang === 'ru' ? 'EN' : 'RU'}
-    </button>
+    <div className="langs" role="group" aria-label={t(UI.langLabel)}>
+      {LANGS.map((l) => {
+        const active = l.code === lang
+        return (
+          <button
+            key={l.code}
+            type="button"
+            className={`langs__btn${active ? ' is-active' : ''}`}
+            onClick={() => setLang(l.code as Lang)}
+            aria-pressed={active}
+            lang={l.code}
+          >
+            <span aria-hidden="true">{l.label}</span>
+            <span className="visually-hidden">{t(l.full)}</span>
+            {active && <m.span className="langs__pill" layoutId="lang-pill" aria-hidden="true" />}
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
 export function Header() {
-  const { lang, toggle, t } = useLang()
-  const other = lang === 'ru' ? 'EN' : 'RU'
+  const { t } = useLang()
+  const [stuck, setStuck] = useState(false)
+
+  /* Шапка липкая всю дорогу, но фон и тень получает только после ухода первого
+     экрана: на камне героя сплошная плашка обрезала бы арку. Наблюдаем за
+     часовым-пикселем, а не за событием прокрутки — без слушателя на scroll. */
+  useEffect(() => {
+    const sentinel = document.getElementById('top-sentinel')
+    if (!sentinel || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting), { threshold: 0 })
+    io.observe(sentinel)
+    return () => io.disconnect()
+  }, [])
+
   return (
-    <header className="header">
-      <a className="header__brand" href="#top" aria-label="Casbah">
-        <KingMark size={46} />
-        <span className="header__word">
-          <span className="header__name font-display">{t(UI.brand)}</span>
-          <span className="header__sub font-mono">{t(UI.brandSub)}</span>
-        </span>
-      </a>
-      <nav className="header__nav font-mono" aria-label={lang === 'ru' ? 'Разделы' : 'Sections'}>
-        <a href="#menu">{t(UI.navMenu)}</a>
-        <a href="#branches">{t(UI.navBranches)}</a>
-        <m.button
-          type="button"
-          className="lang-stamp font-mono"
-          onClick={toggle}
-          aria-label={t(UI.langSwitch)}
-          whileTap={{ scale: 0.9 }}
-        >
-          {/* key на внутреннем span: кнопка не перемонтируется — фокус не теряется */}
-          <m.span
-            key={lang}
-            style={{ display: 'grid', placeItems: 'center' }}
-            initial={{ scale: 1.35, rotate: -16, opacity: 0.6 }}
-            animate={{ scale: 1, rotate: -8, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 18 }}
-          >
-            {other}
-          </m.span>
-        </m.button>
-      </nav>
+    <header className={`header${stuck ? ' is-stuck' : ''}`}>
+      <div className="header__inner">
+        <a className="header__brand" href="#top" aria-label={`${CAFE.wordmark} — ${t(CAFE.tagline)}`}>
+          <ArchMark size={30} />
+          <span className="header__word">
+            <span className="header__name">{CAFE.wordmark}</span>
+            <span className="header__sub">{t(CAFE.tagline)}</span>
+          </span>
+        </a>
+
+        <nav className="header__nav" aria-label={t(UI.sections)}>
+          <a href="#menu">{t(UI.navMenu)}</a>
+          <a href="#room">{t(UI.navRoom)}</a>
+          <a href="#visit">{t(UI.navVisit)}</a>
+        </nav>
+
+        <LangSwitch />
+      </div>
     </header>
   )
 }

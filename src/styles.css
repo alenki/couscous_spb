@@ -1,1860 +1,1595 @@
 /* ============================================================
-   CASBAH · Algerian Kitchen — design tokens & base
-   Act 1 (ticket): parchment + ink + sepia engraving
-   Act 2 (the room): chalkboard + colored chalk + wood
+   ДАМАСК · кафе арабской кухни — токены и основа
+
+   Спуск с улицы в цоколь, пятью актами:
+     1  Улица   — известняк, арка из клиньев абляк, свет камарии
+     2  Двор    — кремовый лист меню, оливковые заголовки
+     3  Зал     — темнота с золотыми звёздами кессонов
+     4  Визит   — фирменный оливковый, единственный крупный цветовой блок
+     5  Подвал  — тёмная олива
+
+   Вся раскладка на логических свойствах (inline/block): на арабском документ
+   разворачивается через dir="rtl", и физические left/right его сломают.
    ============================================================ */
 
-/* Oranienbaum — вручную (не через @fontsource): стабильные пути в /fonts
-   позволяют preload в index.html; это шрифт LCP-заголовка. */
+/* Prata — вручную, не через @fontsource: стабильный путь в /fonts позволяет
+   preload в index.html, а это шрифт заголовка первого экрана (LCP). */
 @font-face {
-  font-family: 'Oranienbaum';
+  font-family: 'Prata';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/oranienbaum-cyrillic-400-normal.woff2') format('woff2');
+  src: url('/fonts/prata-cyrillic-400-normal.woff2') format('woff2');
   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 @font-face {
-  font-family: 'Oranienbaum';
+  font-family: 'Prata';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/oranienbaum-latin-400-normal.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('/fonts/prata-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Подменный шрифт для Oranienbaum на время загрузки (font-display: swap).
-   Заголовок героя от 720px набирается в одну строку кеглем, посчитанным ровно
-   под метрики Oranienbaum (--title-fit), запаса нет. Системная антиква шире:
-   Georgia — в 1,29 раза, и первый кадр обрезало по правому краю, молча, потому
-   что у .hero съедает overflow: hidden. size-adjust посажен по САМОЙ широкой
-   реальной системной антикве; на более узких строка окажется чуть меньше
-   нужного — это безобидно, обрезать её уже нечем. */
+/* Подменный шрифт на время загрузки Prata. Prata заметно шире Georgia на том
+   же кегле; без подгонки заголовок первого экрана прыгал по высоте строки в
+   момент подмены. Числа сняты с самой ходовой системной антиквы. */
 @font-face {
-  font-family: 'Oranienbaum Fallback';
-  src: local('Georgia'), local('Times New Roman'), local('Tinos'),
-    local('Liberation Serif'), local('Noto Serif'), local('Droid Serif');
-  size-adjust: 77%;
-  ascent-override: 90%;
-  descent-override: 22%;
+  font-family: 'Prata Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Tinos'), local('Liberation Serif'),
+    local('Noto Serif');
+  size-adjust: 106%;
+  ascent-override: 92%;
+  descent-override: 24%;
   line-gap-override: 0%;
 }
 
 :root {
   color-scheme: light;
 
-  /* Act 1 — parchment ticket */
-  --parchment: #ead9ae;
-  --parchment-hi: #f2e6c5;
-  --ink: #191307;
-  --sepia: #6b5638;
+  /* --- фирменные, сняты пипеткой с файла логотипа --- */
+  --olive: #6e8a3d; /* фон логотипа */
+  --olive-deep: #4a6128; /* тот же зелёный, притемнённый до AA под текст */
+  --olive-ink: #2f3f18;
+  /* Приглушённая краска для служебных подписей по камню. Прежде это была
+     та же краска под opacity 0.45–0.64 — на нижней кромке градиента героя
+     выходило 3,2:1 при норме 4,5:1. */
+  --ink-dim: #4e5638;
+  --cream: #f1f0e2; /* кремовый логотипа */
 
-  /* Act 2 — the room */
-  --board: #16130f;
-  --night: #100d09; /* подвал и фон документа — один тон */
-  --chalk: #f2efe6;
-  --chalk-dim: #b5af9f;
-  --chalk-red: #e2543f;
-  --chalk-yellow: #e9b94d;
-  --chalk-green: #7fa85c;
-  --chalk-blue: #86b9cc;
-  --wood: #8a5a33;
-  --wood-dark: #6e4526;
+  /* --- зал --- */
+  --stone: #e6dcc6; /* известняк арок */
+  --stone-dim: #d8cbae;
+  --oxblood: #6b2c2a; /* бычья кровь кессонного потолка */
+  --gold: #c9a227; /* золото звёзд: декор и крупный текст */
+  --gold-lt: #d9b54a; /* то же золото для текста по тёмному — 5,3:1 */
+  --night: #1a1412;
 
-  /* Подпись разработчика в подвале — фирменное золото Lumako, только точка */
+  /* --- витраж камарии: только стекло, текста не держит --- */
+  --glass-red: #d8272b;
+  --glass-red-dk: #a71b22;
+  --glass-cobalt: #1e63c8;
+  --glass-turquoise: #2bb3b0;
+  --glass-amber: #f0a31e;
+  --glass-white: #fdf6e4;
+  --lead: #2a1d14; /* свинцовая расстекловка */
+
+  /* Зелёный «открыто». Два значения, потому что одно не бывает читаемым и по
+     светлому камню, и по тёмному залу: светлый вариант на кремовом даёт 3,8:1,
+     тёмный на карточке визита — 2,4:1. Акты, у которых фон тёмный,
+     переопределяют --ok у себя. */
+  --ok: #27591c;
+
+  /* Точка в подписи разработчика — фирменное золото Lumako */
   --lume-gold: #d49a2e;
 
-  /* Ceiling (Atmosphere section only) */
-  --navy: #1e2a4a;
-  --sky: #7ec8e3;
-  --plaster: #c9a6a0;
+  /* --- набор --- */
+  --font-display: 'Prata', 'Prata Fallback', georgia, serif;
+  --font-body: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  /* Арабский: Amiri и Cairo приезжают динамически (lang.tsx). Пока их нет —
+     системный насх, а не подстановка латиницы с ломаной вязью. */
+  --font-ar-display: 'Amiri', 'Segoe UI', 'Geeza Pro', 'Noto Naskh Arabic', serif;
+  --font-ar-body: 'Cairo', 'Segoe UI', 'Geeza Pro', 'Noto Sans Arabic', sans-serif;
 
-  /* Type */
-  --font-display: 'Oranienbaum', 'Oranienbaum Fallback', 'PT Serif', georgia, serif;
-  --font-body: 'PT Serif', georgia, serif;
-  --font-mono: 'PT Mono', 'Courier New', monospace;
-  --font-chalk: 'Neucha', 'PT Serif', cursive;
+  --step--1: clamp(0.78rem, 0.745rem + 0.17vw, 0.875rem);
+  --step-0: clamp(0.95rem, 0.915rem + 0.17vw, 1.05rem);
+  --step-1: clamp(1.1rem, 1.03rem + 0.35vw, 1.35rem);
+  --step-2: clamp(1.35rem, 1.2rem + 0.75vw, 1.85rem);
+  --step-3: clamp(1.7rem, 1.4rem + 1.5vw, 2.6rem);
+  --step-4: clamp(2.1rem, 1.4rem + 3.4vw, 4.1rem);
+  --micro: clamp(0.72rem, 0.7rem + 0.1vw, 0.78rem);
 
-  /* Fluid scale */
-  --step--1: clamp(0.78rem, 0.74rem + 0.2vw, 0.9rem);
-  --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --step-1: clamp(1.25rem, 1.16rem + 0.45vw, 1.5rem);
-  --step-2: clamp(1.56rem, 1.4rem + 0.8vw, 2rem);
-  --step-3: clamp(1.95rem, 1.7rem + 1.3vw, 2.7rem);
-  --step-4: clamp(2.44rem, 2rem + 2.2vw, 3.8rem);
-  /* только заголовок героя; кривая подобрана так, чтобы капитель ломалась
-     одинаково от 320px до десктопа: RU в две строки, EN в три */
-  --step-5: clamp(2.3rem, 0.9rem + 7vw, 5.25rem);
-
-  /* Служебная микротипографика (штампы, сноски, подписи табло). Раньше это были
-     жёсткие 0,58–0,72rem — на телефоне те же 9–11px, что и на десктопе. Теперь
-     низ шкалы поднят до читаемого на 320px, верх оставлен прежним. */
-  --micro: clamp(0.78rem, 0.755rem + 0.105vw, 0.85rem); /* 12,5 → 13,6px */
-  --micro-sm: clamp(0.75rem, 0.73rem + 0.08vw, 0.8rem); /* 12,0 → 12,8px */
-
-  --wrap: 71.25rem; /* 1140px */
+  --wrap: 72rem;
+  --measure: 44rem; /* ширина колонки меню — по читаемой строке, не по сетке */
   --gutter: clamp(1.1rem, 4vw, 2.5rem);
-  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* вырез, «уши» и полоса-домой на телефонах; 0px там, где env() не поддержан */
+  --header-h: 3.5rem;
+  --rail-h: 3rem;
+
   --safe-l: env(safe-area-inset-left, 0px);
   --safe-r: env(safe-area-inset-right, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
 }
 
-* {
+@media (min-width: 720px) {
+  :root {
+    --header-h: 4.25rem;
+  }
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
-  /* iOS Safari в альбомной ориентации сам раздувает кегль — запрещаем */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
-/* Lenis скроллит настоящей полосой документа: если html/body однажды получат
-   height: 100%, прокручивать станет нечего. */
+/* Lenis прокручивает настоящую полосу документа: дай html/body height:100% —
+   и прокручивать станет нечего. */
 html.lenis,
 html.lenis body {
   height: auto;
 }
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
 
 body {
   margin: 0;
+  background: var(--night);
+  color: var(--olive-ink);
   font-family: var(--font-body);
   font-size: var(--step-0);
-  line-height: 1.55;
-  color: var(--ink);
-  background: var(--night); /* overscroll top/bottom matches the footer */
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  /* серый прямоугольник подсветки тапа чужероден пергаменту и доске:
-     гасим его, а отклик даём собственными :active-состояниями ниже */
-  -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
+}
+
+/* Арабский — другой набор целиком, не только другое направление. */
+html[lang='ar'] body {
+  font-family: var(--font-ar-body);
+  line-height: 1.85;
+}
+html[lang='ar'] .section-title,
+html[lang='ar'] .hero__title,
+html[lang='ar'] .course__title,
+html[lang='ar'] .visit__address,
+html[lang='ar'] .footer__word,
+html[lang='ar'] .header__name {
+  font-family: var(--font-ar-display);
+}
+
+img {
+  max-width: 100%;
+  display: block;
 }
 
 h1,
 h2,
 h3 {
-  margin: 0;
   font-family: var(--font-display);
   font-weight: 400;
-  line-height: 1.08;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
 }
 
 p {
   margin: 0;
 }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 a {
   color: inherit;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-button {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-::selection {
-  background: var(--chalk-red);
-  color: var(--parchment-hi);
-}
-
-:focus-visible {
-  outline: 2px solid var(--chalk-red);
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid currentColor;
   outline-offset: 3px;
   border-radius: 2px;
 }
 
-/* на пергаменте меловой красный не дотягивает до 3:1 — берём тёмный кирпичный */
-.act-parchment :focus-visible,
-.header :focus-visible,
-.pass :focus-visible {
-  outline-color: #8a2b1c;
+::selection {
+  background: var(--gold);
+  color: var(--night);
+}
+
+/* ---------------------------------------------------- утилиты */
+
+.wrap {
+  width: min(var(--wrap), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline-start: var(--safe-l);
+  padding-inline-end: var(--safe-r);
 }
 
 .visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
-  padding: 0;
   margin: -1px;
+  padding: 0;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
 
-/* transform, а не translate: независимое свойство translate появилось только в
-   Chrome 104 / Safari 14.1, и на старых движках объявление отбрасывалось целиком —
-   чёрная плашка «Перейти к меню» намертво висела поверх героя. */
 .skip-link {
   position: fixed;
-  top: calc(0.8rem + var(--safe-t));
-  left: 50%;
-  transform: translate(-50%, calc(-100% - 1.5rem - var(--safe-t)));
+  inset-block-start: 0;
+  inset-inline-start: 0;
   z-index: 100;
-  padding: 0.85rem 1.2rem;
-  background: var(--ink);
-  color: var(--parchment-hi);
+  background: var(--olive-deep);
+  color: var(--cream);
+  padding: 0.7rem 1.1rem;
+  font-size: var(--micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-decoration: none;
-  font-size: var(--step--1);
-  letter-spacing: 0.1em;
-  border-radius: 6px;
-  transition: transform 0.15s var(--ease-settle);
+  /* transform, а не translate: независимое свойство translate моложе, чем
+     самые старые браузеры, до которых сайту есть дело */
+  transform: translateY(-120%);
+  transition: transform 0.18s var(--ease);
 }
 .skip-link:focus-visible {
-  transform: translate(-50%, 0);
-  outline-color: var(--parchment-hi);
+  transform: translateY(0);
 }
 
-/* ---------- layout utilities ---------- */
-
-.wrap {
-  max-width: var(--wrap);
-  margin-inline: auto;
-  /* поля растут на вырез: в альбомной ориентации iPhone текст не уезжает под «уши» */
-  padding-left: calc(var(--gutter) + var(--safe-l));
-  padding-right: calc(var(--gutter) + var(--safe-r));
+/**
+ * Числа: табличные цифры, чтобы цены в столбце не гуляли, и собственное
+ * направление.
+ *
+ * Одного `isolate` мало — и это стоило «₽ 480» вместо «480 ₽» на всём арабском
+ * меню. Изоляция отрезает кусок от соседей, но направление внутри изолята
+ * берётся из `direction`, а он наследуется от документа: в RTL знак валюты
+ * (по Юникоду он «примыкает к числу») уезжает налево от цифр, а диапазон
+ * «600–1100» читается как «1100–600». `direction: ltr` внутри изолята
+ * раскладывает число слева направо, как ему и положено, не разворачивая
+ * арабскую строку вокруг. Единица меры при этом остаётся своей: «300 غ»
+ * набирается цифрами, потом буквой — ровно так, как читают.
+ */
+.num {
+  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
-.font-display {
-  font-family: var(--font-display);
-}
-.font-chalk {
-  font-family: var(--font-chalk);
-}
-.font-mono {
-  font-family: var(--font-mono);
+/* Направленные глифы зеркалятся вместе с документом; ненаправленные (часы,
+   телефон, булавка, звезда) остаются как есть. */
+[dir='rtl'] .glyph--dir {
+  transform: scaleX(-1);
 }
 
-/* ---------- act backdrops ---------- */
-
-.act-parchment {
-  position: relative;
-  background:
-    radial-gradient(120% 90% at 50% 0%, var(--parchment-hi) 0%, var(--parchment) 55%, #e0cd9d 100%);
-  color: var(--ink);
+.glyph {
+  flex: none;
 }
 
-/* paper grain: two dot lattices + soft mottling, no image assets */
-.grain::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(rgba(107, 86, 56, 0.16) 0.5px, transparent 0.6px),
-    radial-gradient(rgba(242, 230, 197, 0.55) 0.5px, transparent 0.6px),
-    radial-gradient(60% 45% at 18% 22%, rgba(107, 86, 56, 0.05), transparent 70%),
-    radial-gradient(50% 40% at 82% 74%, rgba(107, 86, 56, 0.06), transparent 70%);
-  background-size:
-    7px 7px,
-    5px 5px,
-    auto,
-    auto;
-  background-position:
-    0 0,
-    3px 2px,
-    0 0,
-    0 0;
-  mix-blend-mode: multiply;
-  opacity: 0.5;
+/* Ряд каменной кладки: чередование известняка и тёмного камня — та же
+   раскладка, что в арках зала. Рисуется градиентом, файлов не требует. */
+.band {
+  --band-h: 0.75rem;
+  height: var(--band-h);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--stone) 0 2.25rem,
+    var(--oxblood) 2.25rem 4.5rem
+  );
 }
 
-.act-board {
-  position: relative;
-  background:
-    radial-gradient(90% 70% at 50% 12%, #1d1a14 0%, var(--board) 60%, #100e0b 100%);
-  color: var(--chalk);
+/* ---------------------------------------------------- типовые узлы */
+
+.section-title {
+  font-size: var(--step-3);
 }
 
-/* faint chalk smudge on the board */
-.act-board::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(45% 30% at 28% 30%, rgba(242, 239, 230, 0.035), transparent 70%),
-    radial-gradient(38% 26% at 74% 62%, rgba(242, 239, 230, 0.03), transparent 70%);
+.section-lead {
+  max-width: 46ch;
+  font-size: var(--step-1);
+  line-height: 1.55;
+  margin-block-start: 0.9rem;
+  opacity: 0.86;
+  text-wrap: pretty;
 }
 
-/* wood plank band (Atmosphere) */
-.wood {
-  background:
-    linear-gradient(rgba(25, 19, 7, 0.18), rgba(25, 19, 7, 0.18)),
-    repeating-linear-gradient(
-      180deg,
-      var(--wood) 0 84px,
-      var(--wood-dark) 84px 86px
-    );
-  box-shadow: inset 0 10px 24px rgba(0, 0, 0, 0.35), inset 0 -10px 24px rgba(0, 0, 0, 0.35);
-}
-
-/* ---------- engraved ornaments (Act 1) ---------- */
-
-/* Фриз никогда не кадрируется: height:auto держит коробку в пропорциях своего
-   viewBox, а компоновку под ширину экрана выбирает media-запрос ниже. */
-.frieze {
-  display: block;
-  width: 100%;
-  height: auto;
-  pointer-events: none;
-}
-.frieze--narrow {
-  display: none;
-}
-
-/* Порог 900px, а не 560: восьмикратная панорама держится, пока полоса выше
-   ~110px, то есть примерно с этой ширины. Ниже она вырождается в волосяную
-   черту поверх пустого поля, и короткая компоновка выигрывает даже там, где
-   места ещё вроде бы хватает. */
-@media (max-width: 899.98px) {
-  .frieze--wide {
-    display: none;
-  }
-  .frieze--narrow {
-    display: block;
-  }
-  /* пунктир на узкой полосе считаем в экранных пикселях, а не в единицах
-     viewBox: так точки земли и маршрута сохраняют десктопный шаг */
-  .frieze-dots {
-    vector-effect: non-scaling-stroke;
-  }
-}
-
-/* Штрих задан в единицах viewBox, а рендерится в масштабе «ширина полосы /
-   ширина viewBox» — на телефоне 1,6 единицы уходят в волосок, на широком
-   экране пухнут в жирную линию. Ступени ниже держат гравюру в 1,2–1,9
-   экранного пикселя на всех ширинах. */
-@media (max-width: 429.98px) {
-  .frieze--narrow .frieze-path {
-    stroke-width: 2.7;
-  }
-}
-@media (min-width: 430px) and (max-width: 559.98px) {
-  .frieze--narrow .frieze-path {
-    stroke-width: 2.2;
-  }
-}
-@media (min-width: 560px) and (max-width: 719.98px) {
-  .frieze--narrow .frieze-path {
-    stroke-width: 1.75;
-  }
-}
-@media (min-width: 720px) and (max-width: 899.98px) {
-  .frieze--narrow .frieze-path {
-    stroke-width: 1.4;
-  }
-}
-@media (max-width: 1199.98px) {
-  .frieze--wide .frieze-path {
-    stroke-width: 1.9;
-  }
-}
-
-/* Низкий экран (телефон в альбоме, окно в половину высоты): короткая
-   компоновка забирает под полосу четверть ширины — при 390px высоты это треть
-   первого акта, и корешки уезжают за сгиб. Панорама при той же ширине вдвое
-   ниже, поэтому здесь она возвращается независимо от ширины окна. */
-@media (max-height: 620px) and (min-width: 560px) {
-  .frieze--wide {
-    display: block;
-  }
-  .frieze--narrow {
-    display: none;
-  }
-}
-
-/* прорисовка штрихов фриза при загрузке */
-.frieze-path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-.frieze--animate .frieze-path {
-  animation: frieze-draw 1.4s var(--ease-settle) both;
-  animation-delay: calc(var(--frieze-delay, 0s));
-}
-@keyframes frieze-draw {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.stamp {
-  --stamp-color: var(--sepia);
-  display: inline-grid;
-  place-items: center;
-  width: 7.2rem;
-  aspect-ratio: 1;
-  border: 2px solid var(--stamp-color);
-  border-radius: 50%;
-  rotate: var(--stamp-rotate, 0deg);
-  color: var(--stamp-color);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-align: center;
-  line-height: 1.25;
-  /* opacity намеренно 1: полупрозрачность роняла контраст текста ниже AA */
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-.stamp__inner {
-  display: grid;
-  place-items: center;
-  width: calc(100% - 0.55rem);
-  aspect-ratio: 1;
-  border: 1px solid var(--stamp-color);
-  border-radius: 50%;
-  padding: 0.4rem;
-}
-.stamp--red {
-  --stamp-color: #8a2b1c;
-}
-
-.king {
-  display: inline-block;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 0 0 2px var(--sepia), 0 0 0 5px rgba(107, 86, 56, 0.25);
-  flex-shrink: 0;
-}
-.king img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.stub {
-  position: relative;
-  display: inline-flex;
-  align-items: stretch;
-  text-decoration: none;
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink);
-  background: var(--parchment-hi);
-  border: 1.5px solid var(--sepia);
-  border-radius: 10px;
-  box-shadow: 2px 3px 0 rgba(107, 86, 56, 0.35);
-  transition: translate 0.15s var(--ease-settle), box-shadow 0.15s var(--ease-settle);
-  /* Маска вырезает две перфорации по бокам корешка. Сокращённое свойство mask
-     сбрасывает composite, поэтому -webkit-mask-composite должен идти ПОСЛЕ обоих
-     сокращений — иначе на Safari 15.0–15.3, где нет mask-composite, режим
-     оставался аддитивным и перфорации пропадали вовсе. */
-  -webkit-mask:
-    radial-gradient(circle 8px at 0% 50%, transparent 97%, #000),
-    radial-gradient(circle 8px at 100% 50%, transparent 97%, #000);
-  mask:
-    radial-gradient(circle 8px at 0% 50%, transparent 97%, #000),
-    radial-gradient(circle 8px at 100% 50%, transparent 97%, #000);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-  /* область маски по умолчанию — border-box, и она срезала всё, что рисуется
-     снаружи: кольцо фокуса (outline-offset 3px) и высечку box-shadow.
-     no-clip снимает границу, перфорации при этом остаются. */
-  -webkit-mask-clip: no-clip;
-  mask-clip: no-clip;
-}
-/* hover — только там, где есть курсор: на тач-экране :hover залипает после тапа */
-@media (hover: hover) {
-  .stub:hover {
-    translate: 0 -2px;
-    box-shadow: 3px 5px 0 rgba(107, 86, 56, 0.35);
-  }
-}
-.stub:active {
-  translate: 0 1px;
-  box-shadow: 1px 1px 0 rgba(107, 86, 56, 0.35);
-}
-.stub > span:first-child {
-  padding: 0.95rem 1.3rem 0.95rem 1.7rem;
-}
-.stub__end {
-  display: grid;
-  place-items: center;
-  padding: 0 1.1rem;
-  border-left: 1.5px dashed var(--sepia);
-}
-/* фон темнее мелового красного: контраст с текстом 5,5:1 (AA) */
-.stub--primary {
-  color: var(--parchment-hi);
-  background: #a53222;
-  border-color: #8a2b1c;
-  box-shadow: 2px 3px 0 rgba(25, 19, 7, 0.4);
-}
-.stub--primary .stub__end {
-  border-left-color: rgba(242, 230, 197, 0.7);
-}
-
-/* ---------- chalk ornaments (Act 2) ---------- */
-
-.dish-flag {
-  flex-shrink: 0;
-  display: inline-block;
-  vertical-align: -0.2em;
-}
-
-.bunting {
-  display: block;
-  width: min(100%, 40rem);
-  height: auto;
-  margin-inline: auto;
-}
-
-.bulb {
-  display: block;
-  transform-origin: 50% 0;
-  animation: bulb-sway 5.6s ease-in-out infinite alternate;
-}
-.bulb__glow {
-  animation: bulb-flicker 4.1s ease-in-out infinite;
-}
-@keyframes bulb-sway {
-  from {
-    rotate: 2.2deg;
-  }
-  to {
-    rotate: -2.2deg;
-  }
-}
-@keyframes bulb-flicker {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  47% {
-    opacity: 0.82;
-  }
-  52% {
-    opacity: 0.95;
-  }
-  71% {
-    opacity: 0.85;
-  }
-}
-
-.mandala {
-  display: block;
-}
-.mandala__spin {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: mandala-spin 240s linear infinite;
-}
-@keyframes mandala-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.chalk-rule {
-  display: block;
-  margin-inline: auto;
-  max-width: 100%;
-}
-
-/* ---------- split-flap ---------- */
-
-.splitflap-wrap {
+.btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.72rem 1.3rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition:
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease),
+    transform 0.2s var(--ease);
+}
+.btn--primary {
+  background: var(--olive-deep);
+  border-color: var(--olive-deep);
+  color: var(--cream);
+}
+/* hover — только там, где есть курсор: на тач-экране :hover залипает после тапа */
+@media (hover: hover) {
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  .btn--primary:hover {
+    background: var(--olive-ink);
+    border-color: var(--olive-ink);
+  }
+}
+.btn:active {
+  transform: translateY(0);
 }
 
-.splitflap {
+.chip {
   display: inline-flex;
-  gap: 3px;
-  vertical-align: middle;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 999px;
+  font-size: var(--micro);
+  letter-spacing: 0.03em;
+}
+.chip svg {
+  color: var(--gold);
 }
 
-.flap {
-  position: relative;
-  display: inline-block;
-  width: 1.5ch;
-  height: 1.6em;
-  font-family: var(--font-mono);
-  font-weight: 400;
-  text-transform: uppercase;
-  perspective: 320px;
-  color: var(--parchment-hi);
+/* Статус «открыто / закрыто» — общий для героя и блока визита. */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+.status__dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.45;
+}
+.status.is-open {
+  color: var(--ok);
+}
+.status.is-open .status__dot {
+  opacity: 1;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 30%, transparent);
 }
 
-.flap__half {
+/* ---------------------------------------------------- знак и орнамент */
+
+.mark {
+  flex: none;
+  overflow: visible;
+}
+.mark__sparks {
+  opacity: 0.9;
+}
+
+.olive {
+  pointer-events: none;
+  user-select: none;
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 50%;
-  overflow: hidden;
-  background: linear-gradient(#2b2115, #191307);
-  backface-visibility: hidden;
+  opacity: 0.9;
 }
-.flap__half--top {
-  top: 0;
-  border-radius: 4px 4px 0 0;
+.olive--flip {
+  transform: scaleX(-1);
 }
-.flap__half--bottom {
-  bottom: 0;
-  border-radius: 0 0 4px 4px;
-  background: linear-gradient(#191307, #241b0e);
+/* В RTL ветвь смотрит в ту же сторону относительно колонки текста */
+[dir='rtl'] .olive {
+  transform: scaleX(-1);
+}
+[dir='rtl'] .olive--flip {
+  transform: none;
 }
 
-.flap__glyph {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 200%;
-  display: grid;
-  place-items: center;
-  line-height: 1;
-}
-.flap__glyph--low {
-  top: -100%;
-}
-.flap__glyph--center {
-  height: 100%;
-}
+/* --------- камария: витражная розетка -------- */
 
-.flap__hinge {
-  position: absolute;
-  top: calc(50% - 0.5px);
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(234, 217, 174, 0.18);
-  z-index: 3;
+.qamariyya {
+  display: block;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--glass-amber) 42%, transparent));
 }
-
-.flap__leaf-front {
-  z-index: 2;
-  transform-origin: bottom;
-  animation: flap-front 280ms cubic-bezier(0.55, 0, 0.85, 0.45) var(--d, 0ms) forwards;
+.qamariyya__core {
+  filter: drop-shadow(0 0 6px var(--glass-white));
 }
-.flap__leaf-back {
-  z-index: 2;
-  transform: rotateX(90deg);
-  transform-origin: top;
-  animation: flap-back 280ms cubic-bezier(0.15, 0.55, 0.45, 1) calc(var(--d, 0ms) + 280ms) forwards;
-}
-@keyframes flap-front {
-  to {
-    transform: rotateX(-90deg);
+@media (prefers-reduced-motion: no-preference) {
+  .qamariyya.is-lit .qamariyya__pane {
+    animation: pane-glow 6.5s ease-in-out infinite;
+    /* каждый сегмент со своим сдвигом фазы: свет дышит вразнобой, как лампы
+       за настоящим стеклом, а не мигает всей розеткой разом */
+    animation-delay: calc(var(--pane) * -0.8s);
+    transform-origin: 50px 50px;
   }
 }
-@keyframes flap-back {
-  to {
-    transform: rotateX(0deg);
+@keyframes pane-glow {
+  0%,
+  100% {
+    opacity: 0.82;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
-.flap--plain {
-  background: linear-gradient(#2b2115, #191307);
-  border-radius: 4px;
+/* --------- арка из клиньев -------- */
+
+.ablaq {
+  inline-size: 100%;
+  block-size: auto;
+}
+/* Кладка держится тише текста: арка — это стена за словами, а не рамка вокруг
+   них. Отсюда и низкая непрозрачность, и почти незаметный шов между камнями. */
+.ablaq__wedge {
+  stroke: color-mix(in srgb, var(--oxblood) 22%, transparent);
+  stroke-width: 0.8;
+}
+.ablaq__wedge--light {
+  fill: #fffdf4;
+  opacity: 0.44;
+}
+.ablaq__wedge--dark {
+  fill: var(--oxblood);
+  opacity: 0.1;
 }
 
-/* ---------- header ---------- */
+/* ============================================================
+   Шапка
+   ============================================================ */
 
 .header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  block-size: var(--header-h);
+  padding-block-start: var(--safe-t);
+  transition:
+    background-color 0.3s var(--ease),
+    box-shadow 0.3s var(--ease);
+}
+.header.is-stuck {
+  background: color-mix(in srgb, var(--cream) 92%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--olive-ink) 14%, transparent);
+}
+
+.header__inner {
+  block-size: var(--header-h);
+  width: min(var(--wrap), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline-start: var(--safe-l);
+  padding-inline-end: var(--safe-r);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: calc(clamp(0.9rem, 2.5vw, 1.6rem) + var(--safe-t))
-    calc(var(--gutter) + var(--safe-r)) clamp(0.9rem, 2.5vw, 1.6rem)
-    calc(var(--gutter) + var(--safe-l));
 }
 
 .header__brand {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
+  color: var(--olive-deep);
   text-decoration: none;
+  margin-inline-end: auto;
 }
 .header__word {
   display: grid;
-  line-height: 1.1;
+  gap: 0.1rem;
 }
 .header__name {
-  font-size: 1.35rem;
-  letter-spacing: 0.2em;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  line-height: 1;
+  letter-spacing: 0.06em;
 }
 .header__sub {
-  font-size: 0.58rem;
-  letter-spacing: 0.34em;
-  color: var(--sepia);
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+/* Разрядка в 0,22em на арабском разрывает вязь — букв в слове не остаётся. */
+html[lang='ar'] .header__sub,
+html[lang='ar'] .footer__sub,
+html[lang='ar'] .visit__label,
+html[lang='ar'] .hero__eyebrow,
+html[lang='ar'] .rail__chip,
+html[lang='ar'] .btn,
+html[lang='ar'] .chip,
+html[lang='ar'] .skip-link {
+  letter-spacing: 0;
 }
 
 .header__nav {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(0.9rem, 2.5vw, 1.7rem);
+  display: none;
+  gap: 1.4rem;
   font-size: var(--step--1);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.header__nav > a {
-  position: relative;
+.header__nav a {
+  color: var(--olive-ink);
   text-decoration: none;
-  white-space: nowrap;
-  border-bottom: 1.5px dashed transparent;
-  padding-bottom: 2px;
-  transition: border-color 0.15s;
+  padding-block: 0.35rem;
+  border-block-end: 1px solid transparent;
 }
-/* 36×22 — мимо пальца; область нажатия растим невидимо, подчёркивание не трогаем */
-.header__nav > a::after {
+@media (hover: hover) {
+  .header__nav a:hover {
+    border-block-end-color: currentColor;
+  }
+}
+@media (min-width: 720px) {
+  .header__nav {
+    display: flex;
+  }
+}
+
+/* --------- переключатель языка -------- */
+
+.langs {
+  position: relative;
+  display: flex;
+  gap: 0.1rem;
+  padding: 0.15rem;
+  border: 1px solid color-mix(in srgb, var(--olive-ink) 22%, transparent);
+  border-radius: 999px;
+}
+.langs__btn {
+  position: relative;
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--olive-ink);
+  font: inherit;
+  font-size: var(--micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  /* 2,25rem × 1,9rem плюс невидимая область нажатия до 44px по вертикали */
+  padding: 0.3rem 0.62rem;
+  border-radius: 999px;
+  opacity: 0.75;
+  transition: opacity 0.2s var(--ease);
+}
+.langs__btn::after {
   content: '';
   position: absolute;
-  inset: -0.7rem -0.45rem;
+  inset-inline: 0;
+  inset-block: -0.55rem;
+}
+.langs__btn.is-active {
+  opacity: 1;
+  color: var(--cream);
 }
 @media (hover: hover) {
-  .header__nav > a:hover {
-    border-bottom-color: var(--chalk-red);
+  .langs__btn:not(.is-active):hover {
+    opacity: 0.95;
   }
 }
-.header__nav > a:active {
-  border-bottom-color: var(--chalk-red);
+.langs__pill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--olive-deep);
+  border-radius: 999px;
 }
-
-.lang-stamp {
-  display: grid;
-  place-items: center;
-  width: 3.1rem;
-  aspect-ratio: 1;
-  border: 2px dashed #8a2b1c;
-  border-radius: 50%;
-  /* #b23a28 давал 3,96:1 на пергаменте — ниже AA; кирпичный тёмный даёт 5,7:1 */
-  color: #8a2b1c;
-  font-size: 0.82rem;
-  letter-spacing: 0.1em;
-  background: rgba(178, 58, 40, 0.06);
-}
-@media (hover: hover) {
-  .lang-stamp:hover {
-    background: rgba(178, 58, 40, 0.14);
-  }
-}
-.lang-stamp:active {
-  background: rgba(178, 58, 40, 0.2);
+.langs__btn > span:first-child {
+  position: relative;
 }
 
-/* Плавающий штамп языка — только на телефоне и малом планшете, где из шапки
-   убраны ссылки, а сама шапка уезжает вместе с героем. Собственная тёмная
-   подложка: элемент проплывает над доской, деревом и пергаментными карточками,
-   и без неё контраст плавал бы вместе с фоном (--chalk-red на доске 4,9:1). */
-.lang-stamp--float {
-  display: none;
-}
-@media (max-width: 899.98px) {
-  .lang-stamp--float {
-    display: grid;
-    position: fixed;
-    right: calc(1rem + var(--safe-r));
-    bottom: calc(1rem + var(--safe-b));
-    z-index: 90;
-    border-color: var(--chalk-red);
-    color: var(--chalk-red);
-    background: rgba(16, 13, 9, 0.93);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transform: scale(0.75);
-    pointer-events: none;
-    transition: opacity 0.2s var(--ease-settle), transform 0.2s var(--ease-settle);
-  }
-  .lang-stamp--float.is-shown {
-    opacity: 1;
-    transform: scale(1) rotate(-7deg);
-    pointer-events: auto;
-  }
-  .lang-stamp--float:active {
-    background: rgba(226, 84, 63, 0.22);
-  }
-}
-
-/* Телефон: строка шапки не помещается — логотип, слово, две ссылки и штамп
-   вместе требуют ~425px при 320 доступных, и штамп языка уезжал за экран.
-   Ссылки убираем: они дублируют два корешка-билета в самом герое, ведущих
-   на те же якоря, а шапка здесь absolute и всё равно уходит при прокрутке.
-   Остаётся то, что несёт смысл: марка и переключатель языка. */
-@media (max-width: 599.98px) {
-  .header {
-    gap: 0.75rem;
-  }
-  .header__nav > a {
-    display: none;
-  }
-  .header__brand {
-    gap: 0.6rem;
-    min-width: 0;
-  }
-  .header__word {
-    min-width: 0;
-  }
-  .header__name {
-    font-size: clamp(1.05rem, 0.86rem + 0.95vw, 1.35rem);
-    letter-spacing: 0.16em;
-  }
-  .header__sub {
-    /* на десктопе это логотипная деталь в 9,3px и так и задумана; на телефоне
-       её читают с 30 см — поднимаем кегль, а место освобождаем трекингом,
-       чтобы строка не переносилась даже на 320px */
-    font-size: 0.66rem;
-    letter-spacing: 0.19em;
-    white-space: nowrap;
-  }
-  .lang-stamp {
-    width: 2.85rem;
-    flex-shrink: 0;
-  }
-}
-
-/* ---------- hero (Act 1) ---------- */
+/* ============================================================
+   Акт 1 · Улица
+   ============================================================ */
 
 .hero {
   position: relative;
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  /* верхнее поле = высота шапки (на телефоне шапка ниже), плюс вырез */
-  padding-top: calc(clamp(4.6rem, 12vh, 6rem) + var(--safe-t));
+  isolation: isolate;
+  margin-block-start: calc(var(--header-h) * -1 - var(--safe-t));
+  padding-block: calc(var(--header-h) + var(--safe-t) + clamp(2rem, 7vh, 4.5rem))
+    clamp(3rem, 9vh, 6rem);
+  background:
+    radial-gradient(
+      120% 78% at 50% 6%,
+      color-mix(in srgb, var(--glass-amber) 14%, transparent) 0%,
+      transparent 62%
+    ),
+    linear-gradient(180deg, #f0e8d4 0%, var(--stone) 58%, var(--stone-dim) 100%);
+  color: var(--olive-ink);
+  overflow: clip;
 }
 
-/* Герой — табло отправления во всю ширину полосы: заголовок, маршрут
-   «город → город», подвал с билетами. Каждая полоса держит оба поля,
-   поэтому справа не остаётся пустоты. */
-.hero__inner {
-  position: relative;
-  z-index: 2;
-  /* база для 1cqw в .hero__title — это ширина контента полосы без паддингов */
-  container-type: inline-size;
-  display: grid;
-  text-align: left;
-  gap: clamp(1.05rem, 3.6vh, 2.9rem);
-  /* Только воздух до гравюры. Раньше здесь сидел резерв под фриз (тот стоял
-     абсолютом и не занимал места): величину приходилось считать от ширины
-     экрана, промахи давали то мёртвую полосу под подсказкой, то гравюру,
-     идущую сквозь корешки. Теперь фриз лежит в потоке и место берёт сам. */
-  padding-bottom: clamp(1.4rem, 4vh, 3rem);
-  /* .wrap даёт margin-inline:auto — у flex-элемента это отменяет stretch,
-     и блок съезжает к центру. Обнуляем: герой стоит на левом поле страницы.
-     По вертикали auto оставляем: свободная высота делится поровну сверху и
-     снизу, поэтому блок стоит по центру того, что осталось над фризом. */
-  margin-inline: 0;
-  margin-block: auto;
-}
-
-/* До 720px заголовок переносится по словам; шире — растягивается в одну строку
-   от края до края полосы (см. --title-fit ниже). */
-.hero__title {
-  --title-fit: 9.19;
-  max-width: 8em; /* em, а не px: перенос строк держится одинаковым на всех кеглях */
-  font-size: var(--step-5);
-  line-height: 1.02;
-  text-transform: uppercase;
-  letter-spacing: 0.015em;
-  text-wrap: balance;
-}
-html[lang='en'] .hero__title {
-  --title-fit: 5.94;
-}
-
-.hero__board {
-  display: grid;
-  align-items: end;
-  grid-template-columns: auto minmax(2.5rem, 1fr) auto;
-  grid-template-areas:
-    'fromlabel .     tolabel'
-    'fromcity  route toflap';
-  column-gap: clamp(0.9rem, 2.5vw, 2rem);
-  row-gap: 0.5rem;
-}
-.hero__board-label {
-  font-size: var(--micro-sm);
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--sepia);
-}
-.hero__board-label--from {
-  grid-area: fromlabel;
-}
-.hero__board-label--to {
-  grid-area: tolabel;
-  /* start, а не end: с тех пор как табло добивается пробелами только справа,
-     слово начинается у левого края своей колонки — подпись встаёт над первой
-     буквой направления, а не над хвостом пустых карточек */
-  justify-self: start;
-}
-.hero__board-city {
-  grid-area: fromcity;
-  font-size: clamp(1.15rem, 0.95rem + 0.9vw, 1.8rem);
-  letter-spacing: 0.12em;
-}
-.hero__board-flap {
-  grid-area: toflap;
-  justify-self: end;
-  font-size: clamp(1.05rem, 0.8rem + 1.1vw, 1.85rem);
-}
-
-/* пунктирный маршрут занимает всё, что осталось между городами */
-.hero__route {
-  grid-area: route;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-bottom: 0.75rem;
-}
-.hero__route-dots {
-  flex: 1;
-  height: 2px;
-  /* тот же штрих, что у пунктира на фризе: точка 1,6px с шагом 8px */
-  background: radial-gradient(circle at 0.8px 1px, var(--sepia) 0.8px, transparent 1.1px) 0 0 /
-    8px 2px repeat-x;
+/* Известняковая крупа: две решётки точек, никаких файлов. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    radial-gradient(color-mix(in srgb, var(--oxblood) 9%, transparent) 0.6px, transparent 0.7px),
+    radial-gradient(color-mix(in srgb, var(--olive-ink) 7%, transparent) 0.5px, transparent 0.6px);
+  background-size:
+    13px 13px,
+    23px 23px;
+  background-position:
+    0 0,
+    7px 11px;
   opacity: 0.75;
 }
 
-/* узкие экраны: города встают друг под другом, маршрут — разделителем между ними */
-@media (max-width: 719.98px) {
-  .hero__board {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      'fromlabel'
-      'fromcity'
-      'route'
-      'tolabel'
-      'toflap';
-    row-gap: 0.4rem;
-  }
-  /* подпись уже start в базовом правиле — здесь выравниваем только табло */
-  .hero__board-flap {
-    justify-self: start;
-  }
-  .hero__board-label--to {
-    margin-top: 0.75rem;
-  }
-  .hero__route {
-    margin-block: 0.55rem 0.15rem;
-  }
+/* Нижний ряд кладки — переход с улицы во двор. Светлый камень берётся
+   отдельным тоном, а не var(--stone): у подошвы градиента фон уже --stone-dim,
+   и одинаковые с фоном блоки пропадали — ряд читался пунктиром, а не кладкой. */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 0.85rem;
+  background: repeating-linear-gradient(
+    90deg,
+    #f6efdd 0 2.25rem,
+    var(--oxblood) 2.25rem 4.5rem
+  );
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--oxblood) 30%, transparent);
 }
 
-.hero__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem 1.5rem;
-  padding-top: clamp(0.2rem, 1.2vh, 0.9rem);
+/* Центрируем парой нулевых вставок и авто-полями, а не inset-inline-start:50%
+   с обратным сдвигом: в RTL логическая вставка отсчитывается справа, а
+   translate остаётся физическим — арка уезжала к левому краю экрана. */
+.hero__arch {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: clamp(2rem, 11vh, 7rem);
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: min(46rem, 118%);
+  opacity: 0.9;
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 0;
+}
+
+.hero__lamp {
+  margin-block-end: clamp(0.75rem, 2.5vh, 1.5rem);
+}
+
+/* 52ch, а не 34: строка набрана с разрядкой 0,14em, и английский адрес
+   («Kronverksky Prospekt, 45 · basement level») в 34ch ломался надвое уже на
+   десктопе. На телефоне ширину всё равно ограничивает полоса. */
+.hero__eyebrow {
+  max-inline-size: 52ch;
+  font-size: var(--micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+/* Булавка — часть строки (см. Hero.tsx), поэтому не flex-элемент, а инлайн. */
+.hero__eyebrow .glyph {
+  display: inline-block;
+  vertical-align: -0.15em;
+  margin-inline-end: 0.4rem;
+}
+
+.hero__title {
+  font-size: var(--step-4);
+  margin-block: 0.5rem 0;
+  max-width: 15ch;
+}
+
+.hero__lead {
+  max-width: 42ch;
+  margin-block-start: 1.1rem;
+  font-size: var(--step-1);
+  line-height: 1.55;
+  opacity: 0.85;
+  text-wrap: pretty;
 }
 
 .hero__ctas {
   display: flex;
-  gap: 1.1rem;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-block-start: clamp(1.4rem, 4vh, 2.2rem);
+}
+/* На телефоне кнопки всё равно встают в столбик — пусть встают одной ширины
+   и во всю полосу: два центрированных корешка разной длины читались обрывком,
+   а палец получает полноразмерную цель вместо надписи по центру. */
+@media (max-width: 559.98px) {
+  .hero__ctas {
+    flex-direction: column;
+    align-items: stretch;
+    inline-size: min(20rem, 100%);
+  }
+  .hero__ctas .btn {
+    justify-content: center;
+  }
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem clamp(1rem, 4vw, 2.4rem);
+  margin-block-start: clamp(1.5rem, 4vh, 2.4rem);
+  padding-block-start: clamp(1.2rem, 3vh, 1.8rem);
+  border-block-start: 1px solid color-mix(in srgb, var(--oxblood) 22%, transparent);
+  inline-size: min(38rem, 100%);
+  font-size: var(--step--1);
+}
+.hero__meta > li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.hero__meta svg {
+  color: var(--gold);
+}
+.hero__meta-sub {
+  color: var(--ink-dim);
 }
 
 .hero__hint {
-  font-size: var(--micro-sm);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #55432a;
-}
-
-/* Телефон: два корешка встают в столбик во всю ширину полосы. Так они
-   перестают быть рваными по длине и берут палец целиком, а не по буквам. */
-@media (max-width: 559.98px) {
-  .hero__ctas {
-    width: 100%;
-    gap: 0.75rem;
-  }
-  .hero__ctas .stub {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .hero__hint {
-    letter-spacing: 0.16em;
-  }
-}
-
-/* с этой ширины герой садится на ту же левую линию, что и логотип в шапке */
-@media (min-width: 1120px) {
-  .header {
-    padding-inline: clamp(2.5rem, 6vw, 5rem);
-  }
-  .hero__inner {
-    max-width: none;
-    margin-inline: 0;
-    padding-inline: clamp(2.5rem, 6vw, 5rem);
-  }
-}
-
-/* Кегль заголовка в одну строку: --title-fit = 100 / (ширина строки в Oranienbaum
-   при кегле 100px) × 0,99; 1cqw — процент ширины контента .hero__inner.
-   Пересчитывать при любой правке heroTitle: RU 1078px → 9,19; EN 1668px → 5,94. */
-@media (min-width: 720px) {
-  .hero__title {
-    max-width: none;
-    white-space: nowrap;
-    font-size: calc(var(--title-fit) * 1cqw);
-  }
-}
-
-/* Гравюра — последний элемент колонки: её высоту задаёт сама полоса, поэтому
-   резерв под неё нигде не считается и наехать на корешки она не может. */
-.hero__frieze {
-  /* relative + z-index только ради порядка отрисовки: .grain::before — тоже
-     позиционированный слой, и без этого зерно бумаги легло бы поверх штриха.
-     На раскладку не влияет, полоса остаётся в потоке. */
   position: relative;
-  z-index: 1;
-  padding-bottom: 1.1rem;
-  opacity: 0.85;
-  pointer-events: none;
+  color: var(--ink-dim);
+  margin-block-start: clamp(1.8rem, 5vh, 3rem);
+  text-align: center;
+  font-size: var(--micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
-
-@media (max-width: 559.98px) {
-  .hero__frieze {
-    padding-bottom: 0.6rem;
-  }
+.hero__hint::after {
+  content: '';
+  display: block;
+  inline-size: 1px;
+  block-size: 2.2rem;
+  margin: 0.7rem auto 0;
+  background: linear-gradient(180deg, currentColor, transparent);
 }
-
-/* Низкий экран (окно в половину высоты, телефон в альбоме): там, где полосу
-   рисует панорама (см. одноимённый запрос выше), воздух вокруг неё тоже
-   считаем от высоты экрана — иначе первый акт вылезает за сгиб. */
-@media (max-height: 620px) and (min-width: 560px) {
-  .hero__inner {
-    padding-bottom: clamp(0.6rem, 2.5vh, 1.4rem);
-  }
-  .hero__frieze {
-    padding-bottom: 0.5rem;
+@media (prefers-reduced-motion: no-preference) {
+  .hero__hint::after {
+    animation: hint-drop 2.6s var(--ease) infinite;
   }
 }
-
-/* Совсем узкий и короткий экран (iPhone SE, 320×568): вертикали не хватает
-   на ~19px, и нижний край фриза уходит за сгиб. Поджимаем поля и межблочные
-   интервалы ровно настолько, чтобы весь первый акт встал в один экран. */
-@media (max-width: 359.98px) {
-  .hero {
-    padding-top: 3.4rem;
+@keyframes hint-drop {
+  0%,
+  100% {
+    transform: scaleY(0.55);
+    transform-origin: top;
+    opacity: 0.4;
   }
-  .hero__inner {
-    gap: 0.6rem;
-    padding-bottom: 0;
-  }
-  .hero__board-label--to {
-    margin-top: 0.5rem;
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+    opacity: 1;
   }
 }
 
-/* Телефон в альбомной ориентации: 100svh — это ~360px. Заголовок в одну
-   строку кеглем 62px и поля в 6rem туда не помещаются; всё завязываем на
-   высоту экрана, а не на ширину. */
-@media (orientation: landscape) and (max-height: 540px) {
-  .hero {
-    padding-top: clamp(3.2rem, 13vh, 4.6rem);
-  }
-  .hero__inner {
-    gap: clamp(0.45rem, 2.2vh, 1.2rem);
-    padding-bottom: clamp(0.6rem, 2.5vh, 1.4rem);
-  }
-  .hero__title {
-    /* кегль ограничен и шириной полосы, и высотой экрана */
-    font-size: min(var(--step-5), 11vh);
-  }
-  .hero__board-city,
-  .hero__board-flap {
-    font-size: clamp(0.95rem, 4.2vh, 1.5rem);
-  }
-  .hero__route {
-    margin-bottom: 0.5rem;
-  }
-  .hero__frieze {
-    padding-bottom: 0.5rem;
-  }
-}
-@media (orientation: landscape) and (max-height: 540px) and (min-width: 720px) {
-  .hero__title {
-    font-size: min(calc(var(--title-fit) * 1cqw), 11vh);
-  }
+#top-sentinel {
+  position: absolute;
+  inset-block-start: calc(var(--header-h) + 1px);
+  inset-inline-start: 0;
+  inline-size: 1px;
+  block-size: 1px;
 }
 
-/* ---------- menu chalkboard (Act 2) ---------- */
+/* ============================================================
+   Акт 2 · Двор — меню
+   ============================================================ */
 
 .menu {
-  padding-block: clamp(3.2rem, 7vh, 5.5rem) clamp(3rem, 6vh, 5rem);
-}
-
-.menu__hearts {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.menu__inner {
   position: relative;
-  z-index: 2;
+  background: var(--cream);
+  padding-block: clamp(3rem, 8vh, 5.5rem) clamp(3.5rem, 9vh, 6rem);
+  scroll-margin-block-start: var(--header-h);
 }
 
-.menu__title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.6rem;
-  font-size: var(--step-4);
-  color: var(--chalk-yellow);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.menu .chalk-rule {
-  margin-top: 0.4rem;
-}
-
-.menu__columns {
+.menu__head {
+  position: relative;
+  text-align: center;
   display: grid;
-  gap: clamp(2rem, 4vw, 3.5rem);
-  margin-top: clamp(2rem, 4vh, 3rem);
+  justify-items: center;
 }
-@media (min-width: 900px) {
-  .menu__columns {
-    grid-template-columns: 1.1fr 1fr;
+.menu__head .section-title {
+  color: var(--olive-deep);
+}
+/* Ветвь стоит над словом со сдвигом вбок, как над «MAS» в логотипе, но без
+   нахлёста: в логотипе она лежит на латинских прописных, а на кириллическом
+   «Меню» со строчными её листья садились ровно на «М». */
+.menu__branch {
+  position: static;
+  margin-inline-start: 3.5rem;
+  margin-block-end: 0.2rem;
+  opacity: 0.95;
+}
+
+.menu__body {
+  margin-block-start: clamp(1.75rem, 5vh, 2.75rem);
+}
+
+/* --------- лента разделов -------- */
+
+.rail {
+  position: sticky;
+  inset-block-start: var(--header-h);
+  z-index: 20;
+  background: color-mix(in srgb, var(--cream) 94%, transparent);
+  backdrop-filter: blur(8px);
+  margin-inline: calc(var(--gutter) * -1);
+  border-block: 1px solid color-mix(in srgb, var(--olive-deep) 16%, transparent);
+}
+.rail__list {
+  display: flex;
+  gap: 0.35rem;
+  block-size: var(--rail-h);
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-inline: var(--gutter);
+  /* Края ленты растворяются, а не обрезаются: видно, что список продолжается */
+  mask-image: linear-gradient(90deg, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent);
+}
+.rail__list::-webkit-scrollbar {
+  display: none;
+}
+.rail__chip {
+  display: block;
+  white-space: nowrap;
+  padding: 0.38rem 0.85rem;
+  border-radius: 999px;
+  font-size: var(--micro);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--olive-ink);
+  text-decoration: none;
+  opacity: 0.75;
+  transition:
+    background-color 0.2s var(--ease),
+    opacity 0.2s var(--ease),
+    color 0.2s var(--ease);
+}
+.rail__chip.is-active {
+  background: var(--olive-deep);
+  color: var(--cream);
+  opacity: 1;
+}
+@media (hover: hover) {
+  .rail__chip:not(.is-active):hover {
+    opacity: 1;
+    background: color-mix(in srgb, var(--olive) 16%, transparent);
   }
 }
 
-.menu__col2 {
-  display: grid;
-  gap: clamp(1.6rem, 3vh, 2.4rem);
-  align-content: start;
+/* С этой ширины лента становится боковиком: колонка меню всё равно ограничена
+   читаемой строкой, и свободное поле сбоку лучше отдать навигации, чем воздуху. */
+@media (min-width: 1080px) {
+  .menu__body {
+    display: grid;
+    grid-template-columns: 12.5rem minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .rail {
+    position: sticky;
+    inset-block-start: calc(var(--header-h) + 2rem);
+    margin-inline: 0;
+    background: none;
+    backdrop-filter: none;
+    border: 0;
+    border-inline-start: 1px solid color-mix(in srgb, var(--olive-deep) 22%, transparent);
+  }
+  .rail__list {
+    display: grid;
+    gap: 0.1rem;
+    block-size: auto;
+    overflow: visible;
+    padding-inline: 0;
+    mask-image: none;
+  }
+  .rail__chip {
+    border-radius: 0;
+    padding: 0.42rem 0 0.42rem 0.9rem;
+    margin-inline-start: -1px;
+    border-inline-start: 2px solid transparent;
+    white-space: normal;
+  }
+  [dir='rtl'] .rail__chip {
+    padding: 0.42rem 0.9rem 0.42rem 0;
+  }
+  .rail__chip.is-active {
+    background: none;
+    color: var(--olive-deep);
+    border-inline-start-color: var(--olive-deep);
+  }
+  @media (hover: hover) {
+    .rail__chip:not(.is-active):hover {
+      background: none;
+    }
+  }
 }
 
-.menu-group__title {
-  font-size: var(--step-2);
-  letter-spacing: 0.04em;
-  margin-bottom: 0.9rem;
+/* --------- разделы и блюда -------- */
+
+.menu__courses {
+  max-width: var(--measure);
+  margin-inline: auto;
 }
-.menu-group__title--red {
-  color: var(--chalk-red);
-}
-.menu-group__title--yellow {
-  color: var(--chalk-yellow);
-}
-.menu-group__title--green {
-  color: var(--chalk-green);
-}
-.menu-group__title--blue {
-  color: var(--chalk-blue);
+@media (min-width: 1080px) {
+  .menu__courses {
+    margin-inline: 0;
+  }
 }
 
-.menu-group__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.9rem;
+.course {
+  padding-block-start: clamp(2rem, 5vh, 3rem);
+  /* Якорь встаёт под шапкой и лентой, а не под ними */
+  scroll-margin-block-start: calc(var(--header-h) + var(--rail-h) + 0.75rem);
+}
+@media (min-width: 1080px) {
+  .course {
+    scroll-margin-block-start: calc(var(--header-h) + 1.5rem);
+  }
 }
 
-/* Блюдо = флажковая колонка + текстовая колонка. Флажок вынесен в собственный
-   жёлоб, поэтому названия, точки и состав стоят на одной левой линии
-   независимо от того, есть у блюда флаг или нет. */
-.dish {
-  --dish-gutter: 1.5rem;
-  display: grid;
-  grid-template-columns: var(--dish-gutter) minmax(0, 1fr);
-  column-gap: 0.55rem;
-}
-.dish__flag {
+.course__title {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  height: 1.68em; /* высота строки названия: флажок садится на её середину */
+  gap: 0.6rem;
+  font-size: var(--step-2);
+  color: var(--olive-deep);
+  padding-block-end: 0.6rem;
+  border-block-end: 1px solid color-mix(in srgb, var(--olive-deep) 26%, transparent);
+}
+.course__star {
+  color: var(--gold);
+  flex: none;
 }
 
-.dish__row {
+.course__photo {
+  margin: 1.25rem 0 0;
+  position: relative;
+}
+.course__photo img {
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: 3px;
+  box-shadow: 0 10px 30px -14px color-mix(in srgb, var(--olive-ink) 55%, transparent);
+}
+.course__photo figcaption {
+  margin-block-start: 0.55rem;
+  font-size: var(--micro);
+  letter-spacing: 0.04em;
+  opacity: 0.78;
+}
+
+.course__list {
+  margin-block-start: 0.5rem;
+}
+
+.dish {
+  padding-block: 0.72rem;
+  border-block-end: 1px solid color-mix(in srgb, var(--olive-ink) 9%, transparent);
+}
+.dish:last-child {
+  border-block-end: 0;
+}
+
+/* Название — точки — вес и цена. Точки занимают всё, что осталось. */
+.dish__line {
   display: flex;
   align-items: baseline;
-  gap: 0.7rem;
+  gap: 0.5rem;
 }
 .dish__name {
-  font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
-  line-height: 1.2;
+  font-size: var(--step-0);
 }
 .dish__dots {
-  flex: 1;
-  min-width: 1.5rem;
-  border-bottom: 2px dotted rgba(242, 239, 230, 0.32);
-  transform: translateY(-0.28em);
+  flex: 1 1 auto;
+  min-inline-size: 1.5rem;
+  align-self: flex-end;
+  margin-block-end: 0.28em;
+  border-block-end: 1px dotted color-mix(in srgb, var(--olive-ink) 32%, transparent);
 }
 .dish__meta {
+  flex: none;
   display: flex;
   align-items: baseline;
-  gap: 0.6rem;
-  white-space: nowrap;
+  gap: 0.75rem;
 }
 .dish__weight {
   font-size: var(--micro);
-  color: var(--chalk-dim);
+  opacity: 0.72;
 }
 .dish__price {
-  font-size: 1.02rem;
-  color: var(--chalk);
+  font-weight: 600;
+  color: var(--olive-deep);
+  white-space: nowrap;
 }
 .dish__desc {
   display: block;
-  grid-column: 2;
-  margin-top: 0.25rem;
-  font-size: 0.95rem;
-  color: var(--chalk-dim);
-  line-height: 1.35;
+  margin-block-start: 0.2rem;
+  padding-inline-end: 5.5rem;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  opacity: 0.78;
+  text-wrap: pretty;
 }
 
-/* Узкая доска: длинное название переносилось в две строки, а точки, вес и цена
-   оставались приклеены к базовой линии ПЕРВОЙ строки — обрубок пунктира посреди
-   пустоты. На телефоне ставим цену на собственную строку и тянем пунктир к ней:
-   табло сохраняется, но ведёт слева направо по нижней строке. */
+/* Узкая полоса: длинное название и вес с ценой в одну строку не встают —
+   лидер убирается, а вес и цена уезжают под название. */
 @media (max-width: 559.98px) {
-  .dish {
-    --dish-gutter: 1.4rem;
-  }
-  .dish__row {
+  .dish__line {
     display: grid;
-    grid-template-columns: minmax(1.5rem, 1fr) auto;
-    align-items: baseline;
-    column-gap: 0.6rem;
-    row-gap: 0.1rem;
-  }
-  .dish__name {
-    grid-column: 1 / -1;
+    grid-template-columns: 1fr auto;
+    gap: 0.15rem 0.75rem;
   }
   .dish__dots {
+    display: none;
+  }
+  .dish__name {
     grid-column: 1;
-    grid-row: 2;
-    min-width: 0;
-    transform: none;
-    align-self: center;
   }
   .dish__meta {
     grid-column: 2;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1rem;
+  }
+  .dish__desc {
+    padding-inline-end: 0;
+  }
+}
+
+/**
+ * Сноска приглушена краской, а не прозрачностью.
+ *
+ * Прозрачность у родителя — не наследуемое значение, а групповой эффект:
+ * она гасит поддерево целиком, и `opacity: 1` на ссылке внутри её не
+ * отменяет. На сноске под .78 ссылка «Меню на Яндекс Картах» давала 3,7:1
+ * при норме 4,5:1 и починить это на самой ссылке было нельзя. С краской
+ * ссылка живёт своей: сноска тише текста, действие в ней — нет.
+ */
+.menu__source {
+  margin-block-start: clamp(2rem, 5vh, 3rem);
+  padding-block-start: 1.2rem;
+  border-block-start: 1px solid color-mix(in srgb, var(--olive-ink) 14%, transparent);
+  font-size: var(--micro);
+  line-height: 1.7;
+  color: var(--ink-dim);
+}
+.menu__source a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--olive-deep);
+  font-weight: 600;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Акт 3 · Зал
+   ============================================================ */
+
+.room {
+  position: relative;
+  isolation: isolate;
+  background: var(--night);
+  color: var(--cream);
+  padding-block: clamp(3.5rem, 9vh, 6rem) clamp(3.5rem, 9vh, 6rem);
+  overflow: clip;
+  scroll-margin-block-start: var(--header-h);
+}
+/* Кессоны потолка: сетка тёмного дерева поверх темноты */
+.room::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--oxblood) 34%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--oxblood) 34%, transparent) 1px, transparent 1px);
+  background-size: 5.5rem 5.5rem;
+  mask-image: radial-gradient(120% 70% at 50% 0%, #000 0%, transparent 72%);
+  opacity: 0.75;
+}
+
+.room__stars {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 18rem;
+  z-index: -1;
+  color: var(--gold);
+  pointer-events: none;
+}
+.room__star {
+  position: absolute;
+}
+.room__star--0 { inset-inline-start: 8%;  inset-block-start: 3.2rem; }
+.room__star--1 { inset-inline-start: 23%; inset-block-start: 7.5rem; }
+.room__star--2 { inset-inline-start: 39%; inset-block-start: 2.2rem; }
+.room__star--3 { inset-inline-start: 52%; inset-block-start: 9.5rem; }
+.room__star--4 { inset-inline-start: 68%; inset-block-start: 4rem; }
+.room__star--5 { inset-inline-start: 81%; inset-block-start: 8.2rem; }
+.room__star--6 { inset-inline-start: 94%; inset-block-start: 3rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .room__star {
+    animation: star-breathe 7s ease-in-out infinite;
+  }
+  .room__star--1 { animation-delay: -1.4s; }
+  .room__star--2 { animation-delay: -2.8s; }
+  .room__star--3 { animation-delay: -4.2s; }
+  .room__star--4 { animation-delay: -0.7s; }
+  .room__star--5 { animation-delay: -3.5s; }
+  .room__star--6 { animation-delay: -5.6s; }
+}
+@keyframes star-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.room__head {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+.room__head .section-title {
+  color: var(--gold-lt);
+}
+.room__head .section-lead {
+  max-width: 54ch;
+  opacity: 0.8;
+}
+
+/* align-items: start обязателен: без него grid растягивает карточки на высоту
+   ряда, object-fit доводит снимок до этой высоты — и разнобой по вертикали,
+   ради которого всё затевалось, съедается обратно. */
+.room__gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: start;
+  gap: clamp(0.6rem, 2vw, 1.1rem);
+  margin-block-start: clamp(2rem, 5vh, 3rem);
+}
+/* Сброс идёт ДО модификаторов, а не после: медиазапрос не добавляет
+   специфичности, и `.room__photo { margin: 0 }`, стоявший ниже, молча
+   отменял сдвиг `.room__photo--1` — снимки выстраивались в линейку, а
+   разнобой, ради которого всё затевалось, не появлялся никогда. */
+.room__photo {
+  margin: 0;
+}
+/* Третий снимок на узкой полосе занимает обе колонки: два в ряд плюс один
+   широкий читаются как разворот, а не как осиротевшая карточка. */
+.room__photo--2 {
+  grid-column: span 2;
+}
+@media (min-width: 900px) {
+  .room__gallery {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .room__photo--2 {
+    grid-column: auto;
+  }
+  /* лёгкий разнобой по вертикали — снимки висят, а не выложены в линейку */
+  .room__photo--1 {
+    margin-block-start: 2.2rem;
+  }
+}
+.room__photo img {
+  inline-size: 100%;
+  block-size: auto;
+  object-fit: cover;
+  aspect-ratio: 3 / 4;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--gold) 26%, transparent);
+  box-shadow: 0 18px 44px -20px #000;
+}
+.room__photo--2 img {
+  aspect-ratio: 16 / 9;
+}
+@media (min-width: 900px) {
+  .room__photo--2 img {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+.room__features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-block-start: clamp(1.75rem, 4vh, 2.5rem);
+  color: color-mix(in srgb, var(--cream) 82%, transparent);
+}
+
+.room__praise {
+  position: relative;
+  max-width: 44rem;
+  margin-block-start: clamp(2.5rem, 6vh, 4rem);
+  padding-block-start: clamp(1.75rem, 4vh, 2.5rem);
+  border-block-start: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+}
+.room__praise-lead {
+  font-size: var(--step-2);
+  color: var(--gold-lt);
+}
+.praise__list {
+  display: grid;
+  gap: 0.9rem;
+  margin-block-start: 1.25rem;
+}
+
+/* Полоса: подпись — процент — шкала — объём выборки, всё в одну строку.
+   Раньше объём выборки был вынесен во вторую строку сетки, и каждая тема
+   занимала две высоты: четыре полосы расползались на пол-экрана, а число
+   отрывалось от своей шкалы. */
+.praise {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, max-content) 2.8rem minmax(4rem, 1fr) max-content;
+  align-items: center;
+  gap: 0.3rem 0.9rem;
+}
+.praise__label {
+  font-size: var(--step-0);
+}
+.praise__value {
+  font-weight: 600;
+  color: var(--gold-lt);
+}
+.praise__track {
+  block-size: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--cream) 18%, transparent);
+  overflow: hidden;
+}
+.praise__fill {
+  display: block;
+  block-size: 100%;
+  background: linear-gradient(90deg, var(--olive), var(--gold));
+  transform: scaleX(var(--pct));
+  transform-origin: left center;
+}
+/* Полоса растёт от того края, откуда читают, — и градиент вместе с ней. */
+[dir='rtl'] .praise__fill {
+  transform-origin: right center;
+  background: linear-gradient(270deg, var(--olive), var(--gold));
+}
+/* Покой шкалы — уже готовый процент. Прочерк добавляется классом, поэтому
+   если наблюдатель почему-то не сработает, гость увидит верное число. */
+@media (prefers-reduced-motion: no-preference) {
+  .praise__fill {
+    transform: scaleX(0);
+    transition: transform 1.1s var(--ease) var(--delay);
+  }
+  .praise.is-drawn .praise__fill {
+    transform: scaleX(var(--pct));
+  }
+}
+.praise__count {
+  font-size: var(--micro);
+  opacity: 0.55;
+  justify-self: end;
+  white-space: nowrap;
+}
+[dir='rtl'] .praise__count {
+  justify-self: start;
+}
+/* На узкой полосе шкале не остаётся места между процентом и выборкой —
+   опускаем её под подпись во всю ширину. */
+@media (max-width: 559.98px) {
+  .praise {
+    grid-template-columns: 1fr auto auto;
+  }
+  .praise__track {
+    grid-column: 1 / -1;
     grid-row: 2;
   }
 }
 
-.menu__drinks {
-  font-size: 1.15rem;
-  line-height: 1.6;
-}
-.menu__drinks-note {
-  margin-top: 0.5rem;
-  color: var(--chalk-dim);
-  font-size: 0.95rem;
-}
-
-.menu__source {
-  margin-top: clamp(2.4rem, 5vh, 3.6rem);
-  text-align: center;
+/* Та же причина, что у .menu__source: под opacity 0.6 ссылка на отзывы давала
+   4,1:1. Приглушаем краской, ссылка остаётся полноцветной. */
+.room__praise-note {
+  margin-block-start: 1.5rem;
   font-size: var(--micro);
-  letter-spacing: 0.08em;
-  color: var(--chalk-dim);
-  max-width: 46rem;
-  margin-inline: auto;
   line-height: 1.7;
+  color: color-mix(in srgb, var(--cream) 68%, var(--night));
 }
-
-/* ---------- atmosphere ---------- */
-
-.atmo {
-  padding-top: clamp(3rem, 7vh, 5rem);
-  padding-bottom: clamp(3rem, 7vh, 5rem);
-}
-
-.atmo__ceiling {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: clamp(1.2rem, 5vw, 4rem);
-  pointer-events: none;
-}
-.atmo__ceiling .mandala {
-  margin-top: -3rem;
-}
-@media (max-width: 700px) {
-  .atmo__ceiling .bulb:nth-child(2),
-  .atmo__ceiling .bulb:nth-child(5) {
-    display: none;
-  }
-  .atmo__ceiling .mandala {
-    width: 180px;
-    height: 180px;
-    margin-top: -2rem;
-  }
-}
-
-.atmo__title {
-  margin-top: clamp(1.2rem, 3.5vh, 2.4rem);
-  text-align: center;
-  font-size: var(--step-4);
-  color: var(--chalk-blue);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.atmo__room {
-  margin-top: clamp(2.6rem, 6vh, 4.4rem);
-  padding-block: clamp(2.2rem, 5vh, 4rem);
-}
-
-.atmo__gallery {
-  display: grid;
-  gap: clamp(1.4rem, 3vw, 2.4rem);
-  align-items: center;
-}
-@media (min-width: 900px) {
-  .atmo__gallery {
-    grid-template-columns: 0.9fr 1.2fr 0.9fr;
-  }
-}
-.atmo__photo {
-  margin: 0;
-  background: #241b10;
-  padding: 10px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(242, 239, 230, 0.12);
-}
-.atmo__photo img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.atmo__photo--a {
-  rotate: -1.4deg;
-}
-.atmo__photo--b {
-  rotate: 1.1deg;
-}
-
-/* Телефон: два снимка в столбик занимали почти два экрана. Кладём их рядом —
-   как пара карточек, приколотых к доске, — а текст ставим под ними во всю
-   ширину. Секция становится вдвое короче, и снимки читаются как пара.
-   Блок стоит ПОСЛЕ безусловных правил .atmo__photo — специфичность у них
-   одинаковая (0-1-0), media-запрос её не повышает, и выше по файлу эти
-   объявления просто перекрывались десктопными. */
-@media (max-width: 899.98px) {
-  .atmo__gallery {
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(0.9rem, 3vw, 1.6rem);
-    align-items: start;
-  }
-  .atmo__card {
-    grid-column: 1 / -1;
-  }
-  .atmo__photo {
-    padding: 7px;
-  }
-  .atmo__photo--a {
-    rotate: -1.8deg;
-  }
-  .atmo__photo--b {
-    rotate: 1.5deg;
-    /* margin, а не margin-top: сокращение `margin:0` в .atmo__photo выше
-       обнуляло бы отдельное margin-top */
-    margin: 1.4rem 0 0;
-  }
-}
-
-.atmo__card {
-  background: var(--parchment-hi);
-  color: var(--ink);
-  padding: clamp(1.4rem, 3vw, 2rem);
-  font-size: var(--step-0);
-  line-height: 1.65;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
-  rotate: -0.6deg;
-  border: 1.5px solid var(--sepia);
-}
-
-.atmo__reviews {
-  margin-top: clamp(2.4rem, 6vh, 4rem);
-  text-align: center;
-}
-
-.atmo__reviews-lead {
-  margin: 0;
-  font-size: var(--step-1);
-  font-weight: 400;
-  color: var(--chalk);
-  letter-spacing: 0.04em;
-}
-
-.atmo__stats-row {
-  list-style: none;
-  margin: clamp(1.4rem, 3.5vh, 2.2rem) 0 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  gap: clamp(1.1rem, 6vw, 4.5rem);
-  flex-wrap: wrap;
-}
-
-.atmo__stat {
-  display: grid;
-  justify-items: center;
-  gap: 0.65rem;
-}
-
-/* циферблат: шкала + число внутри, подпись — снаружи, чтобы не тесно */
-.atmo__stat-dial {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: clamp(5.6rem, 24vw, 8.2rem);
-  aspect-ratio: 1;
-}
-
-.atmo__stat-ring {
-  position: absolute;
-  inset: 0;
-  /* transform, а не rotate: без поддержки независимого свойства дуга
-     стартовала бы с 3 часов, а не с 12 */
-  transform: rotate(-90deg);
-}
-.atmo__stat-track {
-  fill: none;
-  stroke: var(--chalk);
-  stroke-width: 2;
-  stroke-dasharray: 3 7;
-  opacity: 0.25;
-}
-/* Покой дуги — уже готовый процент, а не пустое кольцо: прочерк добавляет
-   анимация, когда шкала входит в кадр (см. Stat в Atmosphere.tsx). Так самый
-   тяжёлый исход — шкала не прорисуется на глазах, но число совпадёт с дугой. */
-.atmo__stat-arc {
-  fill: none;
-  stroke: var(--chalk-yellow);
-  stroke-width: 3.5;
-  stroke-linecap: round;
-  stroke-dasharray: var(--ring-c);
-  stroke-dashoffset: var(--ring-drawn);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .atmo__stat.is-drawn .atmo__stat-arc {
-    animation: ring-draw 1.1s var(--ease-settle) var(--ring-delay, 0s) backwards;
-  }
-}
-@keyframes ring-draw {
-  from {
-    stroke-dashoffset: var(--ring-c);
-  }
-}
-
-.atmo__stat-value {
-  font-size: clamp(1.4rem, 5.5vw, 1.9rem);
-  color: var(--chalk-yellow);
-  line-height: 1;
-}
-.atmo__stat-label {
-  font-size: clamp(0.85rem, 3vw, 0.95rem);
-  color: var(--chalk-dim);
-}
-
-.atmo__stats-note {
-  margin-top: clamp(1.3rem, 3vh, 2rem);
-  padding-inline: 1.2rem;
-  font-size: var(--micro-sm);
-  letter-spacing: 0.08em;
-  color: var(--chalk-dim);
-}
-
-/* ---------- branches (boarding passes) ---------- */
-
-.branches {
-  padding-block: clamp(3.2rem, 7vh, 5.5rem) clamp(3rem, 6vh, 5rem);
-}
-
-.branches__title {
-  text-align: center;
-  font-size: var(--step-4);
-  color: var(--chalk-yellow);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: clamp(2rem, 4vh, 3rem);
-}
-
-.branches__grid {
-  display: grid;
-  gap: clamp(1.6rem, 3vw, 2.6rem);
-}
-@media (min-width: 860px) {
-  .branches__grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  /* нечётная последняя карточка не висит в полряда, а встаёт по центру своей шириной */
-  .branches__grid > :last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: min(100%, 29rem);
-  }
-}
-/* три точки в ряд */
-@media (min-width: 1180px) {
-  .branches__grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  .branches__grid > :last-child:nth-child(odd) {
-    grid-column: auto;
-    justify-self: stretch;
-    width: auto;
-  }
-}
-
-/* Билет по умолчанию сложен вертикально: корешок с наградой уходит вниз.
-   Горизонтальным он бывает ровно в одной полосе ширин — 560–859px, где
-   карточки идут по одной в ряд. При 2-up (от 860) и 3-up (от 1180) карточка
-   узкая, и корешок в 8,5rem съедал бы половину строки: на 860px под адрес
-   оставалось 183px, и «ул. Звонарёва, 19/8» ломался посреди названия. */
-.pass {
-  display: flex;
-  flex-direction: column;
-  background: var(--parchment-hi);
-  color: var(--ink);
-  border: 1.5px solid var(--sepia);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.pass__main {
-  flex: 1;
-  padding: clamp(1.3rem, 3vw, 1.9rem);
-  display: grid;
-  gap: 0.55rem;
-  align-content: start;
-}
-
-.pass__terminal {
-  font-size: var(--micro-sm);
-  letter-spacing: 0.2em;
-  line-height: 1.5;
-  text-transform: uppercase;
-  color: var(--sepia);
-}
-/* в три колонки длинная надпись переносится: держим две строки, чтобы адреса стояли в ряд */
-@media (min-width: 1180px) {
-  .pass__terminal {
-    min-height: 3em;
-  }
-}
-
-.pass__address {
-  font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
-  line-height: 1.12;
-  text-wrap: balance;
-}
-/* в две и три колонки карточка узкая — адрес набираем мельче, чтобы он не
-   ломался посреди названия улицы */
-@media (min-width: 860px) {
-  .pass__address {
-    font-size: clamp(1.3rem, 1.05rem + 0.5vw, 1.6rem);
-  }
-}
-
-.pass__note {
-  font-style: italic;
-  color: var(--sepia);
-  font-size: 0.95rem;
-}
-
-.pass__metro {
-  font-size: var(--micro);
-  letter-spacing: 0.06em;
-  color: var(--sepia);
-}
-
-.pass__rows {
-  display: grid;
-  gap: 0.45rem;
-  margin-top: 0.5rem;
-  font-size: 0.86rem;
-}
-.pass__row {
+.room__praise-note a {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  color: var(--gold-lt);
+  font-weight: 600;
+  text-underline-offset: 3px;
+  white-space: nowrap;
 }
-.pass__tel {
-  width: fit-content;
-  color: inherit;
-  text-decoration: none;
+
+/* ============================================================
+   Акт 4 · Как дойти
+   ============================================================ */
+
+.visit {
+  position: relative;
+  /* фон тёмный — «открыто» берёт светлый зелёный, тёмный на нём нечитаем */
+  --ok: #9fd47a;
+  background: var(--olive-deep);
+  color: var(--cream);
+  padding-block: clamp(3.5rem, 9vh, 6rem);
+  scroll-margin-block-start: var(--header-h);
+  overflow: clip;
 }
-/* подчёркивание только под номером, не под иконкой */
-.pass__tel > span {
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-decoration-color: rgba(107, 86, 56, 0.55);
+/* Восьмиконечная сетка кессонов, но зелёная и едва различимая */
+.visit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0 2.7rem, color-mix(in srgb, var(--cream) 6%, transparent) 2.7rem 2.75rem),
+    repeating-linear-gradient(-45deg, transparent 0 2.7rem, color-mix(in srgb, var(--cream) 6%, transparent) 2.7rem 2.75rem);
+  pointer-events: none;
+}
+
+.visit__head {
+  position: relative;
+}
+.visit__head .section-title {
+  color: var(--cream);
+}
+.visit__head .section-lead {
+  opacity: 0.82;
+}
+
+.visit__card {
+  position: relative;
+  margin-block-start: clamp(1.75rem, 4vh, 2.5rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  background: color-mix(in srgb, var(--olive-ink) 62%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 34%, transparent);
+  border-radius: 4px;
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+@media (min-width: 860px) {
+  .visit__card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: start;
+  }
+}
+
+.visit__label {
+  font-size: var(--micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+.visit__address {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  line-height: 1.15;
+  margin-block-start: 0.35rem;
+  color: var(--gold-lt);
+}
+.visit__note {
+  margin-block-start: 0.5rem;
+  font-size: var(--step--1);
+  opacity: 0.72;
+}
+
+.visit__metro {
+  display: grid;
+  gap: 0.4rem;
+  margin-block-start: 1.2rem;
+  font-size: var(--step--1);
+}
+/* Строка остановки течёт как обычный абзац, а не как flex-ряд из четырёх
+   коробок: на 390px «Сытный рынок» переносится, и flex ломал строку между
+   названием и расстоянием, оставляя их разными столбцами разной высоты. */
+.visit__metro li {
+  display: block;
+}
+.visit__dot {
+  display: inline-block;
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: 50%;
+  margin-inline-end: 0.45rem;
+}
+/* Тип точки набран мельче и тише названия: он уточняет, а не объявляет.
+   Капителью не набираем — на арабском «مترو» разрядка рвёт вязь. */
+.visit__kind {
+  margin-inline-end: 0.35rem;
+  font-size: var(--micro);
+  opacity: 0.72;
+}
+.visit__walk {
+  opacity: 0.72;
+}
+
+.visit__rows {
+  display: grid;
+  gap: 1.35rem;
+}
+.visit__row {
+  display: flex;
+  gap: 0.8rem;
+  padding-block-start: 1.35rem;
+  border-block-start: 1px solid color-mix(in srgb, var(--cream) 14%, transparent);
+}
+.visit__row:first-child {
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+.visit__glyph {
+  padding-block-start: 0.2rem;
+  color: var(--gold);
+}
+.visit__rowbody {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.9rem;
+  font-size: var(--step-0);
+}
+.visit__rowbody > .visit__label {
+  flex-basis: 100%;
+}
+.visit__link {
+  font-weight: 600;
+  color: var(--gold-lt);
+  text-underline-offset: 3px;
+}
+.visit__social {
+  display: flex;
+  gap: 0.9rem;
+  font-size: var(--step--1);
+}
+.visit__social a {
+  opacity: 0.75;
   text-underline-offset: 3px;
 }
 @media (hover: hover) {
-  .pass__tel:hover {
-    color: #b23a28;
-  }
-  .pass__tel:hover > span {
-    text-decoration-style: solid;
-    text-decoration-color: currentColor;
+  .visit__social a:hover {
+    opacity: 1;
   }
 }
-.pass__tel:active {
-  color: #b23a28;
+.visit__row:last-child {
+  flex-wrap: wrap;
 }
-.pass__tel:active > span {
-  text-decoration-style: solid;
-  text-decoration-color: currentColor;
+.visit__row:last-child .visit__rowbody {
+  gap: 0.7rem;
 }
-
-.pass__route {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.7rem;
-  width: fit-content;
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: #b23a28;
-  border-bottom: 1.5px solid transparent;
-  transition: border-color 0.15s;
+.visit__route {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--night);
 }
 @media (hover: hover) {
-  .pass__route:hover {
-    border-bottom-color: #b23a28;
+  .visit__route:hover {
+    background: var(--gold-lt);
+    border-color: var(--gold-lt);
   }
+}
+.visit__seal {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-end: 1rem;
+  color: var(--gold);
+  opacity: 0.4;
 }
 
-/* Телефон и маршрут — два действия, ради которых билет вообще открывают с
-   телефона. В строке они были 21 и 20px высотой: под палец не годится
-   (WCAG 2.5.8 — минимум 24px, комфорт — 44px).
-   Номер получает вертикальные поля, маршрут становится отрывным корешком
-   во всю ширину карточки — это и крупная цель, и продолжение метафоры. */
-@media (max-width: 767.98px) {
-  .pass__rows {
-    gap: 0.15rem;
-  }
-  .pass__tel {
-    padding-block: 0.72rem;
-    margin-block: -0.35rem;
-  }
-  .pass__route {
-    gap: 0.75rem;
-    margin-top: 1rem;
-    padding: 0.85rem 1.1rem;
-    border: 1.5px dashed rgba(178, 58, 40, 0.55);
-    border-radius: 8px;
-    background: rgba(178, 58, 40, 0.05);
-  }
-  .pass__route:active {
-    background: rgba(178, 58, 40, 0.14);
-    border-style: solid;
-  }
-}
-/* сложенный билет: корешок-действие берёт всю ширину карточки */
-@media (max-width: 559.98px) {
-  .pass__route {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-}
-
-.pass__stub {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.9rem 1.2rem;
-  border-top: 2px dashed rgba(107, 86, 56, 0.5);
-  background: var(--parchment);
-}
-@media (min-width: 560px) and (max-width: 859.98px) {
-  .pass {
-    flex-direction: row;
-  }
-  .pass__stub {
-    border-top: none;
-    border-left: 2px dashed rgba(107, 86, 56, 0.5);
-    min-width: 8.5rem;
-    padding: 1.1rem;
-  }
-}
-/* штамп-награда в карточке — это содержимое, не декор: без blend, крупнее, темнее */
-.pass__award {
-  width: 7.2rem;
-  font-size: var(--micro-sm);
-  --stamp-color: #8a2b1c;
-  opacity: 1;
-  mix-blend-mode: normal;
-}
-
-
-.branches__note {
-  text-align: center;
-  margin-top: clamp(1.8rem, 4vh, 2.6rem);
-  font-size: var(--micro-sm);
-  letter-spacing: 0.08em;
-  color: var(--chalk-dim);
-}
-
-/* ---------- footer ---------- */
+/* ============================================================
+   Подвал
+   ============================================================ */
 
 .footer {
-  background: var(--night);
-  color: var(--chalk);
+  background: var(--olive-ink);
+  color: var(--cream);
+  padding-block: clamp(2.5rem, 6vh, 4rem) calc(clamp(2.5rem, 6vh, 4rem) + var(--safe-b));
+  border-block-start: 0.75rem solid transparent;
+  border-image: repeating-linear-gradient(
+      90deg,
+      var(--stone) 0 2.25rem,
+      var(--oxblood) 2.25rem 4.5rem
+    )
+    12;
 }
-
 .footer__inner {
   display: grid;
-  gap: 1.8rem;
-  /* нижнее поле уступает место полосе-домой на безкнопочных iPhone */
-  padding-block: clamp(2.4rem, 5vh, 3.6rem) calc(clamp(2.4rem, 5vh, 3.6rem) + var(--safe-b));
   justify-items: center;
   text-align: center;
+  gap: 1.1rem;
 }
-
 .footer__brand {
   display: grid;
   justify-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
+  color: var(--gold-lt);
+  text-decoration: none;
 }
 .footer__word {
-  letter-spacing: 0.26em;
-  font-size: 1.3rem;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  letter-spacing: 0.14em;
+  line-height: 1;
 }
 .footer__sub {
-  font-size: clamp(0.75rem, 0.72rem + 0.09vw, 0.8rem);
-  letter-spacing: 0.2em;
-  color: var(--chalk-dim);
+  font-size: var(--micro);
+  letter-spacing: 0.18em;
+  opacity: 0.6;
+  color: var(--cream);
 }
-
 .footer__social {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
-  /* строчный интервал больше вертикального выноса ::after (2 × 0,8rem):
-     расширенные области соседних ссылок не накладываются друг на друга */
-  gap: 1.75rem 2rem;
   flex-wrap: wrap;
   justify-content: center;
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
+  gap: 0.6rem 1.4rem;
+  font-size: var(--step--1);
 }
-/* Ссылки были 18px высотой — палец в них не попадает. Площадь наращиваем
-   невидимым псевдоэлементом, а не полями: пунктирное подчёркивание остаётся
-   вплотную к строке, набор не меняется. */
 .footer__social a {
-  position: relative;
-  display: inline-block;
   text-decoration: none;
-  border-bottom: 1.5px dashed rgba(242, 239, 230, 0.35);
-  padding-bottom: 2px;
-}
-.footer__social a::after {
-  content: '';
-  position: absolute;
-  inset: -0.8rem -0.5rem;
+  text-underline-offset: 3px;
 }
 @media (hover: hover) {
   .footer__social a:hover {
-    border-bottom-color: var(--chalk-red);
-    color: var(--chalk);
+    text-decoration: underline;
   }
-}
-.footer__social a:active {
-  border-bottom-color: var(--chalk-red);
-  color: var(--chalk);
 }
 .footer__handle {
-  color: var(--chalk-dim);
+  opacity: 0.68;
 }
-
 .footer__fine {
-  display: grid;
-  gap: 0.3rem;
-  font-size: var(--micro-sm);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--chalk-dim);
+  font-size: var(--micro);
+  opacity: 0.68;
 }
-
-/* Подпись разработчика: тише мелкого шрифта над ней, без капители — иначе
-   от логотипа Lumako остаётся только набор букв. */
 .footer__made {
-  margin: 0;
-  font-size: var(--micro-sm);
-  letter-spacing: 0.1em;
-  color: var(--chalk-dim);
+  font-size: var(--micro);
+  opacity: 0.68;
+  margin-block-start: 0.5rem;
 }
 .lumako {
-  position: relative;
-  display: inline-block;
-  color: var(--chalk);
   text-decoration: none;
-  /* геометрический гротеск логотипа — из системных: ради одного слова
-     веб-шрифт не тянем */
-  font-family: 'Avenir Next', Avenir, Futura, 'Century Gothic', system-ui, sans-serif;
-  letter-spacing: 0.01em;
-  border-bottom: 1px solid transparent;
-  padding-bottom: 1px;
+  letter-spacing: 0.02em;
 }
-/* строка в 13px — не палец; площадь наращиваем невидимым слоем, как у соцсетей */
-.lumako::after {
-  content: '';
-  position: absolute;
-  inset: -0.7rem -0.5rem;
-}
-/* в логотипе точка крупнее буквы — на 13px строке иначе теряется совсем */
 .lumako__dot {
   color: var(--lume-gold);
-  font-size: 1.2em;
-  font-weight: 700;
-  line-height: 0;
-}
-@media (hover: hover) {
-  .lumako:hover {
-    border-bottom-color: var(--lume-gold);
-  }
-}
-.lumako:active {
-  border-bottom-color: var(--lume-gold);
 }
 
-/* ---------- motion safety ---------- */
+/* ============================================================
+   Меньше движения
+   ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -1866,5 +1601,18 @@ html[lang='en'] .hero__title {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Телефон: две кнопки маршрута встают в столбик — пусть будут одной ширины,
+   как и корешки первого экрана. */
+@media (max-width: 559.98px) {
+  .visit__row:last-child .visit__rowbody {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .visit__row:last-child .btn {
+    justify-content: center;
   }
 }

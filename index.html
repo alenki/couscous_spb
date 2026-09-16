@@ -1,135 +1,108 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <!-- viewport-fit=cover: без него env(safe-area-inset-*) всегда 0, и Safari
          letterbox'ит документ — рядом с вырезом в альбомной ориентации появлялась
-         чёрная полоса поверх пергаментного героя. Отступы под вырез — в styles.css -->
+         чёрная полоса поверх каменного первого экрана. Отступы под вырез — в styles.css -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Casbah — алжирская кухня и халяль-шаурма в Санкт-Петербурге</title>
+    <title>Дамаск — кафе арабской кухни в Санкт-Петербурге, Кронверкский, 45</title>
     <meta
       name="description"
-      content="Ваш билет в мир кухни CASBAH: алжирская шаурма, тарелки и фалафель — всё халяль. Три кафе в Петербурге: Звонарёва 19/8, Лоскутная 15 и Стеклярусный переулок 3. 1 700+ оценок гостей."
+      content="Сирийская кухня на Петроградской стороне: мезе, мангал на углях, маклюбе, мансаф и кнафе. Кронверкский проспект, 45, цокольный этаж. Ежедневно 11:00–23:30. 4,4 по 1010 оценкам."
     />
-    <!-- тон строки состояния = верх пергаментного градиента героя (--parchment-hi) -->
-    <meta name="theme-color" content="#F2E6C5" />
+    <!-- тон строки состояния = верх каменного градиента первого экрана -->
+    <meta name="theme-color" content="#F0E8D4" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <!-- Предзагружаем только кириллицу. rel=preload идёт с высшим приоритетом,
-         впереди стилей и модуля, а латинская подрезка (20,5 КБ — 62% бюджета
-         предзагрузки) на русской странице набирает лишь слово CASBAH в шапке:
-         заблокировав её на Slow-4G, LCP падал с 2134 до 1658 мс. Первый визит
-         всегда русский (lang.tsx читает язык из localStorage, html lang="ru"),
-         у вернувшихся англоязычных обе подрезки уже в кеше. Латинская грузится
-         обычным порядком из @font-face, а на время загрузки работает
-         'Oranienbaum Fallback' с подогнанными метриками. -->
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/oranienbaum-cyrillic-400-normal.woff2" crossorigin />
 
-    <!-- PLACEHOLDER: после привязки домена замените og:image на абсолютный URL, добавьте og:url + canonical,
-         а в JSON-LD ниже — поля "url" и "image" (абсолютные ссылки) во все три объекта Restaurant -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Casbah — алжирская кухня в Санкт-Петербурге" />
+    <!-- Предзагружаем только кириллицу. rel=preload идёт с высшим приоритетом,
+         впереди стилей и модуля, а латинская подрезка на русской странице
+         набирает лишь слово DAMASK в шапке и подвале. Первый визит всегда
+         русский (lang.tsx читает язык из localStorage, html lang="ru"), у
+         вернувшихся англоязычных латиница уже в кеше. Арабские Amiri и Cairo
+         не предзагружаются вовсе: их тянет динамический import при выборе AR. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/prata-cyrillic-400-normal.woff2"
+      crossorigin
+    />
+
+    <!-- PLACEHOLDER: после привязки домена замените og:image на абсолютный URL,
+         добавьте og:url + canonical, а в JSON-LD ниже — поля "url" и "image"
+         абсолютными ссылками. -->
+    <meta property="og:type" content="restaurant.restaurant" />
+    <meta property="og:title" content="Дамаск — кафе арабской кухни в Санкт-Петербурге" />
     <meta
       property="og:description"
-      content="Ваш билет в мир кухни CASBAH. Халяль-шаурма и алжирские тарелки. Звонарёва 19/8 · Лоскутная 15 · Стеклярусный переулок 3."
+      content="Мезе, мангал на углях и кнафе. Кронверкский проспект, 45, цокольный этаж. Ежедневно 11:00–23:30."
     />
     <meta property="og:image" content="/og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="ru_RU" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="ar_SY" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Числа рейтинга настоящие: 4,4 по 1010 оценкам, 557 отзывов — карточка
+         на Яндекс Картах, 16 сентября 2026. Держать в согласии с src/data.ts. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Restaurant",
-            "name": "Casbah — Algerian Kitchen (Звонарёва)",
-            "servesCuisine": "Алжирская кухня",
-            "telephone": "+7 812 000-19-08",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "ул. Звонарёва, 19/8",
-              "addressLocality": "Санкт-Петербург",
-              "addressCountry": "RU"
-            },
-            "openingHoursSpecification": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-              "opens": "07:00",
-              "closes": "00:00"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "bestRating": "5",
-              "ratingCount": "1284"
-            },
-            "sameAs": [
-              "https://yandex.ru/maps/org/casbah/10000000001/",
-              "https://t.me/casbahdz",
-              "https://www.instagram.com/cafe_casbah/"
-            ]
-          },
-          {
-            "@type": "Restaurant",
-            "name": "Casbah — Algerian Kitchen (Лоскутная)",
-            "servesCuisine": "Алжирская кухня",
-            "telephone": "+7 812 000-24-51",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Лоскутная ул., 15",
-              "addressLocality": "Санкт-Петербург",
-              "addressCountry": "RU"
-            },
-            "openingHoursSpecification": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-              "opens": "11:00",
-              "closes": "23:00"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8",
-              "bestRating": "5",
-              "ratingCount": "396"
-            },
-            "sameAs": [
-              "https://yandex.ru/maps/org/casbah/10000000002/",
-              "https://t.me/casbahdz",
-              "https://www.instagram.com/cafe_casbah/"
-            ]
-          },
-          {
-            "@type": "Restaurant",
-            "name": "Casbah — Algerian Kitchen (Стеклярусный)",
-            "servesCuisine": "Алжирская кухня",
-            "telephone": "+7 812 000-38-06",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Стеклярусный пер., 3",
-              "addressLocality": "Санкт-Петербург",
-              "addressCountry": "RU"
-            },
-            "openingHoursSpecification": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-              "opens": "11:00",
-              "closes": "23:00"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.7",
-              "bestRating": "5",
-              "ratingCount": "87"
-            },
-            "sameAs": [
-              "https://yandex.ru/maps/org/casbah/10000000003/",
-              "https://t.me/casbahdz",
-              "https://www.instagram.com/cafe_casbah/"
-            ]
-          }
+        "@type": "Restaurant",
+        "name": "Дамаск",
+        "alternateName": ["Damask", "دمشق"],
+        "description": "Кафе арабской (сирийской) кухни на Петроградской стороне: мезе, мангал на углях, маклюбе, мансаф, кнафе и дамасский чай.",
+        "servesCuisine": ["Сирийская кухня", "Арабская кухня", "Ближневосточная кухня"],
+        "priceRange": "600–1100 ₽",
+        "currenciesAccepted": "RUB",
+        "paymentAccepted": "Наличные, банковские карты",
+        "telephone": "+79811642424",
+        "image": "/og.jpg",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Кронверкский проспект, 45, цокольный этаж",
+          "addressLocality": "Санкт-Петербург",
+          "postalCode": "197101",
+          "addressCountry": "RU"
+        },
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "11:00",
+          "closes": "23:30"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.4",
+          "bestRating": "5",
+          "ratingCount": "1010",
+          "reviewCount": "557"
+        },
+        "hasMenu": "https://yandex.ru/maps/org/damask/1050716428/menu/",
+        "acceptsReservations": "https://vk.me/damask2024",
+        "amenityFeature": [
+          { "@type": "LocationFeatureSpecification", "name": "Кальян", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Летняя терраса", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Wi-Fi", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Доставка", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Еда с собой", "value": true }
+        ],
+        "sameAs": [
+          "https://yandex.ru/maps/org/damask/1050716428/",
+          "https://vk.com/damask2024",
+          "https://wa.me/79811642424"
         ]
       }
     </script>

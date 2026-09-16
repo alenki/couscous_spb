@@ -2,17 +2,17 @@ import { LazyMotion, MotionConfig, domAnimation } from 'motion/react'
 import { LangProvider, useLang } from './lang'
 import { UI } from './data'
 import { useSmoothScroll } from './useSmoothScroll'
-import { FloatingLang, Header } from './components/Header'
+import { Header } from './components/Header'
 import { Hero } from './components/Hero'
 import { Menu } from './components/Menu'
-import { Atmosphere } from './components/Atmosphere'
-import { Branches } from './components/Branches'
+import { Room } from './components/Room'
+import { Visit } from './components/Visit'
 import { Footer } from './components/Footer'
 
 function SkipLink() {
   const { t } = useLang()
   return (
-    <a className="skip-link font-mono" href="#menu">
+    <a className="skip-link" href="#menu">
       {t(UI.skip)}
     </a>
   )
@@ -30,11 +30,10 @@ export default function App() {
           <main>
             <Hero />
             <Menu />
-            <Atmosphere />
-            <Branches />
+            <Room />
+            <Visit />
           </main>
           <Footer />
-          <FloatingLang />
         </MotionConfig>
       </LazyMotion>
     </LangProvider>

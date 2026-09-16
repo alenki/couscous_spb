@@ -1,14 +1,17 @@
-/* Oranienbaum задан вручную в styles.css и предзагружен из /fonts (LCP-заголовок) */
-/* Только 400: жирного начертания на сайте нет ни одного — все font-weight в
-   styles.css равны 400, тегов <strong>/<b> нет. Пара 700 тянула ~50 КБ woff2
-   впустую. Подсеты cyrillic/latin оставлены оба: @fontsource раздаёт их с
-   unicode-range, браузер качает только нужный для текущего языка. */
-import '@fontsource/pt-serif/cyrillic-400.css'
-import '@fontsource/pt-serif/latin-400.css'
-import '@fontsource/pt-mono/cyrillic-400.css'
-import '@fontsource/pt-mono/latin-400.css'
-import '@fontsource/neucha/cyrillic-400.css'
-import '@fontsource/neucha/latin-400.css'
+/* Prata задана вручную в styles.css и предзагружена из /fonts: это шрифт
+   заголовка первого экрана, то есть LCP-элемента страницы.
+
+   Montserrat — только 400 и 600. Промежуточных начертаний на сайте нет, а
+   каждая лишняя пара подсетов это ещё ~30 КБ. Подсеты cyrillic и latin
+   оставлены оба: @fontsource раздаёт их с unicode-range, и браузер качает
+   только тот, который реально понадобился набору.
+
+   Арабские Amiri и Cairo здесь намеренно отсутствуют — их подтягивает
+   lang.tsx динамическим import() при переключении на арабский. */
+import '@fontsource/montserrat/cyrillic-400.css'
+import '@fontsource/montserrat/latin-400.css'
+import '@fontsource/montserrat/cyrillic-600.css'
+import '@fontsource/montserrat/latin-600.css'
 import './styles.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
