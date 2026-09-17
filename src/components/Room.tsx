@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react'
 import { m } from 'motion/react'
 import { useLang } from '../lang'
-import { CAFE, FEATURES, PRAISE, ROOM_PHOTOS, UI, srcSet } from '../data'
-import { reviews } from '../plural'
-import { ArrowGlyph, Star8 } from './ornaments/damascene'
+import { CAFE, PRAISE, ROOM_PHOTOS, UI, srcSet } from '../data'
+import { num, reviews } from '../plural'
+import { ArrowGlyph, RatingStar, Star8 } from './ornaments/damascene'
 
 const rise = {
   hidden: { opacity: 0, y: 18 },
@@ -15,7 +15,7 @@ const rise = {
  *
  * Полоса чертится CSS-переходом на `transform: scaleX`, а не анимацией ширины:
  * ширина вызывает раскладку на каждом кадре, а таких полос четыре, и рядом
- * лежит длинная страница меню. Покойное состояние полосы — уже готовый
+ * лежит длинная страница меню. Покойное состояние полосы содержит уже готовый
  * процент, поэтому если класс `is-drawn` почему-то не придёт, гость увидит
  * верное число, просто без прочерка.
  */
@@ -68,6 +68,12 @@ export function Room() {
           {t(UI.roomTitle)}
         </h2>
         <p className="section-lead">{t(UI.roomText)}</p>
+        <p className="room__rating">
+          <RatingStar />
+          <span className="visually-hidden">{t(UI.ratingLabel)}: </span>
+          <span className="num">{t(CAFE.rating)}</span>
+          <span className="num">{num(CAFE.ratingsCount, lang)}</span> {t(UI.ratingsSuffix)}
+        </p>
       </div>
 
       <div className="wrap room__gallery">
@@ -94,15 +100,6 @@ export function Room() {
         ))}
       </div>
 
-      <ul className="wrap room__features" role="list">
-        {FEATURES.map((f) => (
-          <li key={f.ru} className="chip">
-            <Star8 size={10} />
-            {t(f)}
-          </li>
-        ))}
-      </ul>
-
       <div className="wrap room__praise">
         <h3 className="room__praise-lead">{t(UI.praiseLead)}</h3>
         <ul className="praise__list" role="list">
@@ -111,9 +108,8 @@ export function Room() {
           ))}
         </ul>
         <p className="room__praise-note">
-          {t(UI.praiseNote)}{' '}
           <a href={CAFE.yandexReviewsUrl} target="_blank" rel="noopener noreferrer">
-            {t(UI.reviewsCta)} — {reviews(CAFE.reviewsCount, lang)}
+            {t(UI.reviewsCta)}: {reviews(CAFE.reviewsCount, lang)}
             <ArrowGlyph />
           </a>
         </p>

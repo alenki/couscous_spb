@@ -1,19 +1,19 @@
 /**
  * ЕДИНСТВЕННЫЙ источник фактов о кафе.
  *
- * «Дамаск» — настоящее заведение: Санкт-Петербург, Кронверкский проспект, 45,
+ * «Дамаск» является настоящим заведением: Санкт-Петербург, Кронверкский проспект, 45,
  * цокольный этаж. Всё ниже снято с карточки организации на Яндекс Картах
  * 16 сентября 2026 года:
  *   https://yandex.ru/maps/org/damask/1050716428/
  *
- * Русский — источник. Английский и арабский — перевод, НИКОГДА не новые факты.
+ * Русский служит источником. Английский и арабский являются переводами, НИКОГДА не новыми фактами.
  * JSON-LD в index.html держать в согласии с этим файлом: адрес, телефон, часы
  * и aggregateRating продублированы там.
  *
  * Правки против данных Яндекса (описаны в спеке, docs/superpowers/specs):
  *   1. Telegram из карточки (`t.me/damask_cafe45-instagram`) выброшен: дефис в
  *      имени пользователя Telegram недопустим, а `damask_cafe45` не занят.
- *   2. WhatsApp — `79811642424`, а не `89811642424`: «8» это внутрироссийский
+ *   2. WhatsApp: `79811642424`, а не `89811642424`: «8» это внутрироссийский
  *      код выхода, wa.me его не понимает.
  *   3. Два раздела «Закуски» (во втором латинская `c`) объединены в один.
  *   4. Цены взяты с вкладки «Меню», а не с обзорной: они расходятся, вкладка
@@ -24,7 +24,7 @@ export type Lang = 'ru' | 'en' | 'ar'
 
 export type L<T = string> = { ru: T; en: T; ar: T }
 
-/** Языки, между которыми переключается шапка. Порядок — порядок кнопок. */
+/** Языки, между которыми переключается шапка. Порядок соответствует порядку кнопок. */
 export const LANGS: { code: Lang; label: string; full: L }[] = [
   { code: 'ru', label: 'RU', full: { ru: 'Русский', en: 'Russian', ar: 'الروسية' } },
   { code: 'en', label: 'EN', full: { ru: 'Английский', en: 'English', ar: 'الإنجليزية' } },
@@ -36,7 +36,7 @@ export const LANGS: { code: Lang; label: string; full: L }[] = [
    ============================================================ */
 
 export const CAFE = {
-  /** Латиницей — как в логотипе. Не переводится и не транслитерируется. */
+  /** Латиницей, как в логотипе. Не переводится и не транслитерируется. */
   wordmark: 'DAMASK',
   name: { ru: 'Дамаск', en: 'Damask', ar: 'دمشق' } satisfies L,
   tagline: {
@@ -55,7 +55,7 @@ export const CAFE = {
   postcode: '197101',
 
   /**
-   * Горьковская — станция метро, Сытный рынок — наземная остановка. В карточке
+   * Горьковская является станцией метро, Сытный рынок является наземной остановкой. В карточке
    * Яндекса они лежат вперемешку в одном списке «Как добраться», и если не
    * подписать тип, гость идёт искать вестибюль там, где стоит автобус.
    */
@@ -64,6 +64,8 @@ export const CAFE = {
       kind: 'metro' as const,
       station: { ru: 'Горьковская', en: 'Gorkovskaya', ar: 'غوركوفسكايا' } satisfies L,
       walk: { ru: '460 м', en: '460 m', ar: '460 م' } satisfies L,
+      /** То же расстояние числом: из него считается время пешком. */
+      meters: 460,
       /** Московско-Петроградская линия, синяя. */
       line: '#0078C9',
     },
@@ -71,6 +73,7 @@ export const CAFE = {
       kind: 'stop' as const,
       station: { ru: 'Сытный рынок', en: 'Sytny Market', ar: 'سوق سيتني' } satisfies L,
       walk: { ru: '70 м', en: '70 m', ar: '70 م' } satisfies L,
+      meters: 70,
       line: '#C9A227',
     },
   ],
@@ -78,7 +81,7 @@ export const CAFE = {
   phone: '+7 981 164-24-24',
   phoneHref: 'tel:+79811642424',
 
-  /** Одинаково все семь дней. `openMin`/`closeMin` — минуты от полуночи, МСК. */
+  /** Одинаково все семь дней. `openMin`/`closeMin` задаются в минутах от полуночи, МСК. */
   hours: { text: '11:00–23:30', openMin: 11 * 60, closeMin: 23 * 60 + 30 },
 
   rating: { ru: '4,4', en: '4.4', ar: '4.4' } satisfies L,
@@ -91,13 +94,13 @@ export const CAFE = {
   yandexUrl: 'https://yandex.ru/maps/org/damask/1050716428/',
   yandexReviewsUrl: 'https://yandex.ru/maps/org/damask/1050716428/reviews/',
   yandexMenuUrl: 'https://yandex.ru/maps/org/damask/1050716428/menu/',
-  /** Бронь стола — личные сообщения сообщества ВКонтакте (так указано в карточке). */
+  /** Бронь стола оформляется в личных сообщениях сообщества ВКонтакте (так указано в карточке). */
   bookUrl: 'https://vk.me/damask2024',
 } as const
 
 /**
  * У WhatsApp `handle` намеренно нет: он повторял бы телефон, который в подвале
- * и так стоит отдельной ссылкой — номер печатался дважды подряд.
+ * и так стоит отдельной ссылкой, поэтому номер печатался дважды подряд.
  */
 export const SOCIAL: { label: string; handle?: string; url: string }[] = [
   { label: 'VK', handle: 'damask2024', url: 'https://vk.com/damask2024' },
@@ -117,8 +120,8 @@ export const FEATURES: L[] = [
 ]
 
 /**
- * Доли положительных отзывов по темам — прямо из карточки Яндекса.
- * `count` — сколько отзывов в теме; без него процент ничего не значит.
+ * Доли положительных отзывов по темам взяты прямо из карточки Яндекса.
+ * `count` обозначает количество отзывов в теме; без него процент ничего не значит.
  */
 export const PRAISE: { label: L; pct: number; count: number }[] = [
   { label: { ru: 'еда', en: 'the food', ar: 'الطعام' }, pct: 91, count: 453 },
@@ -134,9 +137,9 @@ export const PRAISE: { label: L; pct: number; count: number }[] = [
 /**
  * Снимок в двух ширинах.
  *
- * `smallWidth` и `width` — настоящие ширины файлов в пикселях, а не пожелания:
+ * `smallWidth` и `width` содержат настоящие ширины файлов в пикселях, а не пожелания:
  * из них собирается srcSet, и на них же смотрит images.test.ts. Соврать в
- * дескрипторе — значит заставить браузер выбрать файл мельче, чем он думает,
+ * дескрипторе, значит заставить браузер выбрать файл мельче, чем он думает,
  * и отрисовать его с растяжением; вёрстку это не ломает и глазами не ловится.
  */
 export interface Photo {
@@ -146,16 +149,23 @@ export interface Photo {
   width: number
   height: number
   alt: L
+  /**
+   * `object-position` полосы 21:9, в которую раздел режет снимок. По умолчанию
+   * центр, и горизонтальным кадрам его хватает. Вертикальному не хватает: у
+   * кнафе блюдо стоит в нижней трети кадра, центр полосы приходится на чайник
+   * со стаканом, а от самого кнафе в полосу попадает только верхний край.
+   */
+  focus?: string
 }
 
-/** Единственное место, где склеивается srcSet: два вызова — две ошибки. */
+/** Единственное место, где склеивается srcSet: два вызова означают две ошибки. */
 export function srcSet(p: Photo): string {
   return `${p.small} ${p.smallWidth}w, ${p.src} ${p.width}w`
 }
 
 export interface Dish {
   name: L
-  /** Состав — только там, где он есть в меню Яндекса. Выдумывать нельзя. */
+  /** Состав указан только там, где он есть в меню Яндекса. Выдумывать нельзя. */
   desc?: L
   weight: L
   price: number
@@ -199,6 +209,18 @@ export const MENU: Course[] = [
         },
         weight: G(300),
         price: 440,
+        photo: {
+          src: '/falafel.jpg',
+          small: '/falafel-640.jpg',
+          smallWidth: 640,
+          width: 1280,
+          height: 960,
+          alt: {
+            ru: 'Фалафель: горка нутовых шариков на белой тарелке, помидоры, огурцы и соус тахини, на красной камчатной скатерти',
+            en: 'Falafel: a heap of chickpea patties on a white plate with tomato, cucumber and tahini sauce, on a red damask cloth',
+            ar: 'فلافل: أقراص الحمص في صحن أبيض مع البندورة والخيار وصلصة الطحينة، على مفرش دمقس أحمر',
+          },
+        },
       },
       {
         name: { ru: 'Фатте', en: 'Fatteh', ar: 'فتّة' },
@@ -291,6 +313,18 @@ export const MENU: Course[] = [
         },
         weight: G(150),
         price: 320,
+        photo: {
+          src: '/hummus.jpg',
+          small: '/hummus-640.jpg',
+          smallWidth: 640,
+          width: 1280,
+          height: 960,
+          alt: {
+            ru: 'Хумус: нутовая паста в белой тарелке, лужица оливкового масла, маслина и паприка, ломтики огурца и моркови, на красной камчатной скатерти',
+            en: 'Hummus: chickpea purée in a white bowl, a pool of olive oil, an olive and paprika, slices of cucumber and carrot, on a red damask cloth',
+            ar: 'حمّص: معجون الحمص في صحن أبيض مع زيت الزيتون وزيتونة وفلفل أحمر، وشرائح الخيار والجزر، على مفرش دمقس أحمر',
+          },
+        },
       },
       {
         name: { ru: 'Мутабаль', en: 'Mutabbal', ar: 'متبّل' },
@@ -384,6 +418,18 @@ export const MENU: Course[] = [
         },
         weight: G(250),
         price: 375,
+        photo: {
+          src: '/tabbouleh.jpg',
+          small: '/tabbouleh-640.jpg',
+          smallWidth: 640,
+          width: 1280,
+          height: 960,
+          alt: {
+            ru: 'Табуле: рубленая петрушка с булгуром и томатами на квадратной тарелке, краснокочанная капуста, огурец и долька лимона, на красной камчатной скатерти',
+            en: 'Tabbouleh: chopped parsley with bulgur and tomato on a square plate, red cabbage, cucumber and a lemon wedge, on a red damask cloth',
+            ar: 'تبّولة: بقدونس مفروم مع البرغل والبندورة في صحن مربّع، ملفوف أحمر وخيار وشريحة ليمون، على مفرش دمقس أحمر',
+          },
+        },
       },
       {
         name: { ru: 'Фатуш', en: 'Fattoush', ar: 'فتّوش' },
@@ -761,6 +807,7 @@ export const MENU: Course[] = [
           smallWidth: 560,
           width: 1120,
           height: 1493,
+          focus: '50% 74%',
           alt: {
             ru: 'Кнафе на серебряном блюде рядом с латунным чайником и стаканом чая на красной камчатной скатерти',
             en: 'Knafeh on a silver dish beside a brass teapot and a glass of tea on a red damask cloth',
@@ -851,9 +898,9 @@ export const ROOM_PHOTOS: Photo[] = [
     width: 1120,
     height: 1493,
     alt: {
-      ru: 'Потолок зала: три витражные розетки-камарии — красные, синие и бирюзовые стёкла — в резных восьмиугольных рамах',
-      en: 'The ceiling: three stained-glass qamariyya rosettes — red, blue and turquoise glass — in carved octagonal frames',
-      ar: 'سقف الصالة: ثلاث قمريات زجاجية ملوّنة — أحمر وأزرق وفيروزي — ضمن أطر خشبية مثمّنة',
+      ru: 'Потолок зала: три витражные розетки-камарии с красными, синими и бирюзовыми стёклами в резных восьмиугольных рамах',
+      en: 'The ceiling: three stained-glass qamariyya rosettes with red, blue and turquoise glass in carved octagonal frames',
+      ar: 'سقف الصالة: ثلاث قمريات زجاجية ملوّنة بالأحمر والأزرق والفيروزي ضمن أطر خشبية مثمّنة',
     } satisfies L,
   },
   {
@@ -893,6 +940,9 @@ export const UI = {
   navVisit: { ru: 'Как дойти', en: 'Find us', ar: 'كيف تصل' },
   langLabel: { ru: 'Язык', en: 'Language', ar: 'اللغة' },
   sections: { ru: 'Разделы', en: 'Sections', ar: 'الأقسام' },
+  /* Подпись кнопки-гамбургера. «Меню сайта», а не «Меню»: на странице кафе
+     второе читается как карта блюд, и озвучка попала бы не туда. */
+  navToggle: { ru: 'Меню сайта', en: 'Site menu', ar: 'قائمة الموقع' },
 
   /* --- первый экран --- */
   heroTitle: { ru: 'Спуститесь в Дамаск', en: 'Take the stairs to Damascus', ar: 'انزل إلى دمشق' },
@@ -910,18 +960,28 @@ export const UI = {
   openUntil: { ru: 'до', en: 'until', ar: 'حتى' },
   closedNow: { ru: 'Закрыто', en: 'Closed', ar: 'مغلق' },
   opensAt: { ru: 'откроется в', en: 'opens at', ar: 'يفتح الساعة' },
-  scrollHint: { ru: 'вниз по лестнице', en: 'down the stairs', ar: 'نزولاً على الدرج' },
+  scrollHint: { ru: 'Вниз по лестнице', en: 'Down the stairs', ar: 'نزولاً على الدرج' },
 
   /* --- меню --- */
   menuTitle: { ru: 'Меню', en: 'Menu', ar: 'القائمة' },
+  /* Число блюд из ленты фактов под заголовком убрано намеренно: оно стоит
+     строкой ниже цифрой, а дважды подряд в трёх строках это уже не факт, а
+     оговорка. */
   menuLead: {
-    ru: 'Сирийская кухня: мезе, рис, мангал и кнафе. Всё меню целиком — 62 блюда.',
-    en: 'Syrian cooking: mezze, rice, charcoal grill and knafeh. The whole menu — 62 dishes.',
-    ar: 'مطبخ سوري: مقبلات، أرز، مشاوٍ وكنافة. القائمة كاملة — 62 طبقاً.',
+    ru: 'Сирийская кухня: мезе, рис, мангал и кнафе. Всё меню целиком, тем же порядком, что в зале.',
+    en: 'Syrian cooking: mezze, rice, charcoal grill and knafeh. The whole menu, in the order it is served in the room.',
+    ar: 'مطبخ سوري: مقبلات، أرز، مشاوٍ وكنافة. القائمة الكاملة، بالترتيب نفسه الذي تُقدَّم به في الصالة.',
   },
   menuNav: { ru: 'Разделы меню', en: 'Menu sections', ar: 'أقسام القائمة' },
+  /* Подписи ленты фактов. Существительное в именительном, число стоит рядом
+     отдельно: так не приходится склонять слово под каждое число. Заголовок
+     «Разделы» берётся из UI.sections, второй такой же строки заводить незачем.
+     Среднего чека здесь нет намеренно: он уже стоит на первом экране, а разброс
+     цен по самому меню оттуда не виден. */
+  menuDishes: { ru: 'Блюда', en: 'Dishes', ar: 'الأطباق' },
+  menuPrices: { ru: 'Цены', en: 'Prices', ar: 'الأسعار' },
   menuSource: {
-    ru: 'Состав и цены — карточка кафе на Яндекс Картах, сентябрь 2026 года. Актуальные уточняйте в зале.',
+    ru: 'Состав и цены взяты из карточки кафе на Яндекс Картах за сентябрь 2026 года. Актуальные уточняйте в зале.',
     en: 'Ingredients and prices from the cafe’s Yandex Maps listing, September 2026. Please confirm current ones in the room.',
     ar: 'المكوّنات والأسعار من صفحة المطعم على خرائط ياندكس، أيلول 2026. يُرجى التأكّد من الأسعار الحالية في المطعم.',
   },
@@ -930,23 +990,18 @@ export const UI = {
   /* --- зал --- */
   roomTitle: { ru: 'Зал', en: 'The room', ar: 'الصالة' },
   roomText: {
-    ru: 'Резной потолок с золотыми звёздами, витражные розетки-камарии, фонари с бисерной бахромой и полосатая кладка арок: зал собран как дамасский дом. Кальян, восточная музыка, летом — терраса.',
+    ru: 'Резной потолок с золотыми звёздами, витражные розетки-камарии, фонари с бисерной бахромой и полосатая кладка арок: зал собран как дамасский дом. Кальян, восточная музыка, летом открыта терраса.',
     en: 'A carved ceiling of gold stars, stained-glass qamariyya rosettes, beaded lanterns and striped ablaq arches: the room is put together like a house in Damascus. Hookah, oriental music, a terrace in summer.',
     ar: 'سقف محفور بالنجوم الذهبية، قمريات زجاجية ملوّنة، ثريّات بشراشيب من الخرز وأقواس بالحجر الأبلق: الصالة مبنية على طراز البيت الدمشقي. أراكيل، موسيقى شرقية، وتراس في الصيف.',
   },
   praiseLead: { ru: 'Что хвалят гости', en: 'What guests praise', ar: 'ما يُثني عليه الضيوف' },
-  praiseNote: {
-    ru: 'Доли положительных отзывов по темам — Яндекс Карты, сентябрь 2026.',
-    en: 'Share of positive reviews by topic — Yandex Maps, September 2026.',
-    ar: 'نسبة المراجعات الإيجابية حسب الموضوع — خرائط ياندكس، أيلول 2026.',
-  },
   reviewsCta: { ru: 'Все отзывы', en: 'All reviews', ar: 'كل المراجعات' },
   reviewsOf: { ru: 'из', en: 'of', ar: 'من' },
 
   /* --- как дойти --- */
   visitTitle: { ru: 'Как дойти', en: 'Finding us', ar: 'كيف تصل إلينا' },
   visitLead: {
-    ru: 'Вход с Кронверкского, вниз по лестнице. Напротив — Сытный рынок, за спиной — Петропавловка.',
+    ru: 'Вход с Кронверкского, вниз по лестнице. Напротив находится Сытный рынок, за спиной Петропавловка.',
     en: 'The entrance is on Kronverksky, down the stairs. Sytny Market is across the road, the Peter and Paul Fortress behind you.',
     ar: 'المدخل من شارع كرونفيرسكي، نزولاً على الدرج. سوق سيتني في المقابل، وقلعة بطرس وبولس خلفك.',
   },
@@ -959,17 +1014,45 @@ export const UI = {
   metroKind: { ru: 'метро', en: 'metro', ar: 'مترو' },
   stopKind: { ru: 'остановка', en: 'tram & bus stop', ar: 'موقف باص' },
 
+  /* --- как дойти: вычерченный план подхода ---
+     Подписи плана живут отдельно от адреса: на чертеже стоит имя улицы без
+     номера дома, а ориентиры из лида («Сытный рынок», «Петропавловка»)
+     нужны там полными именами, а не разговорными. */
+  districtLabel: { ru: 'Петроградская сторона', en: 'Petrogradsky Side', ar: 'الجانب البتروغرادي' },
+  approachLabel: { ru: 'Подход', en: 'Approach', ar: 'الوصول' },
+  planCaption: {
+    ru: 'Схема подхода · не в масштабе',
+    en: 'Approach diagram · not to scale',
+    ar: 'مخطّط الوصول · ليس بمقياس رسم',
+  },
+  planAlt: {
+    ru: 'Схема подхода: вход с Кронверкского проспекта, напротив него Сытный рынок. Восточнее, в Александровском парке, метро Горьковская в 460 метрах; за домом Петропавловская крепость. Врезка показывает лестницу с улицы в цокольный этаж.',
+    en: 'Approach diagram: the entrance is on Kronverksky Prospekt with Sytny Market opposite, Gorkovskaya metro 460 metres east in Alexandrovsky Park, the Peter and Paul Fortress behind the building. An inset shows the stairs from the street down to the basement level.',
+    ar: 'مخطّط الوصول: المدخل من شارع كرونفيرسكي، وسوق سيتني في المقابل، ومحطة غوركوفسكايا على بعد 460 متراً شرقاً في حديقة ألكسندروفسكي، وقلعة بطرس وبولس خلف المبنى. يُظهر الإطار الجانبي الدرج النازل من الشارع إلى الطابق السفلي.',
+  },
+  planNorth: { ru: 'С', en: 'N', ar: 'ش' },
+  planStreet: { ru: 'Кронверкский проспект', en: 'Kronverksky Prospekt', ar: 'شارع كرونفيرسكي' },
+  planPark: { ru: 'Александровский парк', en: 'Alexandrovsky Park', ar: 'حديقة ألكسندروفسكي' },
+  planFortress: {
+    ru: 'Петропавловская крепость',
+    en: 'Peter and Paul Fortress',
+    ar: 'قلعة بطرس وبولس',
+  },
+  planEntrance: { ru: 'Вход · разрез', en: 'Entrance · section', ar: 'المدخل · مقطع' },
+  /** Знак метро в кружке легенды это буква, а не иконка: так он набран в городе. */
+  metroMark: { ru: 'М', en: 'M', ar: 'م' },
+
   /* --- подвал --- */
   footerSub: {
     ru: 'КАФЕ АРАБСКОЙ КУХНИ · САНКТ-ПЕТЕРБУРГ',
     en: 'ARABIC KITCHEN · SAINT PETERSBURG',
     ar: 'مطعم المأكولات العربية · سانت بطرسبرغ',
   },
-  /** Подпись разработчика. «Lumako» — часть вёрстки, не переводится. */
+  /** Подпись разработчика. «Lumako» является частью вёрстки и не переводится. */
   madeBy: { ru: 'Сделано в', en: 'Made by', ar: 'من تنفيذ' },
 } satisfies Record<string, L>
 
-/** Все снимки сайта в одном месте — по ним ходит images.test.ts. */
+/** Все снимки сайта собраны в одном месте; по ним ходит images.test.ts. */
 export const ALL_PHOTOS: Photo[] = [
   ...ROOM_PHOTOS,
   ...MENU.flatMap((c) => c.dishes.map((d) => d.photo).filter((p): p is Photo => p !== undefined)),

@@ -1,18 +1,18 @@
 /* ============================================================
-   ДАМАСК · кафе арабской кухни — токены и основа
+   ДАМАСК · кафе арабской кухни, токены и основа
 
    Спуск с улицы в цоколь, пятью актами:
-     1  Улица   — известняк, арка из клиньев абляк, свет камарии
-     2  Двор    — кремовый лист меню, оливковые заголовки
-     3  Зал     — темнота с золотыми звёздами кессонов
-     4  Визит   — фирменный оливковый, единственный крупный цветовой блок
-     5  Подвал  — тёмная олива
+     1  Улица: известняк, арка из клиньев абляк, свет камарии
+     2  Двор: кремовый лист меню, оливковые заголовки
+     3  Зал: темнота с золотыми звёздами кессонов
+     4  Визит: фирменный оливковый, единственный крупный цветовой блок
+     5  Подвал: тёмная олива
 
    Вся раскладка на логических свойствах (inline/block): на арабском документ
    разворачивается через dir="rtl", и физические left/right его сломают.
    ============================================================ */
 
-/* Prata — вручную, не через @fontsource: стабильный путь в /fonts позволяет
+/* Prata подключается вручную, не через @fontsource: стабильный путь в /fonts позволяет
    preload в index.html, а это шрифт заголовка первого экрана (LCP). */
 @font-face {
   font-family: 'Prata';
@@ -53,7 +53,7 @@
   --olive-deep: #4a6128; /* тот же зелёный, притемнённый до AA под текст */
   --olive-ink: #2f3f18;
   /* Приглушённая краска для служебных подписей по камню. Прежде это была
-     та же краска под opacity 0.45–0.64 — на нижней кромке градиента героя
+     та же краска под opacity 0.45–0.64 на нижней кромке градиента героя
      выходило 3,2:1 при норме 4,5:1. */
   --ink-dim: #4e5638;
   --cream: #f1f0e2; /* кремовый логотипа */
@@ -63,7 +63,7 @@
   --stone-dim: #d8cbae;
   --oxblood: #6b2c2a; /* бычья кровь кессонного потолка */
   --gold: #c9a227; /* золото звёзд: декор и крупный текст */
-  --gold-lt: #d9b54a; /* то же золото для текста по тёмному — 5,3:1 */
+  --gold-lt: #d9b54a; /* то же золото для текста по тёмному, 5,3:1 */
   --night: #1a1412;
 
   /* --- витраж камарии: только стекло, текста не держит --- */
@@ -77,17 +77,17 @@
 
   /* Зелёный «открыто». Два значения, потому что одно не бывает читаемым и по
      светлому камню, и по тёмному залу: светлый вариант на кремовом даёт 3,8:1,
-     тёмный на карточке визита — 2,4:1. Акты, у которых фон тёмный,
+     тёмный на карточке визита даёт 2,4:1. Акты, у которых фон тёмный,
      переопределяют --ok у себя. */
   --ok: #27591c;
 
-  /* Точка в подписи разработчика — фирменное золото Lumako */
+  /* Точка в подписи разработчика использует фирменное золото Lumako */
   --lume-gold: #d49a2e;
 
   /* --- набор --- */
   --font-display: 'Prata', 'Prata Fallback', georgia, serif;
   --font-body: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
-  /* Арабский: Amiri и Cairo приезжают динамически (lang.tsx). Пока их нет —
+  /* Арабский: Amiri и Cairo приезжают динамически (lang.tsx). Пока их нет,
      системный насх, а не подстановка латиницы с ломаной вязью. */
   --font-ar-display: 'Amiri', 'Segoe UI', 'Geeza Pro', 'Noto Naskh Arabic', serif;
   --font-ar-body: 'Cairo', 'Segoe UI', 'Geeza Pro', 'Noto Sans Arabic', sans-serif;
@@ -101,7 +101,7 @@
   --micro: clamp(0.72rem, 0.7rem + 0.1vw, 0.78rem);
 
   --wrap: 72rem;
-  --measure: 44rem; /* ширина колонки меню — по читаемой строке, не по сетке */
+  --measure: 44rem; /* ширина колонки меню задаётся по читаемой строке, не по сетке */
   --gutter: clamp(1.1rem, 4vw, 2.5rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -132,7 +132,7 @@ html {
   text-size-adjust: 100%;
 }
 
-/* Lenis прокручивает настоящую полосу документа: дай html/body height:100% —
+/* Lenis прокручивает настоящую полосу документа: дай html/body height:100%,
    и прокручивать станет нечего. */
 html.lenis,
 html.lenis body {
@@ -153,7 +153,7 @@ body {
   overflow-x: clip;
 }
 
-/* Арабский — другой набор целиком, не только другое направление. */
+/* Арабский использует другой набор целиком, не только другое направление. */
 html[lang='ar'] body {
   font-family: var(--font-ar-body);
   line-height: 1.85;
@@ -253,14 +253,14 @@ a {
  * Числа: табличные цифры, чтобы цены в столбце не гуляли, и собственное
  * направление.
  *
- * Одного `isolate` мало — и это стоило «₽ 480» вместо «480 ₽» на всём арабском
+ * Одного `isolate` мало, и это стоило «₽ 480» вместо «480 ₽» на всём арабском
  * меню. Изоляция отрезает кусок от соседей, но направление внутри изолята
  * берётся из `direction`, а он наследуется от документа: в RTL знак валюты
  * (по Юникоду он «примыкает к числу») уезжает налево от цифр, а диапазон
  * «600–1100» читается как «1100–600». `direction: ltr` внутри изолята
  * раскладывает число слева направо, как ему и положено, не разворачивая
  * арабскую строку вокруг. Единица меры при этом остаётся своей: «300 غ»
- * набирается цифрами, потом буквой — ровно так, как читают.
+ * набирается цифрами, потом буквой, ровно так, как читают.
  */
 .num {
   font-feature-settings: 'tnum' 1;
@@ -279,7 +279,7 @@ a {
   flex: none;
 }
 
-/* Ряд каменной кладки: чередование известняка и тёмного камня — та же
+/* Ряд каменной кладки: чередование известняка и тёмного камня, та же
    раскладка, что в арках зала. Рисуется градиентом, файлов не требует. */
 .band {
   --band-h: 0.75rem;
@@ -322,17 +322,17 @@ a {
     color 0.2s var(--ease),
     transform 0.2s var(--ease);
 }
-.btn--primary {
+.btn-primary {
   background: var(--olive-deep);
   border-color: var(--olive-deep);
   color: var(--cream);
 }
-/* hover — только там, где есть курсор: на тач-экране :hover залипает после тапа */
+/* hover только там, где есть курсор: на тач-экране :hover залипает после тапа */
 @media (hover: hover) {
   .btn:hover {
     transform: translateY(-2px);
   }
-  .btn--primary:hover {
+  .btn-primary:hover {
     background: var(--olive-ink);
     border-color: var(--olive-ink);
   }
@@ -341,21 +341,7 @@ a {
   transform: translateY(0);
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.8rem;
-  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
-  border-radius: 999px;
-  font-size: var(--micro);
-  letter-spacing: 0.03em;
-}
-.chip svg {
-  color: var(--gold);
-}
-
-/* Статус «открыто / закрыто» — общий для героя и блока визита. */
+/* Статус «открыто / закрыто» общий для героя и блока визита. */
 .status {
   display: inline-flex;
   align-items: center;
@@ -363,22 +349,9 @@ a {
   font-size: var(--step--1);
   font-weight: 600;
 }
-.status__dot {
-  inline-size: 0.5rem;
-  block-size: 0.5rem;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.45;
-}
 .status.is-open {
   color: var(--ok);
 }
-.status.is-open .status__dot {
-  opacity: 1;
-  background: var(--ok);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 30%, transparent);
-}
-
 /* ---------------------------------------------------- знак и орнамент */
 
 .mark {
@@ -440,7 +413,7 @@ a {
   inline-size: 100%;
   block-size: auto;
 }
-/* Кладка держится тише текста: арка — это стена за словами, а не рамка вокруг
+/* Кладка держится тише текста: арка служит стеной за словами, а не рамкой вокруг
    них. Отсюда и низкая непрозрачность, и почти незаметный шов между камнями. */
 .ablaq__wedge {
   stroke: color-mix(in srgb, var(--oxblood) 22%, transparent);
@@ -510,21 +483,20 @@ a {
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
-/* Разрядка в 0,22em на арабском разрывает вязь — букв в слове не остаётся. */
+/* Разрядка в 0,22em на арабском разрывает вязь, букв в слове не остаётся. */
 html[lang='ar'] .header__sub,
 html[lang='ar'] .footer__sub,
 html[lang='ar'] .visit__label,
 html[lang='ar'] .hero__eyebrow,
+html[lang='ar'] .hero__descent-label,
 html[lang='ar'] .rail__chip,
 html[lang='ar'] .btn,
-html[lang='ar'] .chip,
 html[lang='ar'] .skip-link {
   letter-spacing: 0;
 }
 
 .header__nav {
-  display: none;
-  gap: 1.4rem;
+  display: grid;
   font-size: var(--step--1);
   letter-spacing: 0.04em;
 }
@@ -542,6 +514,127 @@ html[lang='ar'] .skip-link {
 @media (min-width: 720px) {
   .header__nav {
     display: flex;
+    gap: 1.4rem;
+  }
+}
+
+/* --------- кнопка-гамбургер и ящик под ней -------- */
+
+/* Две черты, а не три: на кремовой плашке логотипа третья только утяжеляет
+   знак, а раскрытие всё равно читается по повороту в крест. */
+.burger {
+  display: grid;
+  place-items: center;
+  /* 44px по обеим сторонам: это нижняя граница цели нажатия по WCAG 2.5.8. */
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  margin-inline-end: -0.5rem; /* оптически выравнивает знак по краю колонки */
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--olive-deep);
+}
+.burger__box {
+  position: relative;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+}
+.burger__line {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(50% - 1px);
+  block-size: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.burger__line:first-child {
+  transform: translateY(-0.26rem);
+}
+.burger__line:last-child {
+  transform: translateY(0.26rem);
+}
+.burger[aria-expanded='true'] .burger__line:first-child {
+  transform: rotate(45deg);
+}
+.burger[aria-expanded='true'] .burger__line:last-child {
+  transform: rotate(-45deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .burger__line {
+    transition: transform 0.28s var(--ease);
+  }
+}
+@media (min-width: 720px) {
+  .burger {
+    display: none;
+  }
+}
+
+/* Широкий экран: ящика как коробки нет, разделы и языки лежат прямо в шапке. */
+.header__drawer {
+  display: contents;
+}
+
+@media (max-width: 719.98px) {
+  .header__drawer {
+    position: absolute;
+    inset-block-start: calc(var(--header-h) + var(--safe-t) + 0.35rem);
+    inset-inline-end: calc(var(--gutter) + var(--safe-r));
+    z-index: 1;
+    display: grid;
+    gap: 0.7rem;
+    min-inline-size: 10.5rem;
+    padding: 0.8rem;
+    background: color-mix(in srgb, var(--cream) 96%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--olive-ink) 16%, transparent);
+    border-radius: 0.85rem;
+    box-shadow: 0 16px 34px -20px color-mix(in srgb, var(--night) 75%, transparent);
+    /* Закрытый ящик убран из обхода Tab и из дерева доступности целиком:
+       visibility, а не opacity, иначе ссылки продолжают ловить фокус. */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  .header__drawer[data-open='true'] {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .header__drawer {
+      transition:
+        opacity 0.22s var(--ease),
+        transform 0.22s var(--ease),
+        visibility 0s linear 0.22s;
+    }
+    .header__drawer[data-open='true'] {
+      transition:
+        opacity 0.22s var(--ease),
+        transform 0.22s var(--ease),
+        visibility 0s;
+    }
+  }
+
+  /* Разделы от языков отделяет только воздух: на панели в три строки линейка
+     делит и без того короткий список. */
+  .header__drawer .header__nav {
+    font-size: var(--step-0);
+    padding-block-end: 0.15rem;
+  }
+  .header__drawer .header__nav a {
+    padding-block: 0.5rem;
+    padding-inline: 0.35rem;
+    border-block-end: 0;
+    border-radius: 0.4rem;
+  }
+
+  /* Языки занимают всю ширину ящика: три равные доли вместо фиксированных
+     2,5rem, иначе группа висела бы уже разделов над ней. */
+  .header__drawer .langs {
+    grid-template-columns: repeat(var(--lang-count), 1fr);
   }
 }
 
@@ -549,28 +642,34 @@ html[lang='ar'] .skip-link {
 
 .langs {
   position: relative;
-  display: flex;
-  gap: 0.1rem;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(var(--lang-count), 2.5rem);
+  flex-shrink: 0;
   padding: 0.15rem;
   border: 1px solid color-mix(in srgb, var(--olive-ink) 22%, transparent);
   border-radius: 999px;
 }
 .langs__btn {
   position: relative;
+  z-index: 1;
   appearance: none;
   border: 0;
   background: none;
   cursor: pointer;
   color: var(--olive-ink);
   font: inherit;
+  font-family: var(--font-body);
   font-size: var(--micro);
   font-weight: 600;
   letter-spacing: 0.06em;
-  /* 2,25rem × 1,9rem плюс невидимая область нажатия до 44px по вертикали */
+  /* Равные сегменты плюс невидимая область нажатия до 44px по вертикали. */
   padding: 0.3rem 0.62rem;
   border-radius: 999px;
   opacity: 0.75;
-  transition: opacity 0.2s var(--ease);
+  transition:
+    color 0.22s var(--ease),
+    opacity 0.22s var(--ease);
 }
 .langs__btn::after {
   content: '';
@@ -589,10 +688,19 @@ html[lang='ar'] .skip-link {
 }
 .langs__pill {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  inset-block: 0.15rem;
+  inset-inline-start: 0.15rem;
+  inline-size: calc((100% - 0.3rem) / var(--lang-count));
+  z-index: 0;
+  pointer-events: none;
   background: var(--olive-deep);
   border-radius: 999px;
+  transform: translateX(calc(var(--lang-index) * 100%));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .langs__pill {
+    transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+  }
 }
 .langs__btn > span:first-child {
   position: relative;
@@ -637,9 +745,9 @@ html[lang='ar'] .skip-link {
   opacity: 0.75;
 }
 
-/* Нижний ряд кладки — переход с улицы во двор. Светлый камень берётся
+/* Нижний ряд кладки создаёт переход с улицы во двор. Светлый камень берётся
    отдельным тоном, а не var(--stone): у подошвы градиента фон уже --stone-dim,
-   и одинаковые с фоном блоки пропадали — ряд читался пунктиром, а не кладкой. */
+   и одинаковые с фоном блоки пропадали, ряд читался пунктиром, а не кладкой. */
 .hero::after {
   content: '';
   position: absolute;
@@ -656,14 +764,22 @@ html[lang='ar'] .skip-link {
 
 /* Центрируем парой нулевых вставок и авто-полями, а не inset-inline-start:50%
    с обратным сдвигом: в RTL логическая вставка отсчитывается справа, а
-   translate остаётся физическим — арка уезжала к левому краю экрана. */
+   translate остаётся физическим, арка уезжала к левому краю экрана.
+
+   Ширина при этом не может превышать 100%. Авто-поля центрируют абсолютную
+   коробку, пока уравнение вставок сходится; как только коробка шире
+   содержащего блока, оба поля вышли бы отрицательными, и спецификация велит
+   обнулить поле у начала строки, а весь излишек отдать концу. Прежние 118%
+   на полосе уже 624px переставали быть надрезом по краям и становились
+   сдвигом: арка вставала вплотную к левому краю и на 9% ширины уезжала
+   вправо из-под заголовка, унося с собой правую опору за кадр. */
 .hero__arch {
   position: absolute;
   z-index: -1;
   inset-block-start: clamp(2rem, 11vh, 7rem);
   inset-inline: 0;
   margin-inline: auto;
-  inline-size: min(46rem, 118%);
+  inline-size: min(46rem, 100%);
   opacity: 0.9;
 }
 
@@ -689,7 +805,7 @@ html[lang='ar'] .skip-link {
   text-transform: uppercase;
   color: var(--oxblood);
 }
-/* Булавка — часть строки (см. Hero.tsx), поэтому не flex-элемент, а инлайн. */
+/* Булавка является частью строки (см. Hero.tsx), поэтому не flex-элемент, а инлайн. */
 .hero__eyebrow .glyph {
   display: inline-block;
   vertical-align: -0.15em;
@@ -718,7 +834,7 @@ html[lang='ar'] .skip-link {
   gap: 0.7rem;
   margin-block-start: clamp(1.4rem, 4vh, 2.2rem);
 }
-/* На телефоне кнопки всё равно встают в столбик — пусть встают одной ширины
+/* На телефоне кнопки всё равно встают в столбик; пусть встают одной ширины
    и во всю полосу: два центрированных корешка разной длины читались обрывком,
    а палец получает полноразмерную цель вместо надписи по центру. */
 @media (max-width: 559.98px) {
@@ -756,39 +872,60 @@ html[lang='ar'] .skip-link {
   color: var(--ink-dim);
 }
 
-.hero__hint {
-  position: relative;
+.hero__descent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  inline-size: fit-content;
+  max-inline-size: calc(100% - var(--gutter) * 2);
+  margin-inline: auto;
+  margin-block-start: clamp(1.5rem, 4vh, 2.4rem);
+  /* Поля вместо min-block-size: столбец сам набирает под палец около 48px,
+     а отступы дают промах вокруг подписи и держат фокусную рамку от текста. */
+  padding: 0.4rem 0.75rem 0.5rem;
   color: var(--ink-dim);
-  margin-block-start: clamp(1.8rem, 5vh, 3rem);
-  text-align: center;
+  text-decoration: none;
+}
+
+/* Голос служебной подписи по камню, тот же, что у адреса над заголовком.
+   Подчёркивание снято: на отдельно стоящем указателе оно читалось бракованной
+   ссылкой, а роль здесь несут положение, отвес и наведение, не линия под
+   словами. Компенсация 0,14em возвращает набор в оптический центр: разрядка
+   висит хвостом после последней буквы и уводила строку влево на полшага. */
+.hero__descent-label {
+  margin-inline-start: 0.14em;
   font-size: var(--micro);
-  letter-spacing: 0.16em;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  text-wrap: balance;
 }
-.hero__hint::after {
-  content: '';
-  display: block;
-  inline-size: 1px;
-  block-size: 2.2rem;
-  margin: 0.7rem auto 0;
-  background: linear-gradient(180deg, currentColor, transparent);
+
+.hero__descent:is(:hover, :focus-visible) {
+  color: var(--olive-ink);
 }
+
 @media (prefers-reduced-motion: no-preference) {
-  .hero__hint::after {
-    animation: hint-drop 2.6s var(--ease) infinite;
+  .hero__descent .glyph--descent {
+    transition: transform 200ms var(--ease);
+    /* Ровно три качка и остановка: 3 × 1,4 с = 4,2 с, под порогом WCAG 2.2.2,
+       поэтому кнопки паузы такому движению не требуется. Задержка ждёт, пока
+       сама подсказка проявится (0,85 с в Hero.tsx). */
+    animation: descent-beckon 1.4s var(--ease) 1.5s 3;
   }
-}
-@keyframes hint-drop {
-  0%,
-  100% {
-    transform: scaleY(0.55);
-    transform-origin: top;
-    opacity: 0.4;
+  .hero__descent:is(:hover, :focus-visible) .glyph--descent {
+    transform: translateY(3px);
   }
-  50% {
-    transform: scaleY(1);
-    transform-origin: top;
-    opacity: 1;
+  @keyframes descent-beckon {
+    0%,
+    55%,
+    100% {
+      transform: translateY(0);
+    }
+    28% {
+      transform: translateY(4px);
+    }
   }
 }
 
@@ -801,10 +938,26 @@ html[lang='ar'] .skip-link {
 }
 
 /* ============================================================
-   Акт 2 · Двор — меню
+   Акт 2 · Двор, меню
+
+   Карта блюд, а не страница со списком: кремовый лист в двойной рамке лежит
+   на камне двора, слева от него стоит оглавление с полосой прохода.
    ============================================================ */
 
 .menu {
+  /* Единственный акт, которому ширина нужна по делу: оглавление и лист стоят
+     рядом только на широкой полосе, поэтому здесь --wrap своя. */
+  --wrap: 80rem;
+  --measure: 52rem;
+  --card-pad: clamp(1.1rem, 3.2vw, 3rem);
+  --hairline: color-mix(in srgb, var(--olive-deep) 18%, transparent);
+  /* Краска выносной линейки живёт переменной: строка блюда перекрашивает её
+     под наведением, а точки рисуются градиентом, который иначе пришлось бы
+     переписывать целиком. */
+  --dot: color-mix(in srgb, var(--olive-ink) 42%, transparent);
+  --dish: clamp(1rem, 0.96rem + 0.2vw, 1.16rem);
+  --price: clamp(1.05rem, 0.99rem + 0.3vw, 1.32rem);
+
   position: relative;
   background: var(--cream);
   padding-block: clamp(3rem, 8vh, 5.5rem) clamp(3.5rem, 9vh, 6rem);
@@ -820,30 +973,90 @@ html[lang='ar'] .skip-link {
 .menu__head .section-title {
   color: var(--olive-deep);
 }
-/* Ветвь стоит над словом со сдвигом вбок, как над «MAS» в логотипе, но без
-   нахлёста: в логотипе она лежит на латинских прописных, а на кириллическом
-   «Меню» со строчными её листья садились ровно на «М». */
+/* Ветка и заголовок образуют один центрированный локап. */
 .menu__branch {
   position: static;
-  margin-inline-start: 3.5rem;
+  justify-self: center;
+  inline-size: min(188px, 100%) !important;
+  margin-inline: 0;
   margin-block-end: 0.2rem;
   opacity: 0.95;
+}
+
+/* --------- лента фактов -------- */
+
+/* Три числа, которыми меню описывается целиком. Подпись словом, значение
+   антиквой: подписи читаются серой строкой, числа держат взгляд. */
+.menu__facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.9rem var(--facts-gap);
+  --facts-gap: clamp(1.75rem, 5vw, 3.5rem);
+  inline-size: min(100%, 40rem);
+  margin: clamp(1rem, 2.4vh, 1.5rem) 0 0;
+  padding-block-start: clamp(0.7rem, 1.8vh, 1.1rem);
+}
+.menu__facts .fact {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+}
+/* Разделитель: повёрнутый квадрат, ядро той же восьмилучевой звезды, что
+   набрана по кессонам зала. Краской, а не файлом. */
+.menu__facts .fact + .fact::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: calc(var(--facts-gap) / -2 - 3px);
+  inset-block-start: 0.5em;
+  inline-size: 6px;
+  block-size: 6px;
+  rotate: 45deg;
+  background: color-mix(in srgb, var(--olive) 42%, transparent);
+}
+.menu__facts dt {
+  font-size: var(--micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.menu__facts dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  line-height: 1.15;
+  color: var(--olive-deep);
+  white-space: nowrap;
+}
+html[lang='ar'] .menu__facts dd {
+  font-family: var(--font-ar-display);
 }
 
 .menu__body {
   margin-block-start: clamp(1.75rem, 5vh, 2.75rem);
 }
 
-/* --------- лента разделов -------- */
+/* --------- указатель разделов -------- */
 
 .rail {
+  --i: 0;
+  --n: 9;
   position: sticky;
   inset-block-start: var(--header-h);
   z-index: 20;
   background: color-mix(in srgb, var(--cream) 94%, transparent);
   backdrop-filter: blur(8px);
   margin-inline: calc(var(--gutter) * -1);
-  border-block: 1px solid color-mix(in srgb, var(--olive-deep) 16%, transparent);
+  border-block: 1px solid var(--hairline);
+}
+/* Заголовок оглавления и кнопка брони принадлежат боковику: в ленте вкладок
+   на них нет ни места, ни смысла, а бронь на узком экране уже стоит в шапке
+   первого экрана. */
+.rail__head,
+.rail__book {
+  display: none;
 }
 .rail__list {
   display: flex;
@@ -860,7 +1073,9 @@ html[lang='ar'] .skip-link {
   display: none;
 }
 .rail__chip {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
   white-space: nowrap;
   padding: 0.38rem 0.85rem;
   border-radius: 999px;
@@ -875,6 +1090,11 @@ html[lang='ar'] .skip-link {
     opacity 0.2s var(--ease),
     color 0.2s var(--ease);
 }
+/* Номер и счётчик блюд появляются только в боковике. */
+.rail__ord,
+.rail__count {
+  display: none;
+}
 .rail__chip.is-active {
   background: var(--olive-deep);
   color: var(--cream);
@@ -887,70 +1107,199 @@ html[lang='ar'] .skip-link {
   }
 }
 
-/* С этой ширины лента становится боковиком: колонка меню всё равно ограничена
+/* С этой ширины лента становится оглавлением: лист всё равно ограничен
    читаемой строкой, и свободное поле сбоку лучше отдать навигации, чем воздуху. */
 @media (min-width: 1080px) {
   .menu__body {
     display: grid;
-    grid-template-columns: 12.5rem minmax(0, 1fr);
-    gap: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: 17rem minmax(0, 1fr);
+    gap: clamp(2rem, 4.5vw, 4rem);
     align-items: start;
   }
   .rail {
-    position: sticky;
     inset-block-start: calc(var(--header-h) + 2rem);
     margin-inline: 0;
     background: none;
     backdrop-filter: none;
     border: 0;
-    border-inline-start: 1px solid color-mix(in srgb, var(--olive-deep) 22%, transparent);
   }
+  .rail__head {
+    display: block;
+    margin: 0 0 1.05rem;
+    padding-block-end: 0.75rem;
+    border-block-end: 1px solid var(--hairline);
+    font-size: var(--micro);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  /* Полоса прохода. Дорожка лежит под всеми пунктами, заливка доходит до
+     нижнего края активного, и доля `(--i + 1) / --n` совпадает с высотой
+     ровно потому, что пункты одной высоты. Считать её из геометрии значило бы
+     читать лэйаут на каждый сдвиг активного раздела. */
   .rail__list {
+    position: relative;
     display: grid;
-    gap: 0.1rem;
+    gap: 0;
     block-size: auto;
     overflow: visible;
     padding-inline: 0;
     mask-image: none;
   }
+  .rail__list::before,
+  .rail__list::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+  }
+  .rail__list::before {
+    inline-size: 1px;
+    block-size: 100%;
+    background: var(--hairline);
+  }
+  .rail__list::after {
+    inline-size: 2px;
+    block-size: calc((var(--i) + 1) / var(--n) * 100%);
+    background: var(--olive-deep);
+  }
+  /* Движение по согласию, как и всё остальное на странице: полоса, ползущая
+     сама по себе сбоку от текста, гостю с отключённой анимацией не нужна. */
+  @media (prefers-reduced-motion: no-preference) {
+    .rail__list::after {
+      transition: block-size 0.4s var(--ease);
+    }
+  }
   .rail__chip {
     border-radius: 0;
-    padding: 0.42rem 0 0.42rem 0.9rem;
-    margin-inline-start: -1px;
-    border-inline-start: 2px solid transparent;
+    padding: 0.62rem 0 0.62rem 1.15rem;
     white-space: normal;
+    font-size: var(--step-0);
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    color: var(--ink-dim);
+    opacity: 1;
   }
   [dir='rtl'] .rail__chip {
-    padding: 0.42rem 0.9rem 0.42rem 0;
+    padding: 0.62rem 1.15rem 0.62rem 0;
+  }
+  .rail__ord {
+    display: block;
+    flex: none;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+  .rail__name {
+    flex: 1 1 auto;
+  }
+  .rail__count {
+    display: block;
+    flex: none;
+    font-size: 0.74rem;
+    opacity: 0.42;
   }
   .rail__chip.is-active {
     background: none;
     color: var(--olive-deep);
-    border-inline-start-color: var(--olive-deep);
+    font-weight: 600;
+  }
+  .rail__chip.is-active .rail__ord {
+    opacity: 0.85;
   }
   @media (hover: hover) {
     .rail__chip:not(.is-active):hover {
       background: none;
+      color: var(--olive-ink);
     }
+  }
+  .rail__book {
+    display: inline-flex;
+    justify-content: center;
+    inline-size: 100%;
+    margin-block-start: 1.9rem;
+    padding: 0.72rem 0.9rem;
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    color: var(--olive-deep);
+    border-color: color-mix(in srgb, var(--olive-deep) 40%, transparent);
+  }
+  @media (hover: hover) {
+    .rail__book:hover {
+      background: var(--olive-deep);
+      border-color: var(--olive-deep);
+      color: var(--cream);
+    }
+  }
+}
+
+/* Разрядка рвёт арабскую вязь: те же подписи на арабском идут без неё. */
+html[lang='ar'] .menu__facts dt,
+html[lang='ar'] .rail__head,
+html[lang='ar'] .rail__book,
+html[lang='ar'] .course__plate-name,
+html[lang='ar'] .dish__weight {
+  letter-spacing: 0;
+}
+
+/* --------- лист меню -------- */
+
+/* Кремовый лист на пару процентов светлее двора: карта лежит на скатерти, а
+   не растворяется в ней. */
+.menu__card {
+  position: relative;
+  max-inline-size: var(--measure);
+  margin-inline: auto;
+  margin-block-start: clamp(1.25rem, 4vh, 2rem);
+  padding: var(--card-pad);
+  background: color-mix(in srgb, #fff 42%, var(--cream));
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+}
+/* На узкой полосе листа нет вовсе: лист шириной в экран — это уже не лист, а
+   вторая заливка поверх двора, и её светлый прямоугольник только режет полосу
+   по краям. Остаётся сам набор на кремовом. Заодно обнуляется --card-pad: по
+   нему строка блюда выносит полосу наведения, и без поля выносить её некуда. */
+@media (max-width: 699.98px) {
+  .menu__card {
+    --card-pad: 0px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+/* Вторая линейка внутри рамки: так набирали обложку карты вин. На узкой
+   полосе её нет, там каждый миллиметр поля стоит дороже рамки. */
+@media (min-width: 700px) {
+  .menu__card::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid color-mix(in srgb, var(--olive-deep) 9%, transparent);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+}
+@media (min-width: 1080px) {
+  .menu__card {
+    max-inline-size: none;
+    margin-inline: 0;
+    margin-block-start: 0;
   }
 }
 
 /* --------- разделы и блюда -------- */
 
-.menu__courses {
-  max-width: var(--measure);
-  margin-inline: auto;
-}
-@media (min-width: 1080px) {
-  .menu__courses {
-    margin-inline: 0;
-  }
-}
-
 .course {
-  padding-block-start: clamp(2rem, 5vh, 3rem);
+  padding-block-start: clamp(2.25rem, 5vh, 3.25rem);
   /* Якорь встаёт под шапкой и лентой, а не под ними */
   scroll-margin-block-start: calc(var(--header-h) + var(--rail-h) + 0.75rem);
+}
+.course:first-child {
+  padding-block-start: 0.35rem;
 }
 @media (min-width: 1080px) {
   .course {
@@ -958,123 +1307,230 @@ html[lang='ar'] .skip-link {
   }
 }
 
-.course__title {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: var(--step-2);
-  color: var(--olive-deep);
-  padding-block-end: 0.6rem;
-  border-block-end: 1px solid color-mix(in srgb, var(--olive-deep) 26%, transparent);
+/* Шапка раздела: имя и оно же вязью, без номера и линейки: воздух отбивает
+   начало главы вернее, чем правило. */
+.course__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 0.9rem;
+  padding-block-end: 0.7rem;
 }
-.course__star {
-  color: var(--gold);
-  flex: none;
+.course__title {
+  font-size: var(--step-3);
+  color: var(--olive-deep);
+}
+.course__ar {
+  justify-self: end;
+  font-family: var(--font-ar-display);
+  font-size: var(--step-2);
+  line-height: 1;
+  color: color-mix(in srgb, var(--olive) 46%, transparent);
 }
 
-.course__photo {
-  margin: 1.25rem 0 0;
+/* Снимок раздела: кадр во всю ширину листа, имя и цена полосой по нему. */
+.course__plate {
   position: relative;
+  margin: clamp(1.15rem, 3vh, 1.7rem) 0 0;
+  overflow: hidden;
+  /* Скругление крупнее листа (3px) и рамки: у снимка оно единственное
+     смягчение в разделе. Радиус считается от ширины полосы, а она здесь под
+     семьсот пикселей: на таком поле и 12px прочитываются как прямой угол. */
+  border-radius: 20px;
+  border: 1px solid var(--hairline);
 }
-.course__photo img {
+.course__plate img {
   inline-size: 100%;
   block-size: auto;
-  border-radius: 3px;
-  box-shadow: 0 10px 30px -14px color-mix(in srgb, var(--olive-ink) 55%, transparent);
+  aspect-ratio: 21 / 9;
+  object-fit: cover;
+  /* Радиус на самом снимке, а не только обрезка родителя по overflow: у
+     figure есть трансформ въезда, а связка overflow + border-radius + transform
+     в WebKit отпускает углы, и снимок вылезает из рамки квадратным. */
+  border-radius: inherit;
 }
-.course__photo figcaption {
-  margin-block-start: 0.55rem;
-  font-size: var(--micro);
-  letter-spacing: 0.04em;
-  opacity: 0.78;
+.course__plate figcaption {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem 1.1rem 0.8rem;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--night) 88%, transparent),
+    transparent
+  );
+  color: var(--cream);
+}
+.course__plate-name {
+  font-size: var(--step--1);
+  letter-spacing: 0.03em;
+}
+.course__plate-price {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  line-height: 1;
+  color: var(--gold-lt);
+}
+html[lang='ar'] .course__plate-price {
+  font-family: var(--font-ar-display);
 }
 
 .course__list {
-  margin-block-start: 0.5rem;
+  margin-block-start: 0.35rem;
 }
 
+/* Строка блюда сеткой, а не одной флекс-строкой: состав обязан стоять в
+   колонке названия, иначе длинное описание подтекает под цену и приходится
+   отбивать его фиктивным отступом в полтора вершка. */
 .dish {
-  padding-block: 0.72rem;
-  border-block-end: 1px solid color-mix(in srgb, var(--olive-ink) 9%, transparent);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: clamp(0.75rem, 2vw, 1.75rem);
+  padding-block: 0.8rem;
+  /* Полоса наведения выходит за колонку текста: на неё попадают, не целясь. */
+  margin-inline: calc(var(--card-pad) / -2);
+  padding-inline: calc(var(--card-pad) / 2);
+  border-radius: 2px;
+  transition: background-color 0.18s var(--ease);
 }
-.dish:last-child {
-  border-block-end: 0;
+@media (hover: hover) {
+  .dish:hover {
+    --dot: color-mix(in srgb, var(--olive-deep) 55%, transparent);
+    background: color-mix(in srgb, var(--olive) 7%, transparent);
+  }
 }
 
-/* Название — точки — вес и цена. Точки занимают всё, что осталось. */
-.dish__line {
+.dish__head {
+  grid-column: 1;
   display: flex;
   align-items: baseline;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  min-inline-size: 0;
 }
 .dish__name {
-  font-size: var(--step-0);
+  font-size: var(--dish);
+  font-weight: 500;
 }
-.dish__dots {
+
+/* Выносная линейка: точки, проявляющиеся к цене. Сплошной пунктир во всю
+   строку на широком листе читается шумом, а ведёт всё равно только его
+   правый конец, поэтому левый растворён маской. */
+.dish__lead {
   flex: 1 1 auto;
   min-inline-size: 1.5rem;
   align-self: flex-end;
-  margin-block-end: 0.28em;
-  border-block-end: 1px dotted color-mix(in srgb, var(--olive-ink) 32%, transparent);
+  margin-block-end: 0.32em;
+  /* Полоса на пиксель выше диаметра точки: в 2px круг радиусом 1,1px
+     срезается сверху и снизу и печатается штрихом, а не точкой. */
+  block-size: 3px;
+  background-image: radial-gradient(var(--dot) 1.1px, transparent 1.3px);
+  background-size: 0.44rem 3px;
+  background-repeat: repeat-x;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%);
+  mask-image: linear-gradient(90deg, transparent, #000 42%);
 }
+[dir='rtl'] .dish__lead {
+  -webkit-mask-image: linear-gradient(270deg, transparent, #000 42%);
+  mask-image: linear-gradient(270deg, transparent, #000 42%);
+}
+
 .dish__meta {
-  flex: none;
+  grid-column: 2;
+  grid-row: 1;
   display: flex;
   align-items: baseline;
-  gap: 0.75rem;
-}
-.dish__weight {
-  font-size: var(--micro);
-  opacity: 0.72;
-}
-.dish__price {
-  font-weight: 600;
-  color: var(--olive-deep);
+  gap: clamp(0.6rem, 1.5vw, 1.15rem);
   white-space: nowrap;
 }
+/* Колонка веса фиксированной ширины: «0,5 л» и «500 мл» отличаются вдвое, и
+   без неё выносные линейки обрывались бы в разном месте строка за строкой.
+   Вес прижат к той стороне, где кончается линейка: расстояние между ними
+   одинаково у всех блюд, а разнобой уходит в широкий просвет перед ценой.
+   Стороны названы через `.num`, которая разворачивает эти ячейки в LTR. */
+.dish__weight {
+  min-inline-size: 3.5rem;
+  text-align: start;
+  font-size: var(--micro);
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+[dir='rtl'] .dish__weight {
+  text-align: end;
+}
+/* Колонка цен ровняется по внешнему краю листа. `.num` разворачивает цену в
+   LTR, поэтому `end` внутри неё всегда означает «справа», и в RTL сторону
+   приходится называть прямо, иначе цены соберутся у веса, а не у поля. */
+.dish__price {
+  min-inline-size: 4.75rem;
+  text-align: end;
+  font-family: var(--font-display);
+  font-size: var(--price);
+  line-height: 1;
+  color: var(--olive-deep);
+}
+[dir='rtl'] .dish__price {
+  text-align: start;
+}
+html[lang='ar'] .dish__price {
+  font-family: var(--font-ar-display);
+}
 .dish__desc {
-  display: block;
-  margin-block-start: 0.2rem;
-  padding-inline-end: 5.5rem;
+  grid-column: 1;
+  max-inline-size: 58ch;
+  margin-block-start: 0.3rem;
   font-size: var(--step--1);
-  line-height: 1.5;
-  opacity: 0.78;
+  line-height: 1.55;
+  color: var(--ink-dim);
   text-wrap: pretty;
 }
 
-/* Узкая полоса: длинное название и вес с ценой в одну строку не встают —
-   лидер убирается, а вес и цена уезжают под название. */
+/* Узкая полоса: выносной линейке не хватает хода, она убирается. Вес и цена
+   остаются в одну строку и на строке названия: столбиком они делают первый ряд
+   вдвое выше буквы и отрывают состав от названия на пустую строку. */
 @media (max-width: 559.98px) {
-  .dish__line {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.15rem 0.75rem;
+  .dish {
+    column-gap: 0.7rem;
   }
-  .dish__dots {
+  .dish__lead {
     display: none;
   }
-  .dish__name {
-    grid-column: 1;
-  }
   .dish__meta {
-    grid-column: 2;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.1rem;
+    gap: 0.5rem;
   }
+  .dish__price {
+    min-inline-size: 0;
+  }
+  /* Состав идёт во всю ширину, а не в колонку названия: под ценой её остаётся
+     полтораста точек, и «Сухари в панировке, красный перец, грецкий орех,
+     гранатовый соус, кунжутная паста» ложится лесенкой в четыре строки. */
   .dish__desc {
-    padding-inline-end: 0;
+    grid-column: 1 / -1;
+    max-inline-size: none;
+  }
+  /* Вязь уходит под название: вдвоём в строку они не встают. */
+  .course__head {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.25rem;
+  }
+  .course__ar {
+    justify-self: start;
+    font-size: var(--step-1);
   }
 }
 
 /**
  * Сноска приглушена краской, а не прозрачностью.
  *
- * Прозрачность у родителя — не наследуемое значение, а групповой эффект:
+ * Прозрачность у родителя не наследуемое значение, а групповой эффект:
  * она гасит поддерево целиком, и `opacity: 1` на ссылке внутри её не
  * отменяет. На сноске под .78 ссылка «Меню на Яндекс Картах» давала 3,7:1
  * при норме 4,5:1 и починить это на самой ссылке было нельзя. С краской
- * ссылка живёт своей: сноска тише текста, действие в ней — нет.
+ * ссылка живёт своей: сноска тише текста, действие в ней остаётся ярким.
  */
 .menu__source {
   margin-block-start: clamp(2rem, 5vh, 3rem);
@@ -1174,8 +1630,23 @@ html[lang='ar'] .skip-link {
   opacity: 0.8;
 }
 
+.room__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 1.25rem 0 0;
+  color: var(--gold-deep);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.room__rating svg {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
 /* align-items: start обязателен: без него grid растягивает карточки на высоту
-   ряда, object-fit доводит снимок до этой высоты — и разнобой по вертикали,
+   ряда, object-fit доводит снимок до этой высоты, и разнобой по вертикали,
    ради которого всё затевалось, съедается обратно. */
 .room__gallery {
   display: grid;
@@ -1186,7 +1657,7 @@ html[lang='ar'] .skip-link {
 }
 /* Сброс идёт ДО модификаторов, а не после: медиазапрос не добавляет
    специфичности, и `.room__photo { margin: 0 }`, стоявший ниже, молча
-   отменял сдвиг `.room__photo--1` — снимки выстраивались в линейку, а
+   отменял сдвиг `.room__photo--1`, снимки выстраивались в линейку, а
    разнобой, ради которого всё затевалось, не появлялся никогда. */
 .room__photo {
   margin: 0;
@@ -1203,7 +1674,7 @@ html[lang='ar'] .skip-link {
   .room__photo--2 {
     grid-column: auto;
   }
-  /* лёгкий разнобой по вертикали — снимки висят, а не выложены в линейку */
+  /* лёгкий разнобой по вертикали: снимки висят, а не выложены в линейку */
   .room__photo--1 {
     margin-block-start: 2.2rem;
   }
@@ -1226,21 +1697,11 @@ html[lang='ar'] .skip-link {
   }
 }
 
-.room__features {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-block-start: clamp(1.75rem, 4vh, 2.5rem);
-  color: color-mix(in srgb, var(--cream) 82%, transparent);
-}
-
 .room__praise {
   position: relative;
   max-width: 44rem;
   margin-block-start: clamp(2.5rem, 6vh, 4rem);
   padding-block-start: clamp(1.75rem, 4vh, 2.5rem);
-  border-block-start: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
 }
 .room__praise-lead {
   font-size: var(--step-2);
@@ -1252,7 +1713,7 @@ html[lang='ar'] .skip-link {
   margin-block-start: 1.25rem;
 }
 
-/* Полоса: подпись — процент — шкала — объём выборки, всё в одну строку.
+/* Полоса: подпись, процент, шкала, объём выборки, всё в одну строку.
    Раньше объём выборки был вынесен во вторую строку сетки, и каждая тема
    занимала две высоты: четыре полосы расползались на пол-экрана, а число
    отрывалось от своей шкалы. */
@@ -1282,12 +1743,12 @@ html[lang='ar'] .skip-link {
   transform: scaleX(var(--pct));
   transform-origin: left center;
 }
-/* Полоса растёт от того края, откуда читают, — и градиент вместе с ней. */
+/* Полоса растёт от того края, откуда читают, и градиент вместе с ней. */
 [dir='rtl'] .praise__fill {
   transform-origin: right center;
   background: linear-gradient(270deg, var(--olive), var(--gold));
 }
-/* Покой шкалы — уже готовый процент. Прочерк добавляется классом, поэтому
+/* Покой шкалы содержит уже готовый процент. Прочерк добавляется классом, поэтому
    если наблюдатель почему-то не сработает, гость увидит верное число. */
 @media (prefers-reduced-motion: no-preference) {
   .praise__fill {
@@ -1307,7 +1768,7 @@ html[lang='ar'] .skip-link {
 [dir='rtl'] .praise__count {
   justify-self: start;
 }
-/* На узкой полосе шкале не остаётся места между процентом и выборкой —
+/* На узкой полосе шкале не остаётся места между процентом и выборкой,
    опускаем её под подпись во всю ширину. */
 @media (max-width: 559.98px) {
   .praise {
@@ -1338,138 +1799,605 @@ html[lang='ar'] .skip-link {
 }
 
 /* ============================================================
-   Акт 4 · Как дойти
+   Акт 4 · Как дойти · чертёжный лист
+
+   Дамаскировка это насечка золотом по тёмному металлу; город, давший ей имя,
+   дал имя и кафе. Весь акт нарисован этим приёмом: золотая волосяная линия
+   по оливковой пластине, и ничего кроме линии: ни теней, ни объёма.
+
+   Раскадровка проявления живёт здесь, а не в React: покойное состояние
+   каждого слоя уже проявленное, а класс `is-drawn` только запускает
+   анимацию «из ничего». Если наблюдатель не сработает, чертёж всё равно на
+   месте, просто без прочерка.
    ============================================================ */
 
 .visit {
   position: relative;
-  /* фон тёмный — «открыто» берёт светлый зелёный, тёмный на нём нечитаем */
+  /* фон тёмный, и «открыто» берёт светлый зелёный: тёмный на нём нечитаем */
   --ok: #9fd47a;
-  background: var(--olive-deep);
+  /* две волосяные: золотая для чертёжной линии, кремовая для разделителя */
+  --hair: color-mix(in srgb, var(--gold) 30%, transparent);
+  --hair-soft: color-mix(in srgb, var(--cream) 13%, transparent);
+
+  /* Свет сверху, как из камарии над лестницей; низ уходит в цвет подвала,
+     чтобы стык с футером не читался ступенькой. */
+  background:
+    radial-gradient(
+      124% 68% at 50% -14%,
+      color-mix(in srgb, var(--gold) 12%, transparent),
+      transparent 62%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--olive) 16%, var(--olive-deep)) 0%,
+      var(--olive-deep) 34%,
+      color-mix(in srgb, var(--olive-ink) 74%, var(--olive-deep)) 100%
+    );
   color: var(--cream);
-  padding-block: clamp(3.5rem, 9vh, 6rem);
+  padding-block: clamp(4rem, 11vh, 7rem);
   scroll-margin-block-start: var(--header-h);
   overflow: clip;
 }
-/* Восьмиконечная сетка кессонов, но зелёная и едва различимая */
-.visit::before {
+
+/* Верхняя кромка инкрустации: стык с тёмным залом. */
+.visit::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(45deg, transparent 0 2.7rem, color-mix(in srgb, var(--cream) 6%, transparent) 2.7rem 2.75rem),
-    repeating-linear-gradient(-45deg, transparent 0 2.7rem, color-mix(in srgb, var(--cream) 6%, transparent) 2.7rem 2.75rem);
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 1px;
+  background: linear-gradient(90deg, transparent, var(--hair) 16%, var(--hair) 84%, transparent);
   pointer-events: none;
 }
 
+/* ------------------------------------------------ шапка и адресная пластина */
+
 .visit__head {
   position: relative;
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 2.75rem);
 }
-.visit__head .section-title {
-  color: var(--cream);
-}
-.visit__head .section-lead {
-  opacity: 0.82;
+@media (min-width: 900px) {
+  .visit__head {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+    /* адрес садится подошвой на подошву лида, а не на его макушку */
+    align-items: end;
+  }
 }
 
-.visit__card {
-  position: relative;
-  margin-block-start: clamp(1.75rem, 4vh, 2.5rem);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  background: color-mix(in srgb, var(--olive-ink) 62%, transparent);
-  border: 1px solid color-mix(in srgb, var(--gold) 34%, transparent);
-  border-radius: 4px;
-  display: grid;
-  gap: clamp(1.5rem, 4vw, 2.5rem);
+.visit__intro .section-title {
+  color: var(--cream);
 }
-@media (min-width: 860px) {
-  .visit__card {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    align-items: start;
+.visit__intro .section-lead {
+  max-width: 36ch;
+  opacity: 0.84;
+}
+
+/* Золотая кромка по краю пластины: обрез инкрустации. */
+.visit__plaque {
+  padding-inline-start: clamp(1.1rem, 3vw, 1.9rem);
+  border-inline-start: 1px solid var(--hair);
+}
+@media (max-width: 899.98px) {
+  .visit__plaque {
+    padding-inline-start: 0;
+    padding-block-start: 1.4rem;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--hair);
   }
 }
 
 .visit__label {
   font-size: var(--micro);
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  opacity: 0.72;
+  opacity: 0.66;
 }
 .visit__address {
+  margin-block-start: 0.4rem;
   font-family: var(--font-display);
   font-size: var(--step-3);
-  line-height: 1.15;
-  margin-block-start: 0.35rem;
+  line-height: 1.1;
   color: var(--gold-lt);
+  text-wrap: balance;
 }
 .visit__note {
-  margin-block-start: 0.5rem;
+  margin-block-start: 0.6rem;
   font-size: var(--step--1);
-  opacity: 0.72;
+  opacity: 0.74;
 }
 
-.visit__metro {
-  display: grid;
-  gap: 0.4rem;
-  margin-block-start: 1.2rem;
-  font-size: var(--step--1);
+/* ---------------------------------------------------------------- лист */
+
+.visit__sheet {
+  margin-block-start: clamp(2.25rem, 6vh, 3.5rem);
+  /* Чертёж один и тот же на всех трёх языках и не зеркалится вместе с
+     документом. */
+  direction: ltr;
 }
-/* Строка остановки течёт как обычный абзац, а не как flex-ряд из четырёх
-   коробок: на 390px «Сытный рынок» переносится, и flex ломал строку между
-   названием и расстоянием, оставляя их разными столбцами разной высоты. */
-.visit__metro li {
+/*
+ * Чертёж живёт на одной краске, на золоте, и потому весь его порядок держится
+ * не на цвете, а на плотности линии. Раньше плотностей было пятнадцать, и
+ * лист от этого читался как шум. Теперь их четыре, и у каждой своя работа:
+ *
+ *     --w1 / --o1   волосяная: разметка, штриховка, служебное
+ *     --w2 / --o2   тонкая: контуры застройки, врезка, размерная
+ *     --w3 / --o3   основная: бордюры, крепость, земля разреза
+ *     --w4 / --o4   ударная: знак двери, метро, лестница
+ *
+ * Линия толще и светлее ровно настолько, насколько предмет важнее. Больше
+ * ничем предметы на листе не различаются.
+ */
+.plan {
   display: block;
+  /* Лист целиком входит в полосу на любой ширине: боковой прокрутки нет
+     нигде. Уже 60rem широкий лист подписями в полосу не укладывается, и
+     вместо него ApproachPlan отдаёт узкий, вдвое выше и вдвое крупнее
+     набранный; здесь остаётся только его пропорция. */
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 1200 / 430;
+  color: var(--gold);
+  /* География не отражается вместе с документом */
+  direction: ltr;
+
+  --w1: 0.8;
+  --w2: 1.2;
+  --w3: 1.6;
+  --w4: 2.2;
+  --o1: 0.18;
+  --o2: 0.4;
+  --o3: 0.62;
+  --o4: 0.85;
 }
-.visit__dot {
-  display: inline-block;
-  inline-size: 0.6rem;
-  block-size: 0.6rem;
+
+.plan[data-sheet='tall'] {
+  aspect-ratio: 1200 / 860;
+}
+
+.plan__ground {
+  fill: var(--olive-ink);
+  fill-opacity: 0.74;
+}
+.plan__frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w3);
+  stroke-opacity: var(--o2);
+}
+.plan__frame--inner {
+  stroke-width: var(--w1);
+  stroke-opacity: var(--o1);
+}
+
+.plan__road {
+  fill: var(--cream);
+  fill-opacity: 0.045;
+}
+.plan__kerb {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w2);
+  stroke-opacity: var(--o3);
+}
+.plan__walkline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w1);
+  stroke-opacity: var(--o1);
+}
+
+.plan__block {
+  fill: var(--cream);
+  fill-opacity: 0.045;
+  stroke: currentColor;
+  stroke-width: var(--w2);
+  stroke-opacity: var(--o2);
+}
+.plan__block--named {
+  fill-opacity: 0.07;
+  stroke-opacity: var(--o3);
+}
+/* Дом с кафе: заливка и стена разведены, потому что в стене разрыв на дверь,
+   а заливке разрываться незачем. Стена дома это единственный контур на листе,
+   идущий в полную силу: в него приходит маршрут. */
+.plan__block--home {
+  fill: var(--gold);
+  fill-opacity: 0.16;
+  stroke: none;
+}
+.plan__home-wall {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w3);
+  stroke-opacity: var(--o4);
+  stroke-linejoin: miter;
+}
+/* Заливка штриховкой приходит атрибутом fill="url(#…)", здесь её не трогаем */
+.plan__hatch {
+  stroke: none;
+}
+/* Штриховка на листе ровно одна, на рынке, и потому может быть совсем тихой */
+.plan__hatchline {
+  stroke: currentColor;
+  stroke-width: var(--w1);
+  stroke-opacity: 0.14;
+}
+
+/* Аллея парка: ряд одинаковых точек, поэтому каждая может быть бледной */
+.plan__tree {
+  fill: currentColor;
+  fill-opacity: 0.26;
+}
+.plan__fortress {
+  fill: var(--cream);
+  fill-opacity: 0.05;
+  stroke: currentColor;
+  stroke-width: var(--w2);
+  stroke-opacity: var(--o3);
+}
+
+.plan__dim {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w1);
+  stroke-opacity: var(--o2);
+}
+.plan__dim-tick {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w2);
+  stroke-opacity: var(--o3);
+  stroke-linecap: round;
+}
+.plan__dimtext {
+  fill: var(--gold-lt);
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Пунктир идёт от вестибюля к двери и после проявления продолжает течь:
+   так строка «460 м» читается как маршрут, а не как отрезок. */
+.plan__route {
+  fill: none;
+  stroke: var(--gold-lt);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 7 9;
+}
+.visit.is-drawn .plan__route {
+  animation: plan-march 1.15s linear infinite;
+}
+
+.plan__halo {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  opacity: 0;
+  transition: opacity 0.28s var(--ease);
+}
+.plan[data-hl='metro'] .plan__node--metro .plan__halo,
+.plan[data-hl='stop'] .plan__node--stop .plan__halo {
+  opacity: 0.85;
+}
+/* Подсвеченный узел забирает себе и подпись: строка легенды и точка на
+   чертеже должны загораться одним движением. */
+.plan[data-hl='metro'] .plan__node--metro .plan__label {
+  fill: var(--gold-lt);
+  fill-opacity: 1;
+}
+
+.plan__ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w3);
+  stroke-opacity: var(--o4);
+}
+.plan__mark {
+  fill: var(--cream);
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+/* Остановка это узел на маршруте, а не точка рядом с ним: тот же приём, что у
+   метро, только мельче, иначе кружок читается как случайная соринка. */
+.plan__stop {
+  fill: var(--olive-ink);
+  stroke: currentColor;
+  stroke-width: var(--w4);
+}
+
+.plan__ping {
+  fill: none;
+  stroke: var(--gold-lt);
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.visit.is-drawn .plan__ping {
+  animation: plan-ping 3.6s var(--ease) 2.2s infinite;
+}
+/* Цель маршрута: точка внутри дома, в чистом золоте и без прозрачности.
+   Самое яркое место на листе, и так и задумано. */
+.plan__door {
+  fill: var(--gold-lt);
+  stroke: none;
+}
+
+.plan__leader {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w1);
+  stroke-opacity: var(--o2);
+  stroke-dasharray: 4 5;
+}
+
+.plan__inset {
+  fill: var(--night);
+  fill-opacity: 0.34;
+  stroke: currentColor;
+  stroke-width: var(--w2);
+  stroke-opacity: var(--o2);
+}
+.plan__ground-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w3);
+  stroke-opacity: var(--o3);
+}
+.plan__ground-hatch {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w1);
+  stroke-opacity: var(--o2);
+}
+.plan__stairs {
+  fill: none;
+  stroke: var(--gold-lt);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.plan__arch {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w3);
+  stroke-opacity: var(--o4);
+}
+
+.plan__north {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--w2);
+  stroke-opacity: var(--o2);
+}
+.plan__north-head {
+  fill: currentColor;
+  fill-opacity: var(--o2);
+  stroke: none;
+}
+
+.plan__label {
+  fill: var(--cream);
+  fill-opacity: 0.82;
+  stroke: none;
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+html[lang='ar'] .plan__label {
+  font-family: var(--font-ar-body);
+}
+/* Служебные подписи (имя улицы, имя крепости, сноска врезки) стоят на
+   ступень тише названий, к которым гость идёт. */
+.plan__street,
+.plan__fortress-name,
+.plan__inset-note {
+  fill-opacity: 0.55;
+}
+.plan__inset-title {
+  fill: var(--gold-lt);
+  fill-opacity: 0.85;
+}
+
+/* --- раскадровка чертежа --------------------------------------------- */
+
+.visit.is-drawn .plan__layer {
+  animation: plan-in 0.7s var(--ease) var(--d, 0s) backwards;
+}
+.plan__draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.visit.is-drawn .plan__draw {
+  animation: plan-draw var(--dur, 1.2s) var(--ease) var(--d, 0s) backwards;
+}
+
+@keyframes plan-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes plan-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes plan-ping {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  42%,
+  100% {
+    opacity: 0;
+    transform: scale(1.57);
+  }
+}
+@keyframes plan-march {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+/*
+ * Общий блок «меньше движения» в конце файла снимает длительности, но не
+ * задержки: раскадровка чертежа при этом не исчезала, а превращалась в две
+ * секунды выскакивающих из пустоты кусков. Гасим её здесь целиком; покойное
+ * состояние у всех слоёв и так проявленное, так что лист остаётся целым.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .visit .plan__layer,
+  .visit .plan__draw,
+  .visit .plan__ping,
+  .visit .plan__route {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------- легенда */
+
+.visit__legendrow {
+  margin-block-start: clamp(1.1rem, 3vw, 1.6rem);
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 800px) {
+  .visit__legendrow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+}
+
+.legend {
+  display: grid;
+  gap: 0.6rem;
+  max-inline-size: 30rem;
+}
+/* Название, точки, расстояние: тот же лидер, что и в листе меню. */
+.legend__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: var(--step--1);
+  transition: color 0.22s var(--ease);
+}
+.legend__row.is-active {
+  color: var(--gold-lt);
+}
+.legend__mark {
+  flex: none;
+  align-self: center;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
   border-radius: 50%;
-  margin-inline-end: 0.45rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1;
 }
-/* Тип точки набран мельче и тише названия: он уточняет, а не объявляет.
-   Капителью не набираем — на арабском «مترو» разрядка рвёт вязь. */
-.visit__kind {
+.legend__mark--metro {
+  background: var(--line);
+  color: var(--cream);
+}
+.legend__mark--stop {
+  border: 2px solid var(--line);
+}
+.legend__name {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+/* Тип точки набран мельче и тише названия: он уточняет, а не объявляет. */
+.legend__kind {
   margin-inline-end: 0.35rem;
   font-size: var(--micro);
-  opacity: 0.72;
+  opacity: 0.62;
 }
-.visit__walk {
-  opacity: 0.72;
+.legend__dots {
+  flex: 1 1 auto;
+  min-inline-size: 1.25rem;
+  align-self: flex-end;
+  margin-block-end: 0.32em;
+  border-block-end: 1px dotted color-mix(in srgb, var(--cream) 26%, transparent);
+}
+.legend__val {
+  flex: none;
+  opacity: 0.78;
 }
 
-.visit__rows {
+/* --------------------------------------------------------------- штамп */
+
+.titleblock {
+  margin-block-start: clamp(2rem, 5vh, 3rem);
   display: grid;
-  gap: 1.35rem;
+  border: 1px solid var(--hair);
+  background: color-mix(in srgb, var(--olive-ink) 55%, transparent);
 }
-.visit__row {
-  display: flex;
-  gap: 0.8rem;
-  padding-block-start: 1.35rem;
-  border-block-start: 1px solid color-mix(in srgb, var(--cream) 14%, transparent);
+@media (min-width: 900px) {
+  .titleblock {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
 }
-.visit__row:first-child {
-  padding-block-start: 0;
-  border-block-start: 0;
+
+.titleblock__cell {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+  padding: clamp(1.15rem, 2.4vw, 1.65rem) clamp(1.15rem, 2.4vw, 1.8rem);
 }
-.visit__glyph {
-  padding-block-start: 0.2rem;
-  color: var(--gold);
+.titleblock__cell + .titleblock__cell {
+  border-block-start: 1px solid var(--hair-soft);
 }
-.visit__rowbody {
+/* Кнопки идут отдельной строкой во всю ширину штампа: втроём в ряд им тесно
+   даже на широком экране: часы начинали переноситься по слогам. Нижняя
+   полоса с действиями это та же подвальная строка, что и у чертёжного штампа. */
+@media (min-width: 900px) {
+  .titleblock__cell + .titleblock__cell {
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--hair-soft);
+  }
+  .titleblock__cell--acts {
+    grid-column: 1 / -1;
+    border-block-start: 1px solid var(--hair-soft);
+    border-inline-start: 0;
+  }
+}
+
+.titleblock__cell--acts {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem 0.9rem;
+  gap: 0.7rem;
+}
+.hours {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.hours__body {
+  display: grid;
+  gap: 0.35rem;
+}
+.hours__line {
   font-size: var(--step-0);
 }
-.visit__rowbody > .visit__label {
-  flex-basis: 100%;
+.hours__line .num {
+  color: var(--gold-lt);
+  font-weight: 600;
+  white-space: nowrap;
 }
+
+/* Номер набран `direction: ltr`, и растянутая ячейка сетки прижимала бы его к
+   левому краю даже на арабском. Даём коробке сжаться по содержимому. */
 .visit__link {
+  justify-self: start;
+  font-size: var(--step-1);
+  white-space: nowrap;
   font-weight: 600;
   color: var(--gold-lt);
-  text-underline-offset: 3px;
+  text-decoration: none;
 }
 .visit__social {
   display: flex;
@@ -1478,36 +2406,36 @@ html[lang='ar'] .skip-link {
 }
 .visit__social a {
   opacity: 0.75;
-  text-underline-offset: 3px;
+  text-decoration: none;
 }
 @media (hover: hover) {
   .visit__social a:hover {
     opacity: 1;
   }
 }
-.visit__row:last-child {
-  flex-wrap: wrap;
-}
-.visit__row:last-child .visit__rowbody {
-  gap: 0.7rem;
-}
-.visit__route {
+
+.btn--gold {
   background: var(--gold);
   border-color: var(--gold);
   color: var(--night);
 }
 @media (hover: hover) {
-  .visit__route:hover {
+  .btn--gold:hover {
     background: var(--gold-lt);
     border-color: var(--gold-lt);
   }
 }
-.visit__seal {
-  position: absolute;
-  inset-block-start: 1rem;
-  inset-inline-end: 1rem;
-  color: var(--gold);
-  opacity: 0.4;
+
+/* Телефон: две кнопки встают в столбик; пусть будут одной ширины, как и
+   корешки первого экрана. */
+@media (max-width: 559.98px) {
+  .titleblock__cell--acts {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .titleblock__cell--acts .btn {
+    justify-content: center;
+  }
 }
 
 /* ============================================================
@@ -1601,18 +2529,5 @@ html[lang='ar'] .skip-link {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-
-/* Телефон: две кнопки маршрута встают в столбик — пусть будут одной ширины,
-   как и корешки первого экрана. */
-@media (max-width: 559.98px) {
-  .visit__row:last-child .visit__rowbody {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .visit__row:last-child .btn {
-    justify-content: center;
   }
 }

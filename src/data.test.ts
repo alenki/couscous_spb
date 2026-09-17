@@ -43,12 +43,12 @@ describe('menu', () => {
     expect(mezze.dishes).toHaveLength(10)
   })
 
-  it('has no duplicate dish names — the key of every list on the page', () => {
+  it('has no duplicate dish names, the key of every list on the page', () => {
     const names = ALL_DISHES.map((d) => d.name.ru)
     expect(new Set(names).size).toBe(names.length)
   })
 
-  it('has no duplicate course ids — they are DOM anchors', () => {
+  it('has no duplicate course ids because they are DOM anchors', () => {
     expect(new Set(MENU.map((c) => c.id)).size).toBe(MENU.length)
   })
 
@@ -61,7 +61,7 @@ describe('menu', () => {
   })
 
   // Ключевые цены с вкладки «Меню» Яндекса, снятой 16.09.2026. Обзорная вкладка
-  // показывает другие — если однажды кто-то сверится с ней, тест это поймает.
+  // показывает другие; если однажды кто-то сверится с ней, тест это поймает.
   it('keeps the verified prices from the menu tab', () => {
     const price = (ru: string) => ALL_DISHES.find((d) => d.name.ru === ru)?.price
     expect(price('Микс-гриль')).toBe(2220)
@@ -91,7 +91,7 @@ describe('localisation', () => {
    * Каждая локализованная строка заполнена на всех трёх языках.
    *
    * Повод для обхода, а не для ручного списка: пропущенный `ar` не падает и
-   * не подчёркивается типами (L требует ключ, но пустая строка — валидное
+   * не подчёркивается типами (L требует ключ, но пустая строка является валидным
    * значение). На странице он выглядит как дыра, которую видно только тому,
    * кто читает по-арабски.
    */
@@ -120,7 +120,7 @@ describe('localisation', () => {
       for (const d of c.dishes) expect(arabic.test(d.name.ar), d.name.ru).toBe(true)
     }
     for (const [key, v] of Object.entries(UI)) {
-      // Wi-Fi и подобные пишутся латиницей во всех трёх — исключений быть не
+      // Wi-Fi и подобные пишутся латиницей во всех трёх, исключений быть не
       // должно ни одного, поэтому проверяем весь UI без списка послаблений
       expect(arabic.test(v.ar), `UI.${key}`).toBe(true)
     }
@@ -136,7 +136,7 @@ describe('localisation', () => {
     expect(reviews(557, 'en')).toBe('557\u00a0reviews')
     expect(reviews(1, 'en')).toBe('1\u00a0review')
     // Разряды тоже неразрывные, и во всех трёх языках одинаково: цифры
-    // европейские даже на арабском — как набраны цены во всём меню.
+    // европейские даже на арабском, как набраны цены во всём меню.
     expect(num(1010, 'ru')).toBe('1\u00a0010')
     expect(num(1010, 'en')).toBe('1\u00a0010')
     expect(num(1010, 'ar')).toBe('1\u00a0010')
@@ -169,7 +169,7 @@ describe('facts agree with index.html', () => {
     expect(ld.aggregateRating.ratingValue).toBe(String(CAFE.ratingValue))
     expect(ld.aggregateRating.ratingCount).toBe(String(CAFE.ratingsCount))
     expect(ld.aggregateRating.reviewCount).toBe(String(CAFE.reviewsCount))
-    // русская запятая в вёрстке, точка в разметке — обе про одно число
+    // русская запятая в вёрстке, точка в разметке; обе про одно число
     expect(CAFE.rating.ru).toBe('4,4')
     expect(CAFE.rating.en).toBe('4.4')
   })
@@ -184,14 +184,14 @@ describe('facts agree with index.html', () => {
    * В карточке Яндекса Telegram записан как `t.me/damask_cafe45-instagram`:
    * дефис в имени пользователя Telegram недопустим, а `damask_cafe45` никем
    * не занят. Ссылки на Telegram на сайте быть не должно, пока владелец не
-   * поправит карточку — иначе гость уходит в пустоту.
+   * поправит карточку, иначе гость уходит в пустоту.
    */
   it('has no telegram link while the listing’s handle is broken', () => {
     expect(indexHtml).not.toMatch(/t\.me/)
     expect(SOCIAL.map((s) => s.label)).toEqual(['VK', 'WhatsApp'])
   })
 
-  /** wa.me не понимает внутрироссийскую «8» — номер должен быть с «7». */
+  /** wa.me не понимает внутрироссийскую «8», номер должен быть с «7». */
   it('whatsapp uses the international prefix', () => {
     const wa = SOCIAL.find((s) => s.label === 'WhatsApp')!
     expect(wa.url).toBe('https://wa.me/79811642424')
@@ -210,15 +210,15 @@ describe('facts agree with index.html', () => {
 /* -------------------------------------------------------- часы работы */
 
 describe('open-now clock', () => {
-  /** Полдень в Петербурге — 09:00 UTC зимой, 09:00 UTC летом (МСК = UTC+3). */
+  /** Полдень в Петербурге соответствует 09:00 UTC зимой и летом (МСК = UTC+3). */
   const utc = (h: number, m = 0) => new Date(Date.UTC(2026, 8, 16, h, m))
 
   it('is open between 11:00 and 23:30 Moscow time', () => {
-    expect(isOpenAt(utc(7, 59))).toBe(false) // 10:59 МСК — ещё закрыто
-    expect(isOpenAt(utc(8, 0))).toBe(true) // 11:00 МСК — открылись ровно
+    expect(isOpenAt(utc(7, 59))).toBe(false) // 10:59 МСК, ещё закрыто
+    expect(isOpenAt(utc(8, 0))).toBe(true) // 11:00 МСК, открылись ровно
     expect(isOpenAt(utc(12, 0))).toBe(true) // 15:00 МСК
     expect(isOpenAt(utc(20, 29))).toBe(true) // 23:29 МСК
-    expect(isOpenAt(utc(20, 30))).toBe(false) // 23:30 МСК — закрылись
+    expect(isOpenAt(utc(20, 30))).toBe(false) // 23:30 МСК, закрылись
     expect(isOpenAt(utc(2, 0))).toBe(false) // 05:00 МСК
   })
 

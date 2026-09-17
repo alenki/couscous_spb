@@ -41,7 +41,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local QA artifacts — scoped to the repo root so /public images still commit
+# local QA artifacts, scoped to the repo root so /public images still commit
 .playwright-mcp/
 /*.png
 tsconfig.tsbuildinfo
